@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+/*
+ * PhysIQx AI design tokens — source: docs/UI_Guideliness.md (Architecture v1).
+ * Dark-first, single theme. Neutrals are zinc-family; the doc's #111827 surface
+ * was a gray-scale outlier and is normalized to the zinc ladder here.
+ */
+@theme {
+  /* Surfaces (three levels: app background → card → elevated) */
+  --color-background: #09090b;
+  --color-surface: #121214;
+  --color-surface-elevated: #18181b;
+  --color-border: #27272a;
+
+  /* Text hierarchy. Verified against all three surface levels (WCAG
+     relative-luminance formula, not estimated):
+     - foreground-secondary: 6.9–7.8:1 — passes AA at any size, everywhere.
+       The one actually used across the app (all secondary/caption text).
+     - foreground-muted: 3.7–4.1:1 — large/bold text only (>=3.0 needed),
+       fails normal-size text. Currently unused anywhere in the codebase —
+       reserved from UI_Guideliness.md's 4-level text hierarchy, not yet
+       needed. Must only be applied to large/bold text if it ever is.
+     - foreground-disabled: 2.3–2.6:1 — fails even large-text AA. Also
+       currently unused (Button/IconButton dim disabled states via opacity
+       instead), and WCAG 1.4.3 exempts inactive/disabled UI text from
+       contrast minimums regardless — fine as reserved, would need
+       reconsidering only if ever applied to non-disabled text. */
+  --color-foreground: #fafafa;
+  --color-foreground-secondary: #a1a1aa;
+  --color-foreground-muted: #71717a;
+  --color-foreground-disabled: #52525b;
+
+  /* Brand. Tinted surfaces (the signature green-washed cards) are expressed
+     as opacity modifiers: bg-brand/10, border-brand/20. */
+  --color-brand: #4ade80;
+  --color-brand-strong: #22c55e;
+
+  /* Status */
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --color-info: #3b82f6;
+
+  /* Rarity accent. UI_Guideliness.md's status palette has no fifth hue for
+     Legendary-tier achievements, but the design uses one (flagged in the
+     original architecture review) — added now that Profile's achievement
+     collection needs it. Not a new category, just the one missing token. */
+  --color-legendary: #e879f9;
+
+  /* Typography. `display` is a separate slot so the final display typeface
+     (pending product decision) is a one-line swap; it falls back to Inter. */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  /* Radius: inputs/buttons 16, cards 20, dialogs 24 */
+  --radius-field: 1rem;
+  --radius-card: 1.25rem;
+  --radius-dialog: 1.5rem;
+
+  /* Shadows — very subtle per guidelines */
+  --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.4);
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-background font-sans text-foreground antialiased;
+  }
+}
