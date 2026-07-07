@@ -18,3 +18,8 @@ spec; only promote on actual second use.
 
 `lib/pillarMeta.ts` — pillar → icon/tone lookup, shared by `PillarGrid` and
 any standalone pillar callout, so the mapping can't drift between them.
+
+`lib/milestones.ts` — frequent-win milestone definitions + `deriveLatestMilestone`
+(streak psychology: first workout / first week / first month / 50 / 100).
+Celebrations render through Home's `AchievementSpotlight` (`milestone` kind);
+a fresh PR outranks a milestone when both exist.

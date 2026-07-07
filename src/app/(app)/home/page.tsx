@@ -21,7 +21,7 @@ export default async function HomePage() {
       mission={data.mission}
       week={data.week}
       priorities={data.priorities}
-      latestPR={data.latestPR}
+      spotlight={data.spotlight}
     />
   );
 }

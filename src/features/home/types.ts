@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import type { PersonalRecordBase } from "@/data/personalRecords";
+import type { SpotlightWin } from "./components/AchievementSpotlight";
 import type { Profile } from "@/types/profile";
 import type { PhysIQScoreSnapshot } from "@/types/score";
 import type { Mission, StreakSummary, WeeklySummary } from "@/types/training";
@@ -51,6 +51,6 @@ export interface HomeData {
   quickActions: QuickAction[];
   /** Today's coach-authored actions, most impactful first. */
   priorities: DailyPriority[];
-  /** The freshest PR — Home's achievement spotlight. */
-  latestPR: PersonalRecordBase;
+  /** The freshest win (PR or milestone) — Home's achievement spotlight. */
+  spotlight: SpotlightWin;
 }

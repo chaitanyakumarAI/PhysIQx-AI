@@ -138,5 +138,8 @@ export const mockHomeData: HomeData = {
   level,
   quickActions,
   priorities,
-  latestPR: mockLatestPR,
+  // Priority rule: a fresh PR beats a crossed milestone (specific numbers
+  // beat generic praise). Alex has a fresh Bench PR, so it wins; with no
+  // fresh PR this would be deriveLatestMilestone(stats) as a milestone win.
+  spotlight: { kind: "pr", record: mockLatestPR },
 };

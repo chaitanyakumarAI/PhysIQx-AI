@@ -22,7 +22,7 @@ import type { HomeData } from "@/features/home/types";
 // cross the server/client boundary in a prop this screen doesn't even use.
 export type HomeScreenProps = Pick<
   HomeData,
-  "profile" | "streak" | "score" | "mission" | "week" | "priorities" | "latestPR"
+  "profile" | "streak" | "score" | "mission" | "week" | "priorities" | "spotlight"
 >;
 
 /**
@@ -40,7 +40,7 @@ export function HomeScreen({
   mission,
   week,
   priorities,
-  latestPR,
+  spotlight,
 }: HomeScreenProps) {
   const router = useRouter();
   // Client-side on purpose: the route is statically prerendered, so a
@@ -101,7 +101,7 @@ export function HomeScreen({
         </m.div>
 
         <m.div variants={fadeInUp}>
-          <AchievementSpotlight record={latestPR} />
+          <AchievementSpotlight win={spotlight} />
         </m.div>
 
         <m.div variants={fadeInUp}>

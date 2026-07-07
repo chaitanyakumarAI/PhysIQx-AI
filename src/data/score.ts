@@ -38,10 +38,10 @@ export const mockPhysIQScore: PhysIQScoreSnapshot = {
   ],
   pillars,
   weakestPillarId: findWeakestPillar(pillars),
-  // Specific and actionable, not a vibe: names the weakest pillar (Water, 58)
-  // and what it's costing — per the product rule that every number should
-  // answer "what can I do about it today?"
-  headline: "Hydration is the one pillar holding you back — everything else is peaking.",
+  // Specific, quantified, evidence-based (user-provided copy direction):
+  // the 14% figure matches the "Volume up 14%" insight on Insights — one
+  // fact, two surfaces, zero contradictions. Ends with today's action.
+  headline: "Pressing volume up 14% in two weeks — maintain hydration today to support recovery.",
   state: "active",
   scoreVersion: "v2",
 };

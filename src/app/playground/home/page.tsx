@@ -7,6 +7,7 @@ import { TodaysPriorities } from "@/features/home/components/TodaysPriorities";
 import { AchievementSpotlight } from "@/features/home/components/AchievementSpotlight";
 import { StatusStrip } from "@/features/home/components/StatusStrip";
 import { deriveRecoveryStatus } from "@/features/home/lib/derive";
+import { deriveLatestMilestone } from "@/features/shared/lib/milestones";
 import { DailyMissionCard } from "@/features/home/components/DailyMissionCard";
 import { WeeklyActivityCard } from "@/features/home/components/WeeklyActivityCard";
 import { FuelStatCard } from "@/features/home/components/FuelStatCard";
@@ -26,6 +27,7 @@ export default async function HomeFeaturePlaygroundPage() {
   const data = await getHomeData();
   const greeting = getGreeting(9);
   const [hydration] = data.fuel;
+  const milestone = deriveLatestMilestone({ sessions: 148, streakDays: 27 });
 
   return (
     <PageContainer withBottomNav={false}>
@@ -49,7 +51,15 @@ export default async function HomeFeaturePlaygroundPage() {
           weakestPillarId={data.score.weakestPillarId}
         />
         <TodaysPriorities priorities={data.priorities} />
-        <AchievementSpotlight record={data.latestPR} />
+        <AchievementSpotlight win={data.spotlight} />
+        {/* Milestone variant, derived from Alex's real stats (148 sessions,
+            27-day streak → Century Club) — verifies the celebration path
+            Home doesn't currently show because a fresh PR outranks it. */}
+        {milestone && (
+          <AchievementSpotlight
+            win={{ kind: "milestone", title: milestone.title, detail: milestone.detail }}
+          />
+        )}
         <StatusStrip recovery={deriveRecoveryStatus(data.week.days)} />
         <DailyMissionCard mission={data.mission} />
         <WeeklyActivityCard
