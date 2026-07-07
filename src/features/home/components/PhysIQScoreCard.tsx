@@ -1,6 +1,11 @@
+import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { CircularProgress } from "@/components/ui/CircularProgress";
 import { DeltaBadge } from "@/components/ui/DeltaBadge";
+import { TrendChart } from "@/components/charts/TrendChart";
+import { iconSize } from "@/constants/icons";
+import { scoreBand } from "@/lib/score";
 import { cn } from "@/lib/utils";
 import type { ScoreState } from "@/types/score";
 
@@ -9,6 +14,10 @@ export interface PhysIQScoreCardProps {
   delta: number;
   headline: string;
   state: ScoreState;
+  /** Last 7 daily composites, oldest first — the at-a-glance sparkline. */
+  weekTrend?: number[];
+  /** Where "See breakdown" points (the score-explanation surface). */
+  breakdownHref?: string;
   className?: string;
 }
 
@@ -19,15 +28,18 @@ const stateCopy: Record<ScoreState, string> = {
 };
 
 /**
- * The PhysIQ Score hero: radial gauge, delta, and headline. Reusable as-is
- * on Insights (which adds a trend chart around it) per docs/PHYSIQ_SCORE.md —
- * this component owns only the score/delta/headline contract, not the trend.
+ * The PhysIQ Score hero. A bare number answers nothing, so the card now
+ * answers all three product questions itself: the band says whether 82 is
+ * good, the delta says which direction vs. last week, the sparkline shows
+ * the shape of the week, and "See breakdown" opens the full explanation.
  */
 export function PhysIQScoreCard({
   score,
   delta,
   headline,
   state,
+  weekTrend,
+  breakdownHref,
   className,
 }: PhysIQScoreCardProps) {
   const isCalibrating = state === "calibrating";
@@ -59,15 +71,37 @@ export function PhysIQScoreCard({
               Calibrating
             </span>
           ) : (
-            <span className="font-display text-6xl font-bold">{score}</span>
+            <span className="flex flex-col items-center">
+              <span className="font-display text-6xl font-bold">{score}</span>
+              <span className="text-sm font-semibold text-brand">
+                {scoreBand(score)}
+              </span>
+            </span>
           )}
         </CircularProgress>
         {!isCalibrating && delta !== 0 && (
-          <DeltaBadge value={delta} suffix=" this week" />
+          <DeltaBadge value={delta} suffix=" vs last week" />
+        )}
+        {!isCalibrating && weekTrend && weekTrend.length >= 2 && (
+          <TrendChart
+            values={weekTrend}
+            height={36}
+            className="max-w-40"
+            aria-label={`Score over the last 7 days, from ${weekTrend[0]} to ${score}`}
+          />
         )}
         <p className="max-w-xs text-sm text-foreground-secondary">
           {isCalibrating ? stateCopy.calibrating : headline}
         </p>
+        {!isCalibrating && breakdownHref && (
+          <Link
+            href={breakdownHref}
+            className="inline-flex min-h-11 items-center gap-1 rounded-full px-3 text-sm font-semibold text-brand transition-colors hover:text-brand-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/60"
+          >
+            See breakdown
+            <ChevronRight size={iconSize.xs} aria-hidden />
+          </Link>
+        )}
       </div>
     </Card>
   );

@@ -9,6 +9,8 @@ export interface StatTileProps {
   value: string;
   label: string;
   tone?: "brand" | "warning" | "info" | "neutral";
+  /** Denser rendering for secondary-tier stats — smaller numeral and icon. */
+  compact?: boolean;
   className?: string;
 }
 
@@ -24,16 +26,36 @@ const toneClasses: Record<NonNullable<StatTileProps["tone"]>, string> = {
  * pillar/metric-specific knowledge) — built for the Home/Insights bento
  * density pass, but generic enough for any compact stat.
  */
-export function StatTile({ icon: Icon, value, label, tone = "neutral", className }: StatTileProps) {
+export function StatTile({
+  icon: Icon,
+  value,
+  label,
+  tone = "neutral",
+  compact = false,
+  className,
+}: StatTileProps) {
   return (
     <Card
-      padding="md"
+      padding={compact ? "sm" : "md"}
       className={cn("flex flex-col items-center justify-center gap-1.5 text-center", className)}
     >
-      <span className={cn("grid size-9 place-items-center rounded-full", toneClasses[tone])}>
-        <Icon size={iconSize.sm} aria-hidden />
+      <span
+        className={cn(
+          "grid place-items-center rounded-full",
+          compact ? "size-7" : "size-9",
+          toneClasses[tone],
+        )}
+      >
+        <Icon size={compact ? iconSize.xs : iconSize.sm} aria-hidden />
       </span>
-      <span className="font-display text-xl font-bold tabular-nums">{value}</span>
+      <span
+        className={cn(
+          "font-display font-bold tabular-nums",
+          compact ? "text-base" : "text-xl",
+        )}
+      >
+        {value}
+      </span>
       <span className="text-xs text-foreground-secondary">{label}</span>
     </Card>
   );

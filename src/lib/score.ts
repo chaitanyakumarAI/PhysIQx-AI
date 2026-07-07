@@ -29,6 +29,38 @@ export const pillarWeights: Record<PillarId, number> = {
 };
 
 /**
+ * Qualitative band for a composite score — gives the bare number context
+ * ("82" alone answers nothing; "82 · Excellent" answers "is that good?").
+ * Thresholds are product copy, not science; they live here so every surface
+ * that names a band names the same one.
+ */
+export type ScoreBand =
+  | "Elite"
+  | "Excellent"
+  | "Solid"
+  | "Building"
+  | "Getting started";
+
+export function scoreBand(score: number): ScoreBand {
+  if (score >= 90) return "Elite";
+  if (score >= 80) return "Excellent";
+  if (score >= 65) return "Solid";
+  if (score >= 50) return "Building";
+  return "Getting started";
+}
+
+/**
+ * Pillars ordered by health-impact weight, heaviest first. The UI's
+ * primary/secondary visual tiers derive from this — never from a hardcoded
+ * pillar list that could drift from pillarWeights.
+ */
+export function orderPillarsByWeight(pillars: PillarScore[]): PillarScore[] {
+  return [...pillars].sort(
+    (a, b) => (pillarWeights[b.id] ?? 0) - (pillarWeights[a.id] ?? 0),
+  );
+}
+
+/**
  * Weighted composite (0–100). Normalizes by the total weight actually
  * present, so a partial pillar list (e.g. during calibration) still produces
  * a valid score rather than silently under-counting.

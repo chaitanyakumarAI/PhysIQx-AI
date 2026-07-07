@@ -13,6 +13,7 @@ import { DailyMissionCard } from "@/features/home/components/DailyMissionCard";
 import { FuelStatCard } from "@/features/home/components/FuelStatCard";
 import { PillarGrid } from "@/features/shared/components/PillarGrid";
 import { PhysIQScoreCard } from "@/features/home/components/PhysIQScoreCard";
+import { TodaysPriorities } from "@/features/home/components/TodaysPriorities";
 import { WeeklyActivityCard } from "@/features/home/components/WeeklyActivityCard";
 import { WelcomeHeader } from "@/features/home/components/WelcomeHeader";
 import { XPProgress } from "@/features/home/components/XPProgress";
@@ -23,7 +24,15 @@ import type { HomeData } from "@/features/home/types";
 // cross the server/client boundary in a prop this screen doesn't even use.
 export type HomeScreenProps = Pick<
   HomeData,
-  "profile" | "streak" | "score" | "mission" | "week" | "fuel" | "insight" | "level"
+  | "profile"
+  | "streak"
+  | "score"
+  | "mission"
+  | "week"
+  | "fuel"
+  | "insight"
+  | "level"
+  | "priorities"
 >;
 
 /**
@@ -41,6 +50,7 @@ export function HomeScreen({
   fuel,
   insight,
   level,
+  priorities,
 }: HomeScreenProps) {
   const router = useRouter();
   // Client-side on purpose: the route is statically prerendered, so a
@@ -77,11 +87,19 @@ export function HomeScreen({
             delta={score.delta}
             headline={score.headline}
             state={score.state}
+            weekTrend={score.weekTrend}
+            breakdownHref="/insights"
           />
           <PillarGrid
             pillars={score.pillars}
             weakestPillarId={score.weakestPillarId}
           />
+        </m.div>
+
+        <m.div variants={fadeInUp}>
+          <Section title="Today's priorities">
+            <TodaysPriorities priorities={priorities} />
+          </Section>
         </m.div>
 
         <m.div variants={fadeInUp}>

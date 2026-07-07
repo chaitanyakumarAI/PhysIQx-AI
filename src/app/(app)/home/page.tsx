@@ -23,6 +23,7 @@ export default async function HomePage() {
       fuel={data.fuel}
       insight={data.insight}
       level={data.level}
+      priorities={data.priorities}
     />
   );
 }

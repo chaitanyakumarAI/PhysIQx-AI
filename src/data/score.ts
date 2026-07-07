@@ -19,12 +19,29 @@ const pillars: PillarScore[] = [
   { id: "water", label: pillarLabels.water, value: 58 },
 ];
 
+const score = computeWeightedScore(pillars);
+const delta = 4;
+
 export const mockPhysIQScore: PhysIQScoreSnapshot = {
-  score: computeWeightedScore(pillars),
-  delta: 4,
+  score,
+  delta,
+  // Built from score/delta so the endpoints can never contradict the numbers
+  // shown beside the sparkline: starts at score − delta, ends at score.
+  weekTrend: [
+    score - delta,
+    score - 3,
+    score - 4,
+    score - 2,
+    score - 1,
+    score - 1,
+    score,
+  ],
   pillars,
   weakestPillarId: findWeakestPillar(pillars),
-  headline: "Peak week — strength and consistency leading the way.",
+  // Specific and actionable, not a vibe: names the weakest pillar (Water, 58)
+  // and what it's costing — per the product rule that every number should
+  // answer "what can I do about it today?"
+  headline: "Water is the one pillar holding you back — everything else is peaking.",
   state: "active",
   scoreVersion: "v2",
 };

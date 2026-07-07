@@ -3,6 +3,7 @@ import { getGreeting } from "@/features/home/lib/greeting";
 import { WelcomeHeader } from "@/features/home/components/WelcomeHeader";
 import { PhysIQScoreCard } from "@/features/home/components/PhysIQScoreCard";
 import { PillarGrid } from "@/features/shared/components/PillarGrid";
+import { TodaysPriorities } from "@/features/home/components/TodaysPriorities";
 import { DailyMissionCard } from "@/features/home/components/DailyMissionCard";
 import { WeeklyActivityCard } from "@/features/home/components/WeeklyActivityCard";
 import { FuelStatCard } from "@/features/home/components/FuelStatCard";
@@ -37,11 +38,14 @@ export default async function HomeFeaturePlaygroundPage() {
           delta={data.score.delta}
           headline={data.score.headline}
           state={data.score.state}
+          weekTrend={data.score.weekTrend}
+          breakdownHref="/insights"
         />
         <PillarGrid
           pillars={data.score.pillars}
           weakestPillarId={data.score.weakestPillarId}
         />
+        <TodaysPriorities priorities={data.priorities} />
         <DailyMissionCard mission={data.mission} />
         <WeeklyActivityCard
           completionPercent={data.week.completionPercent}

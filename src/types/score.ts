@@ -45,6 +45,12 @@ export interface PhysIQScoreSnapshot {
   score: number;
   /** Signed change vs. the finalized snapshot 7 days prior. */
   delta: number;
+  /**
+   * The last 7 finalized daily composites, oldest first, ending at `score`.
+   * Powers the at-a-glance sparkline on Home; the full queryable trend
+   * (30d/90d/1y) remains Insights-only per the contract.
+   */
+  weekTrend: number[];
   pillars: PillarScore[];
   weakestPillarId: PillarId;
   /** One sentence explaining the current state — always present, never blank. */

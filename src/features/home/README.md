@@ -23,7 +23,8 @@ was retired during the pillar-model revision — replaced by the shared
 | Component | Purpose |
 |---|---|
 | `WelcomeHeader` | Greeting, streak badge, archetype, avatar |
-| `PhysIQScoreCard` | Score gauge + delta + headline; handles `calibrating` state. Reusable on Insights. |
+| `PhysIQScoreCard` | Score gauge + qualitative band + "vs last week" delta + 7-day sparkline + "See breakdown" link; handles `calibrating` state |
+| `TodaysPriorities` | The coach's three actions for today, most impactful first, each with its payoff stated — the component that answers "what should I do next?". Priority figures derive from the same fuel/mission fixtures shown elsewhere on the screen |
 | `DailyMissionCard` | Today's mission; renders a rest-day state when `mission` is `null` |
 | `WeeklyActivityCard` | "This Week" completion % + daily bar chart |
 | `FuelStatCard` | One fuel metric (hydration/protein) — icon, value/goal, progress. Compose two per screen. |

@@ -7,7 +7,7 @@ import { mockStreak } from "@/data/streak";
 import { mockLevel } from "@/data/level";
 import type { FuelProgress } from "@/types/nutrition";
 import type { Insight } from "@/types/insight";
-import type { HomeData, QuickAction } from "../types";
+import type { DailyPriority, HomeData, QuickAction } from "../types";
 import { computePercent } from "@/lib/math";
 import { computeCompletionPercent } from "../lib/derive";
 
@@ -92,6 +92,39 @@ const insight: Insight = {
   actionHref: "/insights",
 };
 
+// Today's Priorities — every figure derived from the fixtures above (fuel
+// currents/goals, the mission), so the coach can never ask for an amount
+// that contradicts the fuel bars rendered on the same screen.
+const hydrationRemaining = profile.hydrationGoalLiters - 1.8;
+const proteinRemaining = profile.proteinGoalGrams - 118;
+
+const priorities: DailyPriority[] = [
+  {
+    id: "priority-mission",
+    label: `Complete ${mission.title}`,
+    detail: `+${mission.xpReward} XP and today's biggest score mover`,
+    iconId: "dumbbell",
+    completed: false,
+    href: `/session/${mission.id}`,
+  },
+  {
+    id: "priority-water",
+    label: `Drink ${hydrationRemaining.toFixed(1)}L more water`,
+    detail: "Water is your weakest pillar — this closes today's gap",
+    iconId: "droplets",
+    completed: hydrationRemaining <= 0,
+    href: "/home?log=water",
+  },
+  {
+    id: "priority-protein",
+    label: `${proteinRemaining}g protein to go`,
+    detail: `Hits your ${profile.proteinGoalGrams}g daily goal`,
+    iconId: "beef",
+    completed: proteinRemaining <= 0,
+    href: "/home?log=protein",
+  },
+];
+
 const quickActions: QuickAction[] = [
   { id: "log-water", label: "Log water", icon: Droplets, href: "/home?log=water" },
   { id: "log-protein", label: "Log protein", icon: Beef, href: "/home?log=protein" },
@@ -109,4 +142,5 @@ export const mockHomeData: HomeData = {
   insight,
   level,
   quickActions,
+  priorities,
 };
