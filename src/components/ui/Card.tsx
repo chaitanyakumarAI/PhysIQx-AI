@@ -1,14 +1,19 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
+// Every variant layers a faint top-down luminance gradient over its surface
+// and pairs it with the lit-from-above shadow tokens (globals.css) — flat
+// fills on flat black were the single biggest "cheap" tell in the old pass.
 const cardVariants = cva("rounded-card border", {
   variants: {
     variant: {
-      default: "border-border/60 bg-surface shadow-card",
-      elevated: "border-border/60 bg-surface-elevated shadow-card",
+      default:
+        "border-white/[0.07] bg-gradient-to-b from-white/[0.045] to-transparent bg-surface shadow-card",
+      elevated:
+        "border-white/[0.09] bg-gradient-to-b from-white/[0.06] to-transparent bg-surface-elevated [box-shadow:var(--shadow-card-elevated)]",
       /** The signature green-washed card (missions, AI insights). */
       accent:
-        "border-brand/20 bg-gradient-to-b from-brand/10 to-surface shadow-card",
+        "border-brand/25 bg-gradient-to-b from-brand/[0.13] via-brand/[0.04] to-transparent bg-surface [box-shadow:var(--shadow-card),var(--shadow-glow-brand)]",
     },
     padding: {
       none: "",

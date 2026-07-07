@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { cn } from "@/lib/utils";
 
 const tones = {
@@ -6,6 +7,12 @@ const tones = {
   warning: "stroke-warning",
   danger: "stroke-danger",
 } as const;
+
+/** Brand rings sweep light→deep green; a flat single-color stroke reads flat. */
+const brandGradientStops = [
+  { offset: "0%", color: "var(--color-brand)" },
+  { offset: "100%", color: "var(--color-brand-strong)" },
+];
 
 export interface CircularProgressProps
   extends Omit<React.ComponentProps<"div">, "children"> {
@@ -32,11 +39,13 @@ export function CircularProgress({
   children,
   ...props
 }: CircularProgressProps) {
+  const gradientId = useId();
   const clamped = Math.min(Math.max(value, 0), max);
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference * (1 - (max > 0 ? clamped / max : 0));
   const center = size / 2;
+  const useGradient = tone === "brand";
 
   return (
     <div
@@ -50,6 +59,19 @@ export function CircularProgress({
       {...props}
     >
       <svg width={size} height={size} className="-rotate-90" aria-hidden>
+        {useGradient && (
+          <defs>
+            <linearGradient id={gradientId} x1="0" y1="0" x2="1" y2="1">
+              {brandGradientStops.map((stop) => (
+                <stop
+                  key={stop.offset}
+                  offset={stop.offset}
+                  stopColor={stop.color}
+                />
+              ))}
+            </linearGradient>
+          </defs>
+        )}
         <circle
           cx={center}
           cy={center}
@@ -65,9 +87,10 @@ export function CircularProgress({
           strokeLinecap="round"
           strokeDasharray={circumference}
           strokeDashoffset={offset}
+          stroke={useGradient ? `url(#${gradientId})` : undefined}
           className={cn(
             "fill-none transition-[stroke-dashoffset] duration-[600ms] ease-out motion-reduce:transition-none",
-            tones[tone],
+            !useGradient && tones[tone],
             glow && "drop-shadow-[0_0_12px_var(--color-brand)]",
           )}
         />

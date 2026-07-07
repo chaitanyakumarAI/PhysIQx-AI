@@ -31,12 +31,21 @@ export function WelcomeHeader({
         {/* The page's h1: this greeting is Home's visual title, and screens
             need exactly one h1 for a sound heading tree (sections are h2s).
             suppressHydrationWarning: greeting is computed client-side on a
-            statically prerendered page, so a text mismatch is expected. */}
-        <h1
-          suppressHydrationWarning
-          className="text-lg font-normal text-foreground-secondary"
-        >
-          {greeting}, {name}
+            statically prerendered page, so a text mismatch is expected.
+            Greeting and name are one h1 semantically but two visual tiers —
+            the person's name is the headline, not the pleasantry. */}
+        <h1 className="flex flex-col">
+          {/* suppressHydrationWarning must sit on the element whose text
+              differs — it does not cascade to children. */}
+          <span
+            suppressHydrationWarning
+            className="text-sm text-foreground-secondary"
+          >
+            {greeting},
+          </span>
+          <span className="font-display text-3xl font-bold tracking-tight">
+            {name}
+          </span>
         </h1>
         <div className="flex items-center gap-2">
           {streakDays > 0 && (

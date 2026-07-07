@@ -47,18 +47,24 @@
      collection needs it. Not a new category, just the one missing token. */
   --color-legendary: #e879f9;
 
-  /* Typography. `display` is a separate slot so the final display typeface
-     (pending product decision) is a one-line swap; it falls back to Inter. */
+  /* Typography. Display slot resolved: Space Grotesk (loaded in layout.tsx)
+     for numerals and headings — data moments get their own voice. */
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-space-grotesk), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 
   /* Radius: inputs/buttons 16, cards 20, dialogs 24 */
   --radius-field: 1rem;
   --radius-card: 1.25rem;
   --radius-dialog: 1.5rem;
 
-  /* Shadows — very subtle per guidelines */
-  --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.4);
+  /* Shadows. Cards read as lit from above: an inset top hairline highlight
+     plus a real layered drop shadow — depth the old 1px shadow never had. */
+  --shadow-card: inset 0 1px 0 0 rgb(255 255 255 / 0.04),
+    0 1px 2px 0 rgb(0 0 0 / 0.5), 0 8px 24px -12px rgb(0 0 0 / 0.6);
+  --shadow-card-elevated: inset 0 1px 0 0 rgb(255 255 255 / 0.06),
+    0 2px 4px 0 rgb(0 0 0 / 0.5), 0 12px 32px -12px rgb(0 0 0 / 0.7);
+  /* Brand aura for hero surfaces (score card, primary CTAs). */
+  --shadow-glow-brand: 0 0 24px -6px rgb(74 222 128 / 0.35);
 }
 
 @layer base {
@@ -68,5 +74,12 @@
 
   body {
     @apply bg-background font-sans text-foreground antialiased;
+    /* Ambient light: a faint brand aura bleeding from the top and a cool
+       counter-glow low-right, so the app sits in an atmosphere instead of
+       on flat black. Fixed so scrolling content moves through the light. */
+    background-image:
+      radial-gradient(ellipse 80% 45% at 50% -12%, rgb(74 222 128 / 0.09), transparent 70%),
+      radial-gradient(ellipse 60% 40% at 88% 108%, rgb(59 130 246 / 0.05), transparent 70%);
+    background-attachment: fixed;
   }
 }

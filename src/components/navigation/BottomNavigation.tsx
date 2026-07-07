@@ -35,7 +35,7 @@ export function BottomNavigation({ items, className }: BottomNavigationProps) {
         className,
       )}
     >
-      <div className="mx-auto flex max-w-md items-center justify-between rounded-full border border-border/60 bg-surface-elevated/90 p-2 shadow-card backdrop-blur-md">
+      <div className="mx-auto flex max-w-md items-center justify-between rounded-full border border-white/[0.08] bg-background/70 p-2 backdrop-blur-xl [box-shadow:inset_0_1px_0_0_rgb(255_255_255/0.06),0_16px_40px_-12px_rgb(0_0_0/0.8)]">
         {items.map((item) => {
           const active =
             pathname === item.href || pathname.startsWith(`${item.href}/`);
@@ -57,7 +57,7 @@ export function BottomNavigation({ items, className }: BottomNavigationProps) {
                   layoutId="bottom-nav-active"
                   aria-hidden
                   transition={{ duration: duration.fast, ease: easeOut }}
-                  className="absolute inset-0 rounded-full border border-brand/20 bg-brand/10"
+                  className="absolute inset-0 rounded-full border border-brand/25 bg-brand/10 [box-shadow:0_0_16px_-4px_rgb(74_222_128/0.4)]"
                 />
               )}
               <item.icon

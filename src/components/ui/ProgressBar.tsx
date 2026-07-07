@@ -6,13 +6,15 @@ const fillVariants = cva(
   {
     variants: {
       tone: {
-        brand: "bg-brand",
-        info: "bg-info",
-        warning: "bg-warning",
+        brand:
+          "bg-gradient-to-r from-brand-strong to-brand [box-shadow:0_0_8px_-2px_var(--color-brand)]",
+        info: "bg-gradient-to-r from-info to-sky-400",
+        warning: "bg-gradient-to-r from-warning to-amber-400",
         danger: "bg-danger",
         neutral: "bg-foreground-secondary",
         /** Achievement rarity accent — see globals.css's --color-legendary. */
-        legendary: "bg-legendary",
+        legendary:
+          "bg-gradient-to-r from-fuchsia-500 to-legendary [box-shadow:0_0_8px_-2px_var(--color-legendary)]",
       },
     },
     defaultVariants: {

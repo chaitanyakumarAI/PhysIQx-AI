@@ -45,6 +45,7 @@ function toPolygonAttr(vertices: { x: number; y: number }[]): string {
  */
 export function RadarChart({ points, size = 220, className }: RadarChartProps) {
   const titleId = useId();
+  const gradientId = useId();
   const center = size / 2;
   const radius = size / 2 - size * 0.22; // leave room for labels
   const count = points.length;
@@ -64,7 +65,15 @@ export function RadarChart({ points, size = 220, className }: RadarChartProps) {
         aria-labelledby={titleId}
         className="mx-auto"
       >
-        <title id={titleId}>Body balance across {count} dimensions</title>
+        <title id={titleId}>{`Body balance across ${count} dimensions`}</title>
+
+        <defs>
+          {/* Top-lit gradient fill — matches the lit-from-above card system. */}
+          <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="var(--color-brand)" stopOpacity={0.35} />
+            <stop offset="100%" stopColor="var(--color-brand)" stopOpacity={0.06} />
+          </linearGradient>
+        </defs>
 
         {RINGS.map((ratio) => (
           <polygon
@@ -96,7 +105,8 @@ export function RadarChart({ points, size = 220, className }: RadarChartProps) {
 
         <polygon
           points={toPolygonAttr(dataVertices)}
-          className="fill-brand/20 stroke-brand"
+          fill={`url(#${gradientId})`}
+          className="stroke-brand drop-shadow-[0_0_6px_rgb(74_222_128/0.3)]"
           strokeWidth={2}
           strokeLinejoin="round"
         />

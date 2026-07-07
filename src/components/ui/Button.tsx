@@ -8,9 +8,10 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: "bg-brand text-zinc-950 hover:bg-brand-strong",
+        primary:
+          "bg-gradient-to-b from-brand to-brand-strong text-zinc-950 [box-shadow:inset_0_1px_0_0_rgb(255_255_255/0.25),var(--shadow-glow-brand)] hover:brightness-105",
         secondary:
-          "border border-border bg-transparent text-foreground hover:bg-surface-elevated",
+          "border border-white/[0.09] bg-white/[0.03] text-foreground hover:bg-surface-elevated",
         ghost:
           "text-foreground-secondary hover:bg-surface-elevated hover:text-foreground",
         danger: "bg-danger text-white hover:bg-danger/90",
