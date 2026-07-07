@@ -33,7 +33,7 @@ const achievements: ProfileAchievement[] = [
   { id: "week-warrior", name: "Week Warrior", rarity: "common", iconId: "flame", state: "unlocked", progress: 1 },
   { id: "iron-month", name: "Iron Month", rarity: "rare", iconId: "dumbbell", state: "in-progress", progress: 0.65 },
   { id: "hydration-master", name: "Hydration Master", rarity: "rare", iconId: "droplet", state: "unlocked", progress: 1 },
-  { id: "protein-pro", name: "Protein Pro", rarity: "epic", iconId: "beef", state: "in-progress", progress: 0.4 },
+  { id: "pr-hunter", name: "PR Hunter", rarity: "epic", iconId: "trophy", state: "in-progress", progress: 0.4 },
   { id: "gym-warrior", name: "Gym Warrior", rarity: "epic", iconId: "dumbbell", state: "in-progress", progress: 0.55 },
   { id: "consistency-king", name: "Consistency King", rarity: "legendary", iconId: "crown", state: "in-progress", progress: 0.25 },
   { id: "strength-titan", name: "Strength Titan", rarity: "legendary", iconId: "crown", state: "in-progress", progress: 0.15 },

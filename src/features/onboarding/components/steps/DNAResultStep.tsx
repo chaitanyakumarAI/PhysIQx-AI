@@ -11,7 +11,6 @@ export interface DNAResultStepProps {
   goal: ProfileGoal;
   activeSplit: ProgramType;
   trainingDaysPerWeek: number;
-  proteinGoalGrams: number;
   hydrationGoalLiters: number;
 }
 
@@ -24,7 +23,6 @@ export function DNAResultStep({
   goal,
   activeSplit,
   trainingDaysPerWeek,
-  proteinGoalGrams,
   hydrationGoalLiters,
 }: DNAResultStepProps) {
   const archetype = generateArchetype(goal, activeSplit);
@@ -33,11 +31,7 @@ export function DNAResultStep({
     { label: "Goal", value: goalLabels[goal] },
     { label: "Split", value: programTypeLabels[activeSplit] },
     { label: "Days/wk", value: String(trainingDaysPerWeek) },
-  ];
-
-  const goalStats: StatEntry[] = [
-    { label: "Protein", value: `${proteinGoalGrams}g` },
-    { label: "Water", value: `${hydrationGoalLiters}L` },
+    { label: "Hydration", value: `${hydrationGoalLiters}L` },
   ];
 
   return (
@@ -56,8 +50,7 @@ export function DNAResultStep({
         </div>
       </Card>
 
-      <StatChipRow stats={identityStats} />
-      <StatChipRow stats={goalStats} columns={2} />
+      <StatChipRow stats={identityStats} columns={2} />
     </div>
   );
 }

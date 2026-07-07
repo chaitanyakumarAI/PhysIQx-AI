@@ -10,12 +10,12 @@ export interface GoalStepperProps {
   max: number;
   step: number;
   unit: string;
-  /** e.g. "of protein a day" */
+  /** e.g. "of water a day" */
   label: string;
 }
 
 /**
- * Large-numeral stepper for the two continuous goals (protein, water).
+ * Large-numeral stepper for continuous goals (rest days, water).
  * Deliberately not a native range input — cross-browser range-slider
  * styling is a well-known source of inconsistent, hard-to-polish results,
  * and a stepper with a confident hero numeral channels the same "big

@@ -93,7 +93,7 @@ const activity: ActivityEvent[] = [
     id: "activity-priya-challenge",
     actorName: "Priya R.",
     type: "challenge-join",
-    description: "started 30-day protein challenge",
+    description: "started 30-day hydration challenge",
     occurredAt: minutesAgo(180),
   },
 ];

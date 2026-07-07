@@ -23,7 +23,7 @@ Three route groups, three layout worlds:
 
 (onboarding)                protected, step-flow layout (progress, no tabs)
   /onboarding              → step flow: goal, experience, split,
-                             rest days, protein, water, DNA result
+                             rest days, water, DNA result
 
 (app)                       protected, tab shell layout (bottom nav)
   /home
@@ -121,12 +121,12 @@ Canonical URLs are a product feature, not a technicality:
 
 - Notifications land on exact targets: streak-risk → `/home`, challenge
   result → `/compete/challenges/[id]`, resume → `/session/[id]`.
-- AI Insights carry a suggested-action link (an Insight about protein links
+- AI Insights carry a suggested-action link (an Insight about hydration links
   into the log flow; one about a bench PR links to `/train/exercises/[id]`).
 - Insights time ranges (7D/30D/90D/1Y) are URL search params — shareable and
   restorable. Ephemeral filters (muscle-group chips) stay in component state;
   promote to params only when a real link-to-filtered-view need appears.
-- **Quick-log actions (water, protein) are moments, not destinations** — they
+- **Quick-log actions (water) are moments, not destinations** — they
   render as sheets, not routes. But hydration reminders and Insight actions
   must be able to open them, so they get an addressable trigger: a search
   param on the owning tab (`/home?log=water`). Rule of thumb: destinations

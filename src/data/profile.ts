@@ -11,7 +11,6 @@ export const mockProfile: Profile = {
   experienceLevel: "advanced",
   trainingDaysPerWeek: 5,
   activeSplit: "ppl",
-  proteinGoalGrams: 160,
   hydrationGoalLiters: 3,
   dnaArchetype: "Endurance-forward hybrid athlete",
   units: "kg",

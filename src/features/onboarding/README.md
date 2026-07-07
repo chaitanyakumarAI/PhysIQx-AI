@@ -15,7 +15,7 @@ step.
   reveal phrase from goal × split (9 authored strings → 20 combinations),
   not a real computation.
 - `components/GoalStepper.tsx` — large-numeral +/- stepper (Rest Days,
-  Protein, Water). Not a native range input — cross-browser slider styling
+  Water). Not a native range input — cross-browser slider styling
   is a well-known source of inconsistent results; a stepper with a
   confident hero numeral channels the same "big numbers" technique the
   reference designs use, in a form every browser renders identically.

@@ -118,11 +118,11 @@ const insights: Insight[] = [
     state: "fresh",
   },
   {
-    id: "insight-protein-gap",
+    id: "insight-hydration-gap",
     category: "nutrition",
     severity: "suggest",
-    headline: "Protein gap",
-    body: "42g short of daily goal on average. Try a 40g shake post-workout.",
+    headline: "Hydration gap",
+    body: "Averaging 1.2L short of your daily goal. 500ml before training closes most of it.",
     state: "fresh",
   },
 ];

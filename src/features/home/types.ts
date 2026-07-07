@@ -30,7 +30,7 @@ export interface DailyPriority {
   label: string;
   /** The payoff — why this action matters today ("moves Water past 70"). */
   detail: string;
-  iconId: "dumbbell" | "droplets" | "beef";
+  iconId: "dumbbell" | "droplets";
   completed: boolean;
   href: string;
 }

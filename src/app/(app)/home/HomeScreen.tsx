@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Beef, Droplets } from "lucide-react";
+import { Droplets } from "lucide-react";
 import { m } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { PageContainer } from "@/components/layout/PageContainer";
@@ -58,7 +58,7 @@ export function HomeScreen({
   // timezone. useState pins it for the session; WelcomeHeader suppresses the
   // expected SSG-vs-client hydration text difference.
   const [greeting] = useState(() => getGreeting(new Date().getHours()));
-  const [hydration, protein] = fuel;
+  const [hydration] = fuel;
   const insightActionHref = insight?.actionHref;
 
   return (
@@ -122,14 +122,9 @@ export function HomeScreen({
 
         <m.div variants={fadeInUp}>
           <Section title="Fuel">
-            <div className="grid grid-cols-2 gap-3">
-              {hydration && (
-                <FuelStatCard fuel={hydration} icon={Droplets} tone="info" />
-              )}
-              {protein && (
-                <FuelStatCard fuel={protein} icon={Beef} tone="brand" />
-              )}
-            </div>
+            {hydration && (
+              <FuelStatCard fuel={hydration} icon={Droplets} tone="info" />
+            )}
           </Section>
         </m.div>
 

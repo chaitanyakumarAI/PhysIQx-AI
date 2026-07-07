@@ -12,7 +12,6 @@ export const onboardingSchema = z.object({
   experienceLevel: z.enum(["beginner", "intermediate", "advanced"]).optional(),
   activeSplit: z.enum(["ai", "ppl", "upper-lower", "bro", "full-body"]).optional(),
   trainingDaysPerWeek: z.number().min(3).max(6),
-  proteinGoalGrams: z.number().min(80).max(250),
   hydrationGoalLiters: z.number().min(1.5).max(5),
 });
 
@@ -20,6 +19,5 @@ export type OnboardingValues = z.infer<typeof onboardingSchema>;
 
 export const defaultOnboardingValues: OnboardingValues = {
   trainingDaysPerWeek: 4,
-  proteinGoalGrams: 140,
   hydrationGoalLiters: 2.5,
 };

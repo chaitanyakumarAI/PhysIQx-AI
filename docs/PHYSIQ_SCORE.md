@@ -10,7 +10,7 @@ in one module (`lib/score`) and must conform to this document, never the reverse
 
 PhysIQx AI is not a logging app. Logging is the input; consistency is the product.
 The PhysIQ Score is the mechanism that converts scattered daily actions
-(a workout, a protein log, a glass of water, a rest day honored) into **one
+(a workout, a glass of water, a rest day honored) into **one
 number a user can care about**.
 
 It exists to answer, at a glance:
@@ -81,11 +81,11 @@ was chosen for what's actually trackable without either burden, and is
 | **Cardio** | 20% | Cardiovascular effort and capacity | Cardio session logs; later: heart-rate zones, VO2 max from wearables |
 | **BMI** | 15% | Coarse body-composition signal | Height (one-time) + periodic weight entry — no daily logging required |
 | **Body Shape** | 12% | Physique/composition trend | Body measurement entries; later: progress-photo comparison |
-| **Water** | 8% | Hydration adequacy | Hydration logs vs. goal |
+| **Hydration** | 8% | Hydration adequacy | Hydration logs vs. goal |
 
 Weights sum to 1 and live in `lib/score` (`pillarWeights`), stamped by
 `scoreVersion` — this document fixes the *relative* ordering (Consistency and
-the two performance pillars matter most; Water matters least, since it's the
+the two performance pillars matter most; Hydration matters least, since it's the
 lowest-effort signal to hit) but not the exact decimals, which `lib/score` may
 tune. What *is* fixed: every pillar always contributes, and no single day's
 data can move the composite by more than a few points.
@@ -103,7 +103,7 @@ there is now only one pillar set, used everywhere.)
 | Cardio session logs | Cardio | 4–5 |
 | Height + weight entries | BMI | 4–5 |
 | Body measurement entries | Body Shape | 4–5 |
-| Hydration logs | Water | 4–5 |
+| Hydration logs | Hydration | 4–5 |
 | DayStatus series (derived: Program schedule vs. sessions — see DATA_MODELS.md) | Consistency | 4–5 |
 | Wearables: HR zones, VO2 max | Cardio | Future |
 | ML predictions | Trend forecasting only | Phase 7 |

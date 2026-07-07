@@ -28,7 +28,9 @@ export const pillarLabels: Record<PillarId, string> = {
   cardio: "Cardio",
   bmi: "BMI",
   bodyShape: "Body Shape",
-  water: "Water",
+  // Label says "Hydration" (the behavior), id stays "water" — renaming the
+  // id would ripple through weights/meta/fixtures for zero user value.
+  water: "Hydration",
 };
 
 export interface PillarScore {

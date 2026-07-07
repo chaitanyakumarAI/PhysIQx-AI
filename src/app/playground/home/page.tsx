@@ -12,7 +12,7 @@ import { XPProgress } from "@/features/home/components/XPProgress";
 import { QuickActionGrid } from "@/features/home/components/QuickActionGrid";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { Section } from "@/components/layout/Section";
-import { Droplets, Beef } from "lucide-react";
+import { Droplets } from "lucide-react";
 
 /**
  * Dev-only verification harness for the Home feature layer — renders every
@@ -22,7 +22,7 @@ import { Droplets, Beef } from "lucide-react";
 export default async function HomeFeaturePlaygroundPage() {
   const data = await getHomeData();
   const greeting = getGreeting(9);
-  const [hydration, protein] = data.fuel;
+  const [hydration] = data.fuel;
 
   return (
     <PageContainer withBottomNav={false}>
@@ -51,12 +51,9 @@ export default async function HomeFeaturePlaygroundPage() {
           completionPercent={data.week.completionPercent}
           days={data.week.days}
         />
-        <div className="grid grid-cols-2 gap-3">
-          {hydration && (
-            <FuelStatCard fuel={hydration} icon={Droplets} tone="info" />
-          )}
-          {protein && <FuelStatCard fuel={protein} icon={Beef} tone="brand" />}
-        </div>
+        {hydration && (
+          <FuelStatCard fuel={hydration} icon={Droplets} tone="info" />
+        )}
         <AIInsightCard insight={data.insight} />
         <AIInsightCard insight={null} />
         <XPProgress level={data.level} />

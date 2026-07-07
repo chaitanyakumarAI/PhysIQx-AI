@@ -12,7 +12,7 @@ the obvious (every entity has `id`, `createdAt`, `updatedAt`).
 ## Modeling principles
 
 1. **Ledgers over mutable totals.** Anything that accumulates (XP, hydration,
-   protein, volume) is stored as an append-only event ledger. Totals, streaks,
+   volume) is stored as an append-only event ledger. Totals, streaks,
    and levels are *derived*. This makes history explainable, sync/offline
    conflict resolution tractable, and bugs reversible.
 2. **Definitions vs. user state.** Static catalog content (an exercise, an
@@ -41,7 +41,7 @@ The account. Authentication identity only.
 Who the user is as an athlete. Everything Onboarding collects.
 - **Fields:** display name, avatar, goal (cut / bulk / maintain / endurance),
   experience level, active split reference, training days per week, rest-day
-  preferences, protein goal (g), hydration goal (L), DNA archetype (e.g.
+  preferences, hydration goal (L), DNA archetype (e.g.
   "Endurance-forward hybrid athlete" — the PhysIQ DNA line on Profile),
   units (kg/lb), timezone, app preferences (appearance, notification
   toggles — the Settings section on Profile).
@@ -60,7 +60,7 @@ Who the user is as an athlete. Everything Onboarding collects.
 ### PhysIQScoreSnapshot
 One immutable per-day score record. Full contract in PHYSIQ_SCORE.md.
 - **Fields:** date, score, delta, six pillar sub-scores (Consistency,
-  Strength, Cardio, BMI, Body Shape, Water — weighted by health impact, not
+  Strength, Cardio, BMI, Body Shape, Hydration — weighted by health impact, not
   equal), weakest pillar, headline, state (calibrating / active / stale),
   scoreVersion, inputs summary.
 - **Relationships:** derived from session, body-measurement, hydration, and
@@ -200,17 +200,18 @@ Today's assigned focus — the "Push Day A · +320 XP" hero card. A Mission is a
 
 ## Fuel
 
-### HydrationEntry / ProteinEntry
-Append-only intake ledgers behind the two Fuel cards.
-- **Fields:** amount (ml / g), timestamp, source (manual; future: food scanner,
-  integrations).
-- **Relationships:** daily sums vs. Profile goals drive the Fuel progress
-  bars and the Nutrition pillar.
+### HydrationEntry
+Append-only intake ledger behind the Hydration fuel card.
+- **Fields:** amount (ml), timestamp, source (manual; future: integrations).
+- **Relationships:** daily sums vs. Profile goal drive the Hydration progress
+  bar and the Hydration pillar.
 - **Lifecycle:** written on quick-log actions (one-tap, per UX principles);
   daily aggregates derived.
-- **Future:** full NutritionLog (meals, calories, macros) generalizing
-  ProteinEntry — model protein as the first macro, not a special case, so the
-  food scanner phase extends rather than replaces this.
+- **Removed:** ProteinEntry (product decision, July 2026) — without a food
+  tracker there is no honest protein signal, and a self-reported number the
+  user doesn't actually know erodes trust in every other number. A future
+  food-tracking phase would reintroduce protein as part of a full
+  NutritionLog (meals, calories, macros), not as a standalone entry.
 
 ---
 
@@ -302,7 +303,6 @@ User ─ Profile ─ active Program ─ WorkoutTemplates
                      Missions ──────► WorkoutSessions ── SessionExercises ── Sets
                                           │                        │
         (ledgers)  HydrationEntry   XPTransactions          PersonalRecords
-                   ProteinEntry           │                        │
                         │                 │                        │
         (derived)  ─────┴────► DayStatus · PhysIQScoreSnapshots · Level · Streak · WeeklySummary
                                           │

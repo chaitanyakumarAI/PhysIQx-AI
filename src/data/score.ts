@@ -41,7 +41,7 @@ export const mockPhysIQScore: PhysIQScoreSnapshot = {
   // Specific and actionable, not a vibe: names the weakest pillar (Water, 58)
   // and what it's costing — per the product rule that every number should
   // answer "what can I do about it today?"
-  headline: "Water is the one pillar holding you back — everything else is peaking.",
+  headline: "Hydration is the one pillar holding you back — everything else is peaking.",
   state: "active",
   scoreVersion: "v2",
 };

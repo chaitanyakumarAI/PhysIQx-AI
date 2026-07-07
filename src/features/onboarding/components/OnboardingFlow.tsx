@@ -20,13 +20,12 @@ import {
 import { DNAResultStep } from "./steps/DNAResultStep";
 import { ExperienceStep } from "./steps/ExperienceStep";
 import { GoalStep } from "./steps/GoalStep";
-import { ProteinGoalStep } from "./steps/ProteinGoalStep";
 import { RestDaysStep } from "./steps/RestDaysStep";
 import { SplitStep } from "./steps/SplitStep";
 import { WaterGoalStep } from "./steps/WaterGoalStep";
 import { WelcomeStep } from "./steps/WelcomeStep";
 
-const STEP_COUNT = 8;
+const STEP_COUNT = 7;
 
 /**
  * Owns the whole wizard: one RHF instance (via watch/setValue, not
@@ -108,23 +107,16 @@ export function OnboardingFlow() {
           />
         )}
         {step === 5 && (
-          <ProteinGoalStep
-            value={values.proteinGoalGrams}
-            onChange={(value) => setValue("proteinGoalGrams", value)}
-          />
-        )}
-        {step === 6 && (
           <WaterGoalStep
             value={values.hydrationGoalLiters}
             onChange={(value) => setValue("hydrationGoalLiters", value)}
           />
         )}
-        {step === 7 && values.goal && values.activeSplit && (
+        {step === 6 && values.goal && values.activeSplit && (
           <DNAResultStep
             goal={values.goal}
             activeSplit={values.activeSplit}
             trainingDaysPerWeek={values.trainingDaysPerWeek}
-            proteinGoalGrams={values.proteinGoalGrams}
             hydrationGoalLiters={values.hydrationGoalLiters}
           />
         )}

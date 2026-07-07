@@ -10,7 +10,7 @@ import { SettingsPageHeader } from "@/features/profile/components/SettingsPageHe
 
 const includedItems = [
   "Workout history and personal records",
-  "Nutrition logs (protein and hydration)",
+  "Hydration logs",
   "XP, level, and achievement progress",
   "PhysIQ Score history",
 ];

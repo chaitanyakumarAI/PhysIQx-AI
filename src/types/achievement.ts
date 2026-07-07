@@ -18,7 +18,6 @@ export type AchievementIconId =
   | "trophy"
   | "flame"
   | "droplet"
-  | "beef"
   | "dumbbell"
   | "crown";
 

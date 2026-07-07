@@ -1,4 +1,4 @@
-import { Beef, Crown, Droplet, Dumbbell, Flame, Lock, Trophy, type LucideIcon } from "lucide-react";
+import { Crown, Droplet, Dumbbell, Flame, Lock, Trophy, type LucideIcon } from "lucide-react";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { iconSize } from "@/constants/icons";
 import { cn } from "@/lib/utils";
@@ -14,7 +14,6 @@ const achievementIcon: Record<AchievementIconId, LucideIcon> = {
   trophy: Trophy,
   flame: Flame,
   droplet: Droplet,
-  beef: Beef,
   dumbbell: Dumbbell,
   crown: Crown,
 };

@@ -1,4 +1,4 @@
-import { BarChart3, Beef, Droplets, Dumbbell } from "lucide-react";
+import { BarChart3, Droplets, Dumbbell } from "lucide-react";
 import type { DayStatus } from "@/types/training";
 import { mockTodayMission } from "@/data/mission";
 import { mockPhysIQScore } from "@/data/score";
@@ -71,14 +71,6 @@ const fuel: FuelProgress[] = [
     unit: "L",
     percent: computePercent(1.8, profile.hydrationGoalLiters),
   },
-  {
-    kind: "protein",
-    label: "Protein",
-    current: 118,
-    goal: profile.proteinGoalGrams,
-    unit: "g",
-    percent: computePercent(118, profile.proteinGoalGrams),
-  },
 ];
 
 const insight: Insight = {
@@ -96,7 +88,6 @@ const insight: Insight = {
 // currents/goals, the mission), so the coach can never ask for an amount
 // that contradicts the fuel bars rendered on the same screen.
 const hydrationRemaining = profile.hydrationGoalLiters - 1.8;
-const proteinRemaining = profile.proteinGoalGrams - 118;
 
 const priorities: DailyPriority[] = [
   {
@@ -108,26 +99,17 @@ const priorities: DailyPriority[] = [
     href: `/session/${mission.id}`,
   },
   {
-    id: "priority-water",
-    label: `Drink ${hydrationRemaining.toFixed(1)}L more water`,
-    detail: "Water is your weakest pillar — this closes today's gap",
+    id: "priority-hydration",
+    label: `Drink ${hydrationRemaining.toFixed(1)}L more`,
+    detail: "Hydration is your weakest pillar — this closes today's gap",
     iconId: "droplets",
     completed: hydrationRemaining <= 0,
     href: "/home?log=water",
-  },
-  {
-    id: "priority-protein",
-    label: `${proteinRemaining}g protein to go`,
-    detail: `Hits your ${profile.proteinGoalGrams}g daily goal`,
-    iconId: "beef",
-    completed: proteinRemaining <= 0,
-    href: "/home?log=protein",
   },
 ];
 
 const quickActions: QuickAction[] = [
   { id: "log-water", label: "Log water", icon: Droplets, href: "/home?log=water" },
-  { id: "log-protein", label: "Log protein", icon: Beef, href: "/home?log=protein" },
   { id: "start-workout", label: "Start workout", icon: Dumbbell, href: "/train" },
   { id: "view-insights", label: "View insights", icon: BarChart3, href: "/insights" },
 ];

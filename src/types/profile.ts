@@ -26,7 +26,6 @@ export interface Profile {
   trainingDaysPerWeek: number;
   /** The active split, e.g. "ppl" — Profile's SPLIT stat. */
   activeSplit: ProgramType;
-  proteinGoalGrams: number;
   hydrationGoalLiters: number;
   dnaArchetype: string;
   units: "kg" | "lb";

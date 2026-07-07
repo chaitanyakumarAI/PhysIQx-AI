@@ -27,7 +27,7 @@ was retired during the pillar-model revision — replaced by the shared
 | `TodaysPriorities` | The coach's three actions for today, most impactful first, each with its payoff stated — the component that answers "what should I do next?". Priority figures derive from the same fuel/mission fixtures shown elsewhere on the screen |
 | `DailyMissionCard` | Today's mission; renders a rest-day state when `mission` is `null` |
 | `WeeklyActivityCard` | "This Week" completion % + daily bar chart |
-| `FuelStatCard` | One fuel metric (hydration/protein) — icon, value/goal, progress. Compose two per screen. |
+| `FuelStatCard` | One fuel metric (hydration) — icon, value/goal, progress. Protein was removed as a product decision (no food tracker = no honest signal). |
 | `XPProgress` | Level, title, XP-to-next-level bar |
 | `QuickActionGrid` | One-tap shortcut tiles; hrefs follow the quick-log param convention in `docs/ROUTES.md` |
 
