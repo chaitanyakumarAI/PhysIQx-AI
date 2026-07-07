@@ -91,7 +91,9 @@ export function CircularProgress({
           className={cn(
             "fill-none transition-[stroke-dashoffset] duration-[600ms] ease-out motion-reduce:transition-none",
             !useGradient && tones[tone],
-            glow && "drop-shadow-[0_0_12px_var(--color-brand)]",
+            // Half-opacity glow: the full-color shadow made the ring read
+            // neon-sticker rather than lit (verified in screenshots).
+            glow && "drop-shadow-[0_0_10px_rgb(74_222_128/0.45)]",
           )}
         />
       </svg>

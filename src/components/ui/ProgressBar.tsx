@@ -8,8 +8,10 @@ const fillVariants = cva(
       tone: {
         brand:
           "bg-gradient-to-r from-brand-strong to-brand [box-shadow:0_0_8px_-2px_var(--color-brand)]",
-        info: "bg-gradient-to-r from-info to-sky-400",
-        warning: "bg-gradient-to-r from-warning to-amber-400",
+        // Deep→tone ramps, not tone→bright: ending brighter than the token
+        // made these bars electric against the dark ground (screenshots).
+        info: "bg-gradient-to-r from-sky-700 to-info",
+        warning: "bg-gradient-to-r from-amber-600 to-warning",
         danger: "bg-danger",
         neutral: "bg-foreground-secondary",
         /** Achievement rarity accent — see globals.css's --color-legendary. */

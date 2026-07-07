@@ -6,11 +6,16 @@
  * was a gray-scale outlier and is normalized to the zinc ladder here.
  */
 @theme {
-  /* Surfaces (three levels: app background → card → elevated) */
-  --color-background: #09090b;
-  --color-surface: #121214;
-  --color-surface-elevated: #18181b;
-  --color-border: #27272a;
+  /* Surfaces (three levels: app background → card → elevated). Green-cast
+     neutrals, not zinc: the ambient background aura is brand green, and
+     blue-leaning zinc surfaces sitting in green light read as mismatched
+     (flagged from real screenshots). Same lightness ladder as the old zinc
+     values — only the temperature moved, so all verified contrast ratios
+     against these surfaces still hold. */
+  --color-background: #0a0d0b;
+  --color-surface: #121613;
+  --color-surface-elevated: #191e1a;
+  --color-border: #272c28;
 
   /* Text hierarchy. Verified against all three surface levels (WCAG
      relative-luminance formula, not estimated):
@@ -70,6 +75,17 @@
 @layer base {
   html {
     color-scheme: dark;
+  }
+
+  /* All numeric inputs in the app are custom-designed (set logging, goals) —
+     native spin buttons clash with the design and are useless on touch. */
+  input[type="number"] {
+    appearance: textfield;
+  }
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    appearance: none;
+    margin: 0;
   }
 
   body {

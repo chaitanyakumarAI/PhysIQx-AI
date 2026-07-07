@@ -81,7 +81,9 @@ export function TrendChart({
     >
       <defs>
         <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={color} stopOpacity={0.35} />
+          {/* Kept faint on purpose: at 0.35 the fill rendered as a solid
+              slab over the dark ground (verified in screenshots). */}
+          <stop offset="0%" stopColor={color} stopOpacity={0.16} />
           <stop offset="100%" stopColor={color} stopOpacity={0} />
         </linearGradient>
       </defs>

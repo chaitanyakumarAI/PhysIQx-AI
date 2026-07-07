@@ -60,7 +60,10 @@ export type DayStatusValue = "trained" | "rest-honored" | "missed" | "unplanned"
 export const dayStatusTone: Record<DayStatusValue, string> = {
   trained: "bg-brand",
   "rest-honored": "bg-foreground/15",
-  missed: "bg-danger/40",
+  // Quiet, not punitive: at /40 the red rendered as heavy dried-blood
+  // blocks across the heatmap and weekly bars — visually loud and against
+  // the product philosophy (missed days are reflected, never punished).
+  missed: "bg-danger/25",
   unplanned: "bg-foreground/10",
 };
 
