@@ -12,12 +12,11 @@ export interface OptionCardProps {
 }
 
 /**
- * Large, tappable single-select card — Goal/Experience/Split/Rest-days all
- * use this. A deliberately bigger, more confident touch target than Chip,
- * matching the "generous, satisfying selection" bar the reference designs
- * point at, without inventing radio-group keyboard semantics (arrow-key
- * cycling) this component doesn't implement — aria-pressed toggle-button
- * semantics instead, the same pattern Chip/FilterChipRow already use.
+ * Large, tappable single-select card. Promoted from Onboarding once
+ * Settings' Appearance (theme) picker needed the same pattern — a
+ * deliberately bigger, more confident touch target than Chip. Uses
+ * aria-pressed toggle-button semantics, not role="radio" — this component
+ * doesn't implement radio-group keyboard cycling, so it doesn't claim to.
  * Group multiple under a `role="group"` wrapper with an aria-label.
  */
 export function OptionCard({

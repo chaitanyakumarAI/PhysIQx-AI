@@ -1,6 +1,6 @@
 import { Flame, Scale, Sprout, Zap } from "lucide-react";
 import { goalLabels, type ProfileGoal } from "@/types/profile";
-import { OptionCard } from "../OptionCard";
+import { OptionCard } from "@/components/ui/OptionCard";
 
 export interface GoalStepProps {
   value: ProfileGoal | undefined;

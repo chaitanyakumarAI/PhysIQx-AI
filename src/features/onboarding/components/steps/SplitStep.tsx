@@ -1,6 +1,6 @@
 import { Dumbbell, Sparkles } from "lucide-react";
 import { programTypeLabels, type ProgramType } from "@/types/training";
-import { OptionCard } from "../OptionCard";
+import { OptionCard } from "@/components/ui/OptionCard";
 
 export interface SplitStepProps {
   value: ProgramType | undefined;

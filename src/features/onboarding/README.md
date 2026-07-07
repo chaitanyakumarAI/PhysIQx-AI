@@ -14,10 +14,6 @@ step.
 - `lib/generateArchetype.ts` — pure function composing the "PhysIQ DNA"
   reveal phrase from goal × split (9 authored strings → 20 combinations),
   not a real computation.
-- `components/OptionCard.tsx` — large single-select card (Goal, Experience,
-  Split). Uses `aria-pressed`, not `role="radio"` — deliberately matches
-  Chip/FilterChipRow's existing pattern rather than introducing radiogroup
-  semantics (arrow-key cycling) this component doesn't implement.
 - `components/GoalStepper.tsx` — large-numeral +/- stepper (Rest Days,
   Protein, Water). Not a native range input — cross-browser slider styling
   is a well-known source of inconsistent results; a stepper with a
@@ -34,10 +30,11 @@ This is the first feature built under the "reference designs are inspiration,
 not blueprints" policy (see memory). The reference bento-grid density
 doesn't apply here — onboarding is inherently one-decision-per-screen, the
 opposite instinct from a multi-widget dashboard. What was taken instead:
-confident, generous touch targets (`OptionCard` over small checkboxes), and
-large hero numerals (`GoalStepper`) for the one moment (DNA Result) that
-earns a celebratory treatment, reusing `CircularProgress`'s existing glow
-rather than inventing a new effect.
+confident, generous touch targets (`OptionCard`, from `@/components/ui/` —
+promoted there once Settings' theme picker needed it too — over small
+checkboxes), and large hero numerals (`GoalStepper`) for the one moment
+(DNA Result) that earns a celebratory treatment, reusing `CircularProgress`'s
+existing glow rather than inventing a new effect.
 
 ## Deliberate scope decisions
 

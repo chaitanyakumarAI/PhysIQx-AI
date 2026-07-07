@@ -1,6 +1,6 @@
 import { Feather, Mountain, TrendingUp } from "lucide-react";
 import type { ExperienceLevel } from "@/types/profile";
-import { OptionCard } from "../OptionCard";
+import { OptionCard } from "@/components/ui/OptionCard";
 
 export interface ExperienceStepProps {
   value: ExperienceLevel | undefined;
