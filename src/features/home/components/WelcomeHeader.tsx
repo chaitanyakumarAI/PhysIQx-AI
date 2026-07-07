@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Flame } from "lucide-react";
-import { Avatar } from "@/components/ui/Avatar";
+import { UserAvatar } from "@/features/shared/components/UserAvatar";
 import { Badge } from "@/components/ui/Badge";
 import { iconSize } from "@/constants/icons";
 import { cn } from "@/lib/utils";
@@ -11,7 +11,6 @@ export interface WelcomeHeaderProps extends React.ComponentProps<"header"> {
   name: string;
   streakDays: number;
   archetype: string;
-  avatarUrl?: string;
 }
 
 export function WelcomeHeader({
@@ -20,7 +19,6 @@ export function WelcomeHeader({
   name,
   streakDays,
   archetype,
-  avatarUrl,
   ...props
 }: WelcomeHeaderProps) {
   return (
@@ -66,7 +64,7 @@ export function WelcomeHeader({
         aria-label="Open profile"
         className="shrink-0 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
-        <Avatar name={name} src={avatarUrl} variant="brand" size="md" />
+        <UserAvatar name={name} size="md" />
       </Link>
     </header>
   );

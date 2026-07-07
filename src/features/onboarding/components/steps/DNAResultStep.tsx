@@ -3,7 +3,14 @@ import { Card } from "@/components/ui/Card";
 import { CircularProgress } from "@/components/ui/CircularProgress";
 import { iconSize } from "@/constants/icons";
 import { StatChipRow, type StatEntry } from "@/features/shared/components/StatChipRow";
-import { goalLabels, type ProfileGoal } from "@/types/profile";
+import {
+  goalBodyShapeLabels,
+  goalLabels,
+  sessionFrequencyLabels,
+  type GoalBodyShape,
+  type ProfileGoal,
+  type SessionFrequency,
+} from "@/types/profile";
 import { programTypeLabels, type ProgramType } from "@/types/training";
 import { generateArchetype } from "../../lib/generateArchetype";
 
@@ -12,6 +19,8 @@ export interface DNAResultStepProps {
   activeSplit: ProgramType;
   trainingDaysPerWeek: number;
   hydrationGoalLiters: number;
+  goalBodyShape?: GoalBodyShape;
+  sessionFrequency?: SessionFrequency;
 }
 
 /**
@@ -24,6 +33,8 @@ export function DNAResultStep({
   activeSplit,
   trainingDaysPerWeek,
   hydrationGoalLiters,
+  goalBodyShape,
+  sessionFrequency,
 }: DNAResultStepProps) {
   const archetype = generateArchetype(goal, activeSplit);
 
@@ -31,6 +42,12 @@ export function DNAResultStep({
     { label: "Goal", value: goalLabels[goal] },
     { label: "Split", value: programTypeLabels[activeSplit] },
     { label: "Days/wk", value: String(trainingDaysPerWeek) },
+    ...(goalBodyShape
+      ? [{ label: "Shape", value: goalBodyShapeLabels[goalBodyShape] }]
+      : []),
+    ...(sessionFrequency
+      ? [{ label: "Sessions", value: sessionFrequencyLabels[sessionFrequency] }]
+      : []),
     { label: "Hydration", value: `${hydrationGoalLiters}L` },
   ];
 

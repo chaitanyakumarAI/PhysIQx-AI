@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, type UseFormSetValue } from "react-hook-form";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { m } from "framer-motion";
@@ -17,24 +17,122 @@ import {
   onboardingSchema,
   type OnboardingValues,
 } from "../schemas";
+import { tourSlides } from "../lib/tourSlides";
+import { BodyShapeStep } from "./steps/BodyShapeStep";
 import { DNAResultStep } from "./steps/DNAResultStep";
 import { ExperienceStep } from "./steps/ExperienceStep";
 import { GoalStep } from "./steps/GoalStep";
 import { RestDaysStep } from "./steps/RestDaysStep";
+import { SessionFrequencyStep } from "./steps/SessionFrequencyStep";
 import { SplitStep } from "./steps/SplitStep";
+import { TourSlideView } from "./TourSlideView";
 import { WaterGoalStep } from "./steps/WaterGoalStep";
 import { WelcomeStep } from "./steps/WelcomeStep";
 
-const STEP_COUNT = 7;
+interface StepConfig {
+  id: string;
+  render: (
+    values: OnboardingValues,
+    setValue: UseFormSetValue<OnboardingValues>,
+  ) => React.ReactNode;
+  /** Absent = always continuable. */
+  canContinue?: (values: OnboardingValues) => boolean;
+}
 
 /**
- * Owns the whole wizard: one RHF instance (via watch/setValue, not
- * register() — none of the step UIs are native inputs) so values persist
- * across steps without prop-drilling a parallel state object, plus the
- * current step index and step-specific "can continue" gating. No data
- * fetching, no backend write — this mirrors Auth's structure (pure client
- * flow), not the tab screens' server-fetch pattern.
+ * Steps as a config array — inserting or removing a step is one splice, not
+ * a renumbering of every index-keyed branch (the old ladder made adding the
+ * body-shape question a 4-file diff; this made it one entry). Questions
+ * first, the DNA reveal as the celebration, then the feature tour so new
+ * users learn the app while the reveal's energy is still warm.
  */
+const steps: StepConfig[] = [
+  { id: "welcome", render: () => <WelcomeStep /> },
+  {
+    id: "goal",
+    render: (values, setValue) => (
+      <GoalStep value={values.goal} onChange={(value) => setValue("goal", value)} />
+    ),
+    canContinue: (values) => !!values.goal,
+  },
+  {
+    id: "body-shape",
+    render: (values, setValue) => (
+      <BodyShapeStep
+        value={values.goalBodyShape}
+        onChange={(value) => setValue("goalBodyShape", value)}
+      />
+    ),
+    canContinue: (values) => !!values.goalBodyShape,
+  },
+  {
+    id: "experience",
+    render: (values, setValue) => (
+      <ExperienceStep
+        value={values.experienceLevel}
+        onChange={(value) => setValue("experienceLevel", value)}
+      />
+    ),
+    canContinue: (values) => !!values.experienceLevel,
+  },
+  {
+    id: "split",
+    render: (values, setValue) => (
+      <SplitStep
+        value={values.activeSplit}
+        onChange={(value) => setValue("activeSplit", value)}
+      />
+    ),
+    canContinue: (values) => !!values.activeSplit,
+  },
+  {
+    id: "rest-days",
+    render: (values, setValue) => (
+      <RestDaysStep
+        trainingDaysPerWeek={values.trainingDaysPerWeek}
+        onChange={(value) => setValue("trainingDaysPerWeek", value)}
+      />
+    ),
+  },
+  {
+    id: "session-frequency",
+    render: (values, setValue) => (
+      <SessionFrequencyStep
+        value={values.sessionFrequency}
+        onChange={(value) => setValue("sessionFrequency", value)}
+      />
+    ),
+    canContinue: (values) => !!values.sessionFrequency,
+  },
+  {
+    id: "water",
+    render: (values, setValue) => (
+      <WaterGoalStep
+        value={values.hydrationGoalLiters}
+        onChange={(value) => setValue("hydrationGoalLiters", value)}
+      />
+    ),
+  },
+  {
+    id: "dna-result",
+    render: (values) =>
+      values.goal && values.activeSplit ? (
+        <DNAResultStep
+          goal={values.goal}
+          activeSplit={values.activeSplit}
+          trainingDaysPerWeek={values.trainingDaysPerWeek}
+          hydrationGoalLiters={values.hydrationGoalLiters}
+          goalBodyShape={values.goalBodyShape}
+          sessionFrequency={values.sessionFrequency}
+        />
+      ) : null,
+  },
+  ...tourSlides.map<StepConfig>((slide) => ({
+    id: slide.id,
+    render: () => <TourSlideView slide={slide} />,
+  })),
+];
+
 export function OnboardingFlow() {
   const router = useRouter();
   const [step, setStep] = useState(0);
@@ -44,25 +142,23 @@ export function OnboardingFlow() {
   });
 
   const values = watch();
-
-  const canContinue =
-    step === 1 ? !!values.goal
-    : step === 2 ? !!values.experienceLevel
-    : step === 3 ? !!values.activeSplit
-    : true;
+  const current = steps[step]!;
+  const isLast = step === steps.length - 1;
+  const isTourSlide = current.id.startsWith("tour-");
+  const canContinue = current.canContinue?.(values) ?? true;
 
   function handleContinue() {
-    if (step === STEP_COUNT - 1) {
+    if (isLast) {
       // No backend yet — nothing is persisted. This is the seam where a
       // real profile-creation call would go before entering the app.
       router.push("/home");
       return;
     }
-    setStep((current) => current + 1);
+    setStep((index) => index + 1);
   }
 
   function handleBack() {
-    setStep((current) => Math.max(0, current - 1));
+    setStep((index) => Math.max(0, index - 1));
   }
 
   return (
@@ -75,63 +171,34 @@ export function OnboardingFlow() {
         )}
         <ProgressBar
           value={step + 1}
-          max={STEP_COUNT}
+          max={steps.length}
           className="flex-1"
-          aria-label={`Step ${step + 1} of ${STEP_COUNT}`}
+          aria-label={`Step ${step + 1} of ${steps.length}`}
         />
       </div>
 
       {/* Re-keyed per step so each one gets its own entrance — the same
           fadeInUp variant every screen already uses, not a new transition. */}
-      <m.div key={step} initial="hidden" animate="visible" variants={fadeInUp} className="flex-1">
-        {step === 0 && <WelcomeStep />}
-        {step === 1 && (
-          <GoalStep value={values.goal} onChange={(value) => setValue("goal", value)} />
-        )}
-        {step === 2 && (
-          <ExperienceStep
-            value={values.experienceLevel}
-            onChange={(value) => setValue("experienceLevel", value)}
-          />
-        )}
-        {step === 3 && (
-          <SplitStep
-            value={values.activeSplit}
-            onChange={(value) => setValue("activeSplit", value)}
-          />
-        )}
-        {step === 4 && (
-          <RestDaysStep
-            trainingDaysPerWeek={values.trainingDaysPerWeek}
-            onChange={(value) => setValue("trainingDaysPerWeek", value)}
-          />
-        )}
-        {step === 5 && (
-          <WaterGoalStep
-            value={values.hydrationGoalLiters}
-            onChange={(value) => setValue("hydrationGoalLiters", value)}
-          />
-        )}
-        {step === 6 && values.goal && values.activeSplit && (
-          <DNAResultStep
-            goal={values.goal}
-            activeSplit={values.activeSplit}
-            trainingDaysPerWeek={values.trainingDaysPerWeek}
-            hydrationGoalLiters={values.hydrationGoalLiters}
-          />
-        )}
+      <m.div
+        key={current.id}
+        initial="hidden"
+        animate="visible"
+        variants={fadeInUp}
+        className="flex-1"
+      >
+        {current.render(values, setValue)}
       </m.div>
 
       <div className="flex flex-col gap-3">
         <Button size="lg" fullWidth disabled={!canContinue} onClick={handleContinue}>
-          {step === STEP_COUNT - 1 ? "Enter PhysIQx" : step === 0 ? "Get started" : "Continue"}
+          {isLast ? "Enter PhysIQx" : step === 0 ? "Get started" : "Continue"}
         </Button>
-        {step === 0 && (
+        {(step === 0 || (isTourSlide && !isLast)) && (
           <Link
             href="/home"
             className="text-center text-sm text-foreground-secondary hover:underline"
           >
-            Skip for now
+            {step === 0 ? "Skip for now" : "Skip tour"}
           </Link>
         )}
       </div>

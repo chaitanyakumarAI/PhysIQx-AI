@@ -11,6 +11,8 @@ export const onboardingSchema = z.object({
   goal: z.enum(["cut", "bulk", "maintain", "endurance"]).optional(),
   experienceLevel: z.enum(["beginner", "intermediate", "advanced"]).optional(),
   activeSplit: z.enum(["ai", "ppl", "upper-lower", "bro", "full-body"]).optional(),
+  sessionFrequency: z.enum(["once", "twice", "flexible"]).optional(),
+  goalBodyShape: z.enum(["lean", "athletic", "muscular", "powerful"]).optional(),
   trainingDaysPerWeek: z.number().min(3).max(6),
   hydrationGoalLiters: z.number().min(1.5).max(5),
 });

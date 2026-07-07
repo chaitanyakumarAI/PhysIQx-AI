@@ -40,10 +40,12 @@ const achievements: ProfileAchievement[] = [
 ];
 
 const settings: ProfileData["settings"] = [
+  { id: "avatar", label: "Avatar", iconId: "user", href: "/profile/settings/avatar" },
   { id: "notifications", label: "Notifications", value: "On", iconId: "bell", href: "/profile/settings/notifications" },
   { id: "appearance", label: "Appearance", value: "Dark", iconId: "moon", href: "/profile/settings/appearance" },
   { id: "privacy", label: "Privacy", iconId: "shield", href: "/profile/settings/privacy" },
   { id: "export-data", label: "Export data", iconId: "download", href: "/profile/settings/export" },
+  { id: "tour", label: "Replay app tour", iconId: "play", href: "/profile/settings/tour" },
 ];
 
 export const mockProfileData: ProfileData = {

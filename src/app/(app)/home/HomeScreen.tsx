@@ -67,7 +67,6 @@ export function HomeScreen({
             name={profile.displayName}
             streakDays={streak.currentStreakDays}
             archetype={profile.dnaArchetype}
-            avatarUrl={profile.avatarUrl}
             className="pt-0"
           />
         </m.div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useProfileStore } from "@/store/profileStore";
 import { useSessionStore } from "@/store/sessionStore";
 
 /**
@@ -13,6 +14,7 @@ import { useSessionStore } from "@/store/sessionStore";
 export function StoreHydrator() {
   useEffect(() => {
     useSessionStore.persist.rehydrate();
+    useProfileStore.persist.rehydrate();
   }, []);
 
   return null;

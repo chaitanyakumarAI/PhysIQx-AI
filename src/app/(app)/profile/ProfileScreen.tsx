@@ -56,7 +56,6 @@ export function ProfileScreen({
             archetype={profile.dnaArchetype}
             level={level.level}
             score={score.score}
-            avatarUrl={profile.avatarUrl}
           />
           <StatChipRow stats={buildIdentityStats(profile)} />
           <DNABanner archetype={profile.dnaArchetype} />

@@ -17,6 +17,29 @@ export const goalLabels: Record<ProfileGoal, string> = {
 
 export type ExperienceLevel = "beginner" | "intermediate" | "advanced";
 
+/** How workouts are scheduled within a day (once / cardio+strength split / flexible). */
+export type SessionFrequency = "once" | "twice" | "flexible";
+
+export const sessionFrequencyLabels: Record<SessionFrequency, string> = {
+  once: "Once a day",
+  twice: "Twice a day",
+  flexible: "Flexible",
+};
+
+/**
+ * The physique the user is training toward — replaceable default content
+ * authored for the onboarding body-shape question; a future phase may pair
+ * these with visuals (camera/scan integration is explicitly out of scope).
+ */
+export type GoalBodyShape = "lean" | "athletic" | "muscular" | "powerful";
+
+export const goalBodyShapeLabels: Record<GoalBodyShape, string> = {
+  lean: "Lean & defined",
+  athletic: "Athletic & balanced",
+  muscular: "Muscular & built",
+  powerful: "Powerful & strong",
+};
+
 export interface Profile {
   id: string;
   displayName: string;
@@ -26,6 +49,8 @@ export interface Profile {
   trainingDaysPerWeek: number;
   /** The active split, e.g. "ppl" — Profile's SPLIT stat. */
   activeSplit: ProgramType;
+  sessionFrequency: SessionFrequency;
+  goalBodyShape: GoalBodyShape;
   hydrationGoalLiters: number;
   dnaArchetype: string;
   units: "kg" | "lb";

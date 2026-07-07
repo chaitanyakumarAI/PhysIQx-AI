@@ -1,5 +1,14 @@
 import Link from "next/link";
-import { Bell, ChevronRight, Download, Moon, Shield, type LucideIcon } from "lucide-react";
+import {
+  Bell,
+  ChevronRight,
+  CircleUserRound,
+  Download,
+  Moon,
+  Play,
+  Shield,
+  type LucideIcon,
+} from "lucide-react";
 import { iconSize } from "@/constants/icons";
 import { cn } from "@/lib/utils";
 import type { SettingsIconId, SettingsItem } from "../types";
@@ -14,6 +23,8 @@ const settingsIcon: Record<SettingsIconId, LucideIcon> = {
   moon: Moon,
   shield: Shield,
   download: Download,
+  user: CircleUserRound,
+  play: Play,
 };
 
 /**
