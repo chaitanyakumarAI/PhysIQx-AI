@@ -57,6 +57,15 @@ export type DayStatusValue = "trained" | "rest-honored" | "missed" | "unplanned"
  * defined exactly once. Tailwind class fragments (not raw hex): stays on the
  * design system's tokens.
  */
+/** Human-readable status names — the heatmap legend and day-detail panel
+ *  both read these, so "what does this color mean" has one answer. */
+export const dayStatusLabels: Record<DayStatusValue, string> = {
+  trained: "Trained",
+  "rest-honored": "Rest honored",
+  missed: "Missed",
+  unplanned: "No plan",
+};
+
 export const dayStatusTone: Record<DayStatusValue, string> = {
   trained: "bg-brand",
   "rest-honored": "bg-foreground/15",

@@ -27,11 +27,12 @@ export function PersonalRecordCard({ record, className }: PersonalRecordCardProp
       </div>
 
       <TrendChart
-        values={record.trend.map((point) => point.value)}
+        points={record.trend}
         tone="info"
         height={100}
+        interactive
         className="mt-4"
-        aria-label={`${record.exerciseName} trend, ${record.value}${record.unit} currently`}
+        aria-label={`${record.exerciseName} trend, ${record.value}${record.unit} currently. Drag across the chart to inspect each day.`}
       />
     </Card>
   );

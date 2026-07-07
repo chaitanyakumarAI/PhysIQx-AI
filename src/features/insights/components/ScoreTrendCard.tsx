@@ -59,11 +59,12 @@ export function ScoreTrendCard({
         transition={{ duration: duration.progress }}
       >
         <TrendChart
-          values={points.map((point) => point.score)}
+          points={points.map((point) => ({ date: point.date, value: point.score }))}
           tone="brand"
           height={120}
+          interactive
           className="mt-6"
-          aria-label={`Score trend, ${points.at(-1)?.score ?? score} currently`}
+          aria-label={`Score trend, ${points.at(-1)?.score ?? score} currently. Drag across the chart to inspect each day.`}
         />
       </m.div>
     </Card>

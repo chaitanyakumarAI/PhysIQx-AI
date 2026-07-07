@@ -90,7 +90,7 @@ export function PhysIQScoreCard({
         )}
         {!isCalibrating && weekTrend && weekTrend.length >= 2 && (
           <TrendChart
-            values={weekTrend}
+            points={weekTrend.map((value) => ({ value }))}
             height={36}
             className="max-w-40"
             aria-label={`Score over the last 7 days, from ${weekTrend[0]} to ${score}`}

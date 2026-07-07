@@ -4,6 +4,7 @@ import { useState } from "react";
 import { m } from "framer-motion";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { Section } from "@/components/layout/Section";
+import { FilterChipRow } from "@/components/ui/FilterChipRow";
 import { ScreenHeader } from "@/components/navigation/ScreenHeader";
 import { fadeInUp, staggerChildren } from "@/lib/motion";
 import { AIInsightCard } from "@/features/shared/components/AIInsightCard";
@@ -30,6 +31,11 @@ export function InsightsScreen({
   streakWeeks,
 }: InsightsScreenProps) {
   const [range, setRange] = useState<ScoreTrendRange>("30d");
+  // PR switcher: one exercise's chart at a time, chip row to change lift.
+  const [selectedPRId, setSelectedPRId] = useState(personalRecords[0]?.id ?? "");
+  const selectedRecord =
+    personalRecords.find((record) => record.id === selectedPRId) ??
+    personalRecords[0];
 
   return (
     <PageContainer>
@@ -72,9 +78,27 @@ export function InsightsScreen({
 
         <m.div variants={fadeInUp}>
           <Section title="Personal records">
-            {personalRecords.map((record) => (
-              <PersonalRecordCard key={record.id} record={record} />
-            ))}
+            <FilterChipRow
+              options={personalRecords.map((record) => ({
+                id: record.id,
+                label: record.exerciseName,
+              }))}
+              selectedId={selectedPRId}
+              onSelect={setSelectedPRId}
+              variant="accent"
+              label="Personal record exercise"
+            />
+            {selectedRecord && (
+              /* Re-keyed so switching lifts cross-fades the chart, matching
+                 the range selector's existing behavior above. */
+              <m.div
+                key={selectedRecord.id}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+              >
+                <PersonalRecordCard record={selectedRecord} />
+              </m.div>
+            )}
           </Section>
         </m.div>
 

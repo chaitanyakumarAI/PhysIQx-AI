@@ -23,6 +23,30 @@ export const mockPersonalRecordBases: PersonalRecordBase[] = [
     delta: 5,
     windowLabel: "Last 30 days",
   },
+  {
+    id: "pr-deadlift",
+    exerciseName: "Deadlift",
+    unit: "kg",
+    value: 180,
+    delta: 7.5,
+    windowLabel: "Last 30 days",
+  },
+  {
+    id: "pr-back-squat",
+    exerciseName: "Back Squat",
+    unit: "kg",
+    value: 140,
+    delta: 5,
+    windowLabel: "Last 30 days",
+  },
+  {
+    id: "pr-overhead-press",
+    exerciseName: "Overhead Press",
+    unit: "kg",
+    value: 60,
+    delta: 2.5,
+    windowLabel: "Last 30 days",
+  },
 ];
 
 /** The most recent PR — Home's "today's biggest win" spotlight. */
