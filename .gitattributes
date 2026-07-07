@@ -1,0 +1,17 @@
+# Normalize line endings: LF in the repository for all text files.
+# Windows checkouts stop producing "CRLF will be replaced by LF" warnings
+# on every diff once files are renormalized.
+* text=auto eol=lf
+
+# Windows scripts that genuinely require CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary assets — never touch line endings
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary
