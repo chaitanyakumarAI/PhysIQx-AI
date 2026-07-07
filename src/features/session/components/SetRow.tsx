@@ -79,7 +79,9 @@ export function SetRow({
         }
         onClick={onToggleCompleted}
         className={cn(
-          "grid size-10 shrink-0 place-items-center rounded-full border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/60",
+          // size-11 (44px): docs/UI_Guideliness.md's minimum touch target —
+          // this is the actual tap area, not just the visual circle.
+          "grid size-11 shrink-0 place-items-center rounded-full border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/60",
           set.completed
             ? "border-brand bg-brand text-zinc-950"
             : "border-border text-foreground-secondary hover:bg-surface-elevated",
