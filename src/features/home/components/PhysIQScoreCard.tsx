@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
-import { Card } from "@/components/ui/Card";
 import { CircularProgress } from "@/components/ui/CircularProgress";
 import { DeltaBadge } from "@/components/ui/DeltaBadge";
 import { TrendChart } from "@/components/charts/TrendChart";
@@ -28,10 +27,15 @@ const stateCopy: Record<ScoreState, string> = {
 };
 
 /**
- * The PhysIQ Score hero. A bare number answers nothing, so the card now
- * answers all three product questions itself: the band says whether 82 is
- * good, the delta says which direction vs. last week, the sparkline shows
- * the shape of the week, and "See breakdown" opens the full explanation.
+ * The PhysIQ Score hero. A bare number answers nothing, so it answers all
+ * three product questions itself: the band says whether 82 is good, the
+ * delta says which direction vs. last week, the sparkline shows the shape
+ * of the week, and "See breakdown" opens the full explanation.
+ *
+ * Deliberately NOT a Card: no border, no boxy edge — a radial brand
+ * gradient that dissolves into the page background, so the score reads as
+ * a moment in the screen's light rather than another rectangle in the
+ * stack (fixes the "square that doesn't mix with the background" review).
  */
 export function PhysIQScoreCard({
   score,
@@ -45,10 +49,12 @@ export function PhysIQScoreCard({
   const isCalibrating = state === "calibrating";
 
   return (
-    <Card
-      variant="accent"
-      padding="lg"
-      className={cn("relative overflow-hidden", className)}
+    <section
+      aria-label="PhysIQ Score"
+      className={cn(
+        "relative px-6 py-8 [background:radial-gradient(ellipse_75%_85%_at_50%_40%,rgb(34_197_94/0.12),transparent_75%)]",
+        className,
+      )}
     >
       {/* Ambient aura behind the gauge — the hero moment gets its own light. */}
       <div
@@ -103,6 +109,6 @@ export function PhysIQScoreCard({
           </Link>
         )}
       </div>
-    </Card>
+    </section>
   );
 }

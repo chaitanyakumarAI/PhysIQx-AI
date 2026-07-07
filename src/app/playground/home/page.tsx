@@ -4,6 +4,9 @@ import { WelcomeHeader } from "@/features/home/components/WelcomeHeader";
 import { PhysIQScoreCard } from "@/features/home/components/PhysIQScoreCard";
 import { PillarGrid } from "@/features/shared/components/PillarGrid";
 import { TodaysPriorities } from "@/features/home/components/TodaysPriorities";
+import { AchievementSpotlight } from "@/features/home/components/AchievementSpotlight";
+import { StatusStrip } from "@/features/home/components/StatusStrip";
+import { deriveRecoveryStatus } from "@/features/home/lib/derive";
 import { DailyMissionCard } from "@/features/home/components/DailyMissionCard";
 import { WeeklyActivityCard } from "@/features/home/components/WeeklyActivityCard";
 import { FuelStatCard } from "@/features/home/components/FuelStatCard";
@@ -46,6 +49,8 @@ export default async function HomeFeaturePlaygroundPage() {
           weakestPillarId={data.score.weakestPillarId}
         />
         <TodaysPriorities priorities={data.priorities} />
+        <AchievementSpotlight record={data.latestPR} />
+        <StatusStrip recovery={deriveRecoveryStatus(data.week.days)} />
         <DailyMissionCard mission={data.mission} />
         <WeeklyActivityCard
           completionPercent={data.week.completionPercent}

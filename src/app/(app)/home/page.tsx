@@ -20,10 +20,8 @@ export default async function HomePage() {
       score={data.score}
       mission={data.mission}
       week={data.week}
-      fuel={data.fuel}
-      insight={data.insight}
-      level={data.level}
       priorities={data.priorities}
+      latestPR={data.latestPR}
     />
   );
 }

@@ -11,6 +11,30 @@ import type { DayStatus } from "@/types/training";
  * feature needed them. Week-completion math stays here: Home-only so far.
  */
 
+export interface RecoveryStatus {
+  label: string;
+  tone: "brand" | "info";
+}
+
+/**
+ * The status-strip recovery chip, derived from yesterday's DayStatus —
+ * honest about its inputs (plan adherence, not biometrics; wearables would
+ * upgrade this later). Falls back to "Ready to train" when yesterday is
+ * unknowable (first day of a week view).
+ */
+export function deriveRecoveryStatus(days: DayStatus[]): RecoveryStatus {
+  const todayIndex = days.findIndex((day) => day.isToday);
+  const yesterday = todayIndex > 0 ? days[todayIndex - 1] : undefined;
+
+  if (yesterday?.status === "rest-honored") {
+    return { label: "Fully recovered", tone: "brand" };
+  }
+  if (yesterday?.status === "missed") {
+    return { label: "Fresh start today", tone: "info" };
+  }
+  return { label: "Ready to train", tone: "brand" };
+}
+
 export function computeCompletionPercent(days: DayStatus[]): number {
   const elapsed = days.filter(
     (day) => day.status !== "unplanned",

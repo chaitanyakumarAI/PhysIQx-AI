@@ -1,4 +1,5 @@
 import { mockPhysIQScore } from "@/data/score";
+import { mockPersonalRecordBases } from "@/data/personalRecords";
 import type { Insight } from "@/types/insight";
 import type { PersonalRecord, PersonalRecordTrendPoint } from "@/types/personalRecord";
 import type { ScoreTrendPoint, ScoreTrendRange } from "@/types/score";
@@ -127,17 +128,13 @@ const insights: Insight[] = [
   },
 ];
 
-const personalRecords: PersonalRecord[] = [
-  {
-    id: "pr-bench-press",
-    exerciseName: "Bench Press",
-    unit: "kg",
-    value: 92.5,
-    delta: 5,
-    windowLabel: "Last 30 days",
-    trend: generatePRTrend(30, 92.5, 5),
-  },
-];
+// Base values come from the shared fixture (also feeds Home's achievement
+// spotlight); only the trend series is built here, since only Insights
+// renders it.
+const personalRecords: PersonalRecord[] = mockPersonalRecordBases.map((base) => ({
+  ...base,
+  trend: generatePRTrend(30, base.value, base.delta),
+}));
 
 export const mockInsightsData: InsightsData = {
   score: mockPhysIQScore,

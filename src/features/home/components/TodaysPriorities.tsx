@@ -1,5 +1,13 @@
 import Link from "next/link";
-import { Check, ChevronRight, Droplets, Dumbbell, type LucideIcon } from "lucide-react";
+import {
+  Check,
+  ChevronRight,
+  Droplets,
+  Dumbbell,
+  HeartPulse,
+  Scale,
+  type LucideIcon,
+} from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { iconSize } from "@/constants/icons";
 import { cn } from "@/lib/utils";
@@ -8,6 +16,8 @@ import type { DailyPriority } from "../types";
 const priorityIcon: Record<DailyPriority["iconId"], LucideIcon> = {
   dumbbell: Dumbbell,
   droplets: Droplets,
+  "heart-pulse": HeartPulse,
+  scale: Scale,
 };
 
 export interface TodaysPrioritiesProps {

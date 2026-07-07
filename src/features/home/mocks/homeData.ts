@@ -1,6 +1,7 @@
 import { BarChart3, Droplets, Dumbbell } from "lucide-react";
 import type { DayStatus } from "@/types/training";
 import { mockTodayMission } from "@/data/mission";
+import { mockLatestPR } from "@/data/personalRecords";
 import { mockPhysIQScore } from "@/data/score";
 import { mockProfile } from "@/data/profile";
 import { mockStreak } from "@/data/streak";
@@ -89,15 +90,11 @@ const insight: Insight = {
 // that contradicts the fuel bars rendered on the same screen.
 const hydrationRemaining = profile.hydrationGoalLiters - 1.8;
 
+// The mission is NOT a priority item — the mission card sits directly above
+// this list on the restructured Home, and repeating it as row one would be
+// noise. Priorities are the supporting actions, each tied to a score pillar
+// so every row can state its payoff.
 const priorities: DailyPriority[] = [
-  {
-    id: "priority-mission",
-    label: `Complete ${mission.title}`,
-    detail: `+${mission.xpReward} XP and today's biggest score mover`,
-    iconId: "dumbbell",
-    completed: false,
-    href: `/session/${mission.id}`,
-  },
   {
     id: "priority-hydration",
     label: `Drink ${hydrationRemaining.toFixed(1)}L more`,
@@ -105,6 +102,22 @@ const priorities: DailyPriority[] = [
     iconId: "droplets",
     completed: hydrationRemaining <= 0,
     href: "/home?log=water",
+  },
+  {
+    id: "priority-cardio",
+    label: "20-min zone-2 walk",
+    detail: "Cardio carries 20% of your score — an easy walk counts",
+    iconId: "heart-pulse",
+    completed: false,
+    href: "/train",
+  },
+  {
+    id: "priority-weigh-in",
+    label: "Weekly weigh-in",
+    detail: "Keeps your BMI and Body Shape pillars current",
+    iconId: "scale",
+    completed: false,
+    href: "/profile",
   },
 ];
 
@@ -125,4 +138,5 @@ export const mockHomeData: HomeData = {
   level,
   quickActions,
   priorities,
+  latestPR: mockLatestPR,
 };

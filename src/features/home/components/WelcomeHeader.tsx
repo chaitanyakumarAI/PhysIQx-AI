@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Flame } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
 import { Badge } from "@/components/ui/Badge";
@@ -59,7 +60,14 @@ export function WelcomeHeader({
           </span>
         </div>
       </div>
-      <Avatar name={name} src={avatarUrl} variant="brand" size="md" />
+      {/* The avatar is Home's door to Profile — a real link, not decoration. */}
+      <Link
+        href="/profile"
+        aria-label="Open profile"
+        className="shrink-0 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      >
+        <Avatar name={name} src={avatarUrl} variant="brand" size="md" />
+      </Link>
     </header>
   );
 }

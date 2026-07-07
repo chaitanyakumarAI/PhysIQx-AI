@@ -1,4 +1,5 @@
 import type { LucideIcon } from "lucide-react";
+import type { PersonalRecordBase } from "@/data/personalRecords";
 import type { Profile } from "@/types/profile";
 import type { PhysIQScoreSnapshot } from "@/types/score";
 import type { Mission, StreakSummary, WeeklySummary } from "@/types/training";
@@ -28,9 +29,9 @@ export interface QuickAction {
 export interface DailyPriority {
   id: string;
   label: string;
-  /** The payoff — why this action matters today ("moves Water past 70"). */
+  /** The payoff — why this action matters today ("moves Hydration past 70"). */
   detail: string;
-  iconId: "dumbbell" | "droplets";
+  iconId: "dumbbell" | "droplets" | "heart-pulse" | "scale";
   completed: boolean;
   href: string;
 }
@@ -50,4 +51,6 @@ export interface HomeData {
   quickActions: QuickAction[];
   /** Today's coach-authored actions, most impactful first. */
   priorities: DailyPriority[];
+  /** The freshest PR — Home's achievement spotlight. */
+  latestPR: PersonalRecordBase;
 }
