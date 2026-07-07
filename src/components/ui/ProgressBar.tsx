@@ -16,7 +16,7 @@ const fillVariants = cva(
         neutral: "bg-foreground-secondary",
         /** Achievement rarity accent — see globals.css's --color-legendary. */
         legendary:
-          "bg-gradient-to-r from-fuchsia-500 to-legendary [box-shadow:0_0_8px_-2px_var(--color-legendary)]",
+          "bg-gradient-to-r from-violet-600 to-legendary [box-shadow:0_0_8px_-2px_var(--color-legendary)]",
       },
     },
     defaultVariants: {

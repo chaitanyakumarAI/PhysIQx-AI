@@ -57,7 +57,7 @@ export function BottomNavigation({ items, className }: BottomNavigationProps) {
                   layoutId="bottom-nav-active"
                   aria-hidden
                   transition={{ duration: duration.fast, ease: easeOut }}
-                  className="absolute inset-0 rounded-full border border-brand/25 bg-brand/10 [box-shadow:0_0_16px_-4px_rgb(74_222_128/0.4)]"
+                  className="absolute inset-0 rounded-full border border-brand/25 bg-brand/10 [box-shadow:0_0_16px_-4px_rgb(34_197_94/0.45)]"
                 />
               )}
               <item.icon

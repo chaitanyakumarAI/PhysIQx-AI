@@ -106,7 +106,7 @@ export function RadarChart({ points, size = 220, className }: RadarChartProps) {
         <polygon
           points={toPolygonAttr(dataVertices)}
           fill={`url(#${gradientId})`}
-          className="stroke-brand drop-shadow-[0_0_6px_rgb(74_222_128/0.3)]"
+          className="stroke-brand drop-shadow-[0_0_6px_rgb(34_197_94/0.35)]"
           strokeWidth={2}
           strokeLinejoin="round"
         />

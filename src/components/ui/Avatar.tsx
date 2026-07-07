@@ -16,8 +16,9 @@ const avatarVariants = cva(
       },
       variant: {
         default: "bg-surface-elevated text-foreground-secondary",
-        /** The current user's green-gradient avatar from the designs. */
-        brand: "bg-gradient-to-br from-brand to-brand-strong text-zinc-950",
+        /** The current user's signature gradient: brand green sweeping into
+            the violet accent — one of the few sanctioned violet moments. */
+        brand: "bg-gradient-to-br from-brand via-brand to-legendary text-zinc-950",
       },
     },
     defaultVariants: {

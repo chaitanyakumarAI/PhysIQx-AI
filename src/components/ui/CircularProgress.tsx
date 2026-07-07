@@ -8,10 +8,12 @@ const tones = {
   danger: "stroke-danger",
 } as const;
 
-/** Brand rings sweep light→deep green; a flat single-color stroke reads flat. */
+/** Brand rings sweep green into a violet tail — the score ring is the
+ *  product's signature moment, one of the few sanctioned violet uses. */
 const brandGradientStops = [
   { offset: "0%", color: "var(--color-brand)" },
-  { offset: "100%", color: "var(--color-brand-strong)" },
+  { offset: "65%", color: "var(--color-brand-strong)" },
+  { offset: "100%", color: "var(--color-legendary)" },
 ];
 
 export interface CircularProgressProps
@@ -93,7 +95,7 @@ export function CircularProgress({
             !useGradient && tones[tone],
             // Half-opacity glow: the full-color shadow made the ring read
             // neon-sticker rather than lit (verified in screenshots).
-            glow && "drop-shadow-[0_0_10px_rgb(74_222_128/0.45)]",
+            glow && "drop-shadow-[0_0_10px_rgb(34_197_94/0.5)]",
           )}
         />
       </svg>
