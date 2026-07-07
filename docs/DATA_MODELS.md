@@ -59,14 +59,17 @@ Who the user is as an athlete. Everything Onboarding collects.
 
 ### PhysIQScoreSnapshot
 One immutable per-day score record. Full contract in PHYSIQ_SCORE.md.
-- **Fields:** date, score, delta, four pillar sub-scores, weakest pillar,
-  headline, state (calibrating / active / stale), scoreVersion, inputs summary.
-- **Relationships:** derived from session, fuel, and adherence ledgers.
+- **Fields:** date, score, delta, six pillar sub-scores (Consistency,
+  Strength, Cardio, BMI, Body Shape, Water — weighted by health impact, not
+  equal), weakest pillar, headline, state (calibrating / active / stale),
+  scoreVersion, inputs summary.
+- **Relationships:** derived from session, body-measurement, hydration, and
+  adherence ledgers.
 - **Lifecycle:** one per user per day; provisional until day close, immutable
   after; never recomputed under a newer scoreVersion.
-- **Note:** the six-axis Body Balance radar (Insights) is a derived view over
-  the same inputs summary — it is rendered from snapshot data, never stored
-  as a second scoring structure.
+- **Note:** the Body Balance radar (Insights) renders these same six pillars
+  directly — it is not a separately-shaped decomposition, so there is nothing
+  to reconcile between the two views.
 
 ### XPTransaction
 Append-only XP ledger entry. XP is the *social/comparative* currency;

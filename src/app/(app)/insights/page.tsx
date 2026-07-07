@@ -16,7 +16,6 @@ export default async function InsightsPage() {
       score={data.score}
       trends={data.trends}
       insights={data.insights}
-      bodyBalance={data.bodyBalance}
       personalRecords={data.personalRecords}
       streakWeeks={data.streakWeeks}
     />

@@ -15,7 +15,6 @@ export function InsightsPlaygroundDemo({
   score,
   trends,
   insights,
-  bodyBalance,
   personalRecords,
   streakWeeks,
 }: InsightsData) {
@@ -42,7 +41,7 @@ export function InsightsPlaygroundDemo({
       </Section>
 
       <Section title="Body balance">
-        <BodyBalanceCard bodyBalance={bodyBalance} />
+        <BodyBalanceCard pillars={score.pillars} weakestPillarId={score.weakestPillarId} />
       </Section>
 
       <Section title="Personal records">

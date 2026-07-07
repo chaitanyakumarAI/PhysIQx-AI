@@ -1,9 +1,8 @@
 import { mockPhysIQScore } from "@/data/score";
 import type { Insight } from "@/types/insight";
 import type { PersonalRecord, PersonalRecordTrendPoint } from "@/types/personalRecord";
-import type { BodyBalance, BodyBalancePoint, ScoreTrendPoint, ScoreTrendRange } from "@/types/score";
+import type { ScoreTrendPoint, ScoreTrendRange } from "@/types/score";
 import type { DayStatus } from "@/types/training";
-import { findWeakestAxis } from "../lib/derive";
 import type { InsightsData } from "../types";
 
 /**
@@ -128,20 +127,6 @@ const insights: Insight[] = [
   },
 ];
 
-const bodyBalancePoints: BodyBalancePoint[] = [
-  { id: "strength", label: "Strength", value: 88 },
-  { id: "nutrition", label: "Nutrition", value: 70 },
-  { id: "hydration", label: "Hydration", value: 58 },
-  { id: "recovery", label: "Recovery", value: 82 },
-  { id: "cardio", label: "Cardio", value: 75 },
-  { id: "consistency", label: "Consistency", value: 90 },
-];
-
-const bodyBalance: BodyBalance = {
-  points: bodyBalancePoints,
-  weakestAxisId: findWeakestAxis(bodyBalancePoints),
-};
-
 const personalRecords: PersonalRecord[] = [
   {
     id: "pr-bench-press",
@@ -158,7 +143,6 @@ export const mockInsightsData: InsightsData = {
   score: mockPhysIQScore,
   trends,
   insights,
-  bodyBalance,
   personalRecords,
   streakWeeks: generateStreakWeeks(12),
 };

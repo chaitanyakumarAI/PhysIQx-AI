@@ -3,7 +3,9 @@
 Check here before adding a Home component — mirrors the reuse-discovery
 convention in `src/components/README.md`. `AIInsightCard` used to live here;
 it moved to `src/features/shared/components/` once Insights needed it too —
-see that folder's README.
+see that folder's README. `HealthPillarSummary` (the old four-bar pillar row)
+was retired during the pillar-model revision — replaced by the shared
+`PillarGrid` (see `features/shared/README.md`), which Insights now uses too.
 
 ## Data
 
@@ -22,7 +24,6 @@ see that folder's README.
 |---|---|
 | `WelcomeHeader` | Greeting, streak badge, archetype, avatar |
 | `PhysIQScoreCard` | Score gauge + delta + headline; handles `calibrating` state. Reusable on Insights. |
-| `HealthPillarSummary` | Four-pillar progress row under the score |
 | `DailyMissionCard` | Today's mission; renders a rest-day state when `mission` is `null` |
 | `WeeklyActivityCard` | "This Week" completion % + daily bar chart |
 | `FuelStatCard` | One fuel metric (hydration/protein) — icon, value/goal, progress. Compose two per screen. |

@@ -14,7 +14,6 @@ export default async function InsightsFeaturePlaygroundPage() {
       score={data.score}
       trends={data.trends}
       insights={data.insights}
-      bodyBalance={data.bodyBalance}
       personalRecords={data.personalRecords}
       streakWeeks={data.streakWeeks}
     />

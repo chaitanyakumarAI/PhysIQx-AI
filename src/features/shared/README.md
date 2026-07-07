@@ -14,3 +14,7 @@ spec; only promote on actual second use.
 | `AIInsightCard` | Home (AI Coach card), Insights ("What the data says" cards) |
 | `StatChipRow` | Profile (identity + progress stat rows, 3 columns), Onboarding (DNA Result summary, 2 columns) |
 | `Logo` | Auth layout, Onboarding's Welcome step |
+| `PillarGrid` | Home (standalone, under the score), Insights (inside `BodyBalanceCard`, beneath the radar) — same six `PillarScore`s, same component, so the two screens can't show conflicting breakdowns |
+
+`lib/pillarMeta.ts` — pillar → icon/tone lookup, shared by `PillarGrid` and
+any standalone pillar callout, so the mapping can't drift between them.

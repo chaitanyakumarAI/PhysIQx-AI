@@ -59,7 +59,7 @@ accurate it is.
 | `score` | Integer 0–100. The composite. |
 | `delta` | Signed change vs. 7 days ago (the "+4 this week" chip). |
 | `trend` | Daily score series, queryable at 7D / 30D / 90D / 1Y ranges. |
-| `pillars` | Four pillar sub-scores, each 0–100 (see below). |
+| `pillars` | Six pillar sub-scores, each 0–100 (see below). |
 | `weakestPillar` | The pillar currently holding the score back. |
 | `headline` | One human-readable sentence explaining the current state. |
 | `state` | `calibrating` \| `active` \| `stale` (see lifecycle). |
@@ -67,37 +67,45 @@ accurate it is.
 
 ### Pillars
 
-Four pillars, matching the Home screen exactly:
+Six pillars, matching the Home screen exactly. Revised from the original
+Training/Nutrition/Recovery/Consistency set: Nutrition required daily food
+logging most users won't sustain, Recovery had no real signal without
+wearables, and Training/Consistency measured almost the same thing. This set
+was chosen for what's actually trackable without either burden, and is
+**weighted by health impact rather than treated as equal**:
 
-| Pillar | What it measures | Primary inputs |
-|---|---|---|
-| **Training** | Executing planned workouts with quality | Sessions completed vs. planned, volume, progressive overload |
-| **Nutrition** | Fueling adequately | Protein intake vs. goal, hydration vs. goal |
-| **Recovery** | Respecting the body's need to adapt | Rest days honored, session spacing; later: sleep and HRV from wearables |
-| **Consistency** | Showing up over time | Streaks, weekly plan adherence, return-after-break behavior |
+| Pillar | Weight | What it measures | Primary inputs |
+|---|---|---|---|
+| **Consistency** | 25% | Showing up over time | Streaks, weekly plan adherence, return-after-break behavior |
+| **Strength** | 20% | Getting stronger over time | Workout session PRs, volume progression, load trends |
+| **Cardio** | 20% | Cardiovascular effort and capacity | Cardio session logs; later: heart-rate zones, VO2 max from wearables |
+| **BMI** | 15% | Coarse body-composition signal | Height (one-time) + periodic weight entry — no daily logging required |
+| **Body Shape** | 12% | Physique/composition trend | Body measurement entries; later: progress-photo comparison |
+| **Water** | 8% | Hydration adequacy | Hydration logs vs. goal |
 
-Hydration is an **input to the Nutrition pillar**, not a fifth pillar. The
-"Body Balance" radar on Insights is a separate six-axis *display decomposition*
-(Strength, Nutrition, Hydration, Recovery, Cardio, Consistency) derived from
-the same underlying inputs — it is a visualization, not a second scoring
-system. (See "Open conflicts" in the project notes: the 4-pillar / 6-axis
-relationship must be confirmed before Insights is built.)
+Weights sum to 1 and live in `lib/score` (`pillarWeights`), stamped by
+`scoreVersion` — this document fixes the *relative* ordering (Consistency and
+the two performance pillars matter most; Water matters least, since it's the
+lowest-effort signal to hit) but not the exact decimals, which `lib/score` may
+tune. What *is* fixed: every pillar always contributes, and no single day's
+data can move the composite by more than a few points.
 
-The composite is a weighted blend of the four pillars. Weights are an
-implementation detail owned by `lib/score` and stamped by `scoreVersion`; this
-document intentionally does not fix them. What *is* fixed: every pillar always
-contributes, and no single day's data can move the composite by more than a
-few points.
+The "Body Balance" radar on Insights renders these same six pillars directly
+— it is a visualization of the score's own data, not a second, differently-
+shaped scoring system. (This resolves the previous 4-pillar/6-axis mismatch:
+there is now only one pillar set, used everywhere.)
 
 ### Inputs and data sources
 
 | Source | Feeds | Phase |
 |---|---|---|
-| Workout sessions (completed, volume, RPE) | Training, Consistency | 4–5 |
-| Protein logs | Nutrition | 4–5 |
-| Hydration logs | Nutrition | 4–5 |
-| DayStatus series (derived: Program schedule vs. sessions — see DATA_MODELS.md) | Recovery, Consistency | 4–5 |
-| Wearables: sleep, HRV, resting HR | Recovery | Future |
+| Workout sessions (completed, PRs, volume) | Strength, Consistency | 4–5 |
+| Cardio session logs | Cardio | 4–5 |
+| Height + weight entries | BMI | 4–5 |
+| Body measurement entries | Body Shape | 4–5 |
+| Hydration logs | Water | 4–5 |
+| DayStatus series (derived: Program schedule vs. sessions — see DATA_MODELS.md) | Consistency | 4–5 |
+| Wearables: HR zones, VO2 max | Cardio | Future |
 | ML predictions | Trend forecasting only | Phase 7 |
 
 All inputs arrive as **events in ledgers** (see DATA_MODELS.md). The score is
@@ -160,9 +168,9 @@ These are contracts for later phases; none are built during UI recreation.
 - **ML (Phase 7):** models may *predict* the score trajectory and *suggest*
   weights, but the shipped score of record remains deterministic and
   explainable. Predictions render as forecasts, clearly distinct from history.
-- **Wearables:** sleep/HRV/resting-HR arrive as new event types feeding the
-  Recovery pillar. Adding a source must not require schema changes to
-  snapshots — sources are additive inputs behind the same pillar interface.
+- **Wearables:** HR zones/VO2 max/resting-HR arrive as new event types
+  feeding the Cardio pillar. Adding a source must not require schema changes
+  to snapshots — sources are additive inputs behind the same pillar interface.
 - **AI Coach:** insight generation *consumes* score outputs (pillar deltas,
   weakest link, trend inflections) and never computes its own. One scoring
   brain; many mouths.

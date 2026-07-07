@@ -26,7 +26,6 @@ export function InsightsScreen({
   score,
   trends,
   insights,
-  bodyBalance,
   personalRecords,
   streakWeeks,
 }: InsightsScreenProps) {
@@ -67,7 +66,7 @@ export function InsightsScreen({
 
         <m.div variants={fadeInUp}>
           <Section title="Body balance">
-            <BodyBalanceCard bodyBalance={bodyBalance} />
+            <BodyBalanceCard pillars={score.pillars} weakestPillarId={score.weakestPillarId} />
           </Section>
         </m.div>
 

@@ -2,7 +2,7 @@ import { getHomeData } from "@/features/home/api/getHomeData";
 import { getGreeting } from "@/features/home/lib/greeting";
 import { WelcomeHeader } from "@/features/home/components/WelcomeHeader";
 import { PhysIQScoreCard } from "@/features/home/components/PhysIQScoreCard";
-import { HealthPillarSummary } from "@/features/home/components/HealthPillarSummary";
+import { PillarGrid } from "@/features/shared/components/PillarGrid";
 import { DailyMissionCard } from "@/features/home/components/DailyMissionCard";
 import { WeeklyActivityCard } from "@/features/home/components/WeeklyActivityCard";
 import { FuelStatCard } from "@/features/home/components/FuelStatCard";
@@ -38,7 +38,7 @@ export default async function HomeFeaturePlaygroundPage() {
           headline={data.score.headline}
           state={data.score.state}
         />
-        <HealthPillarSummary
+        <PillarGrid
           pillars={data.score.pillars}
           weakestPillarId={data.score.weakestPillarId}
         />

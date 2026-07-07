@@ -4,8 +4,32 @@
  * not needed by Home). The composite `score` and each pillar `value` are
  * authored as already-computed — in the real system they're produced by
  * `lib/score`, never derived in the UI layer.
+ *
+ * Pillar set v2 (revised from the original Training/Nutrition/Recovery/
+ * Consistency): Nutrition and Recovery were weak signals without daily food
+ * logging or wearables, and Training/Consistency measured almost the same
+ * thing. Replaced with six pillars chosen for what's actually trackable
+ * without either burden, weighted by health impact (see `pillarWeights` in
+ * `@/lib/score`) rather than treated as equal. This is also the single
+ * pillar set the Body Balance radar renders (see BodyBalanceCard) — there is
+ * no longer a separate, differently-shaped axis list to reconcile.
  */
-export type PillarId = "training" | "nutrition" | "recovery" | "consistency";
+export type PillarId =
+  | "consistency"
+  | "strength"
+  | "cardio"
+  | "bmi"
+  | "bodyShape"
+  | "water";
+
+export const pillarLabels: Record<PillarId, string> = {
+  consistency: "Consistency",
+  strength: "Strength",
+  cardio: "Cardio",
+  bmi: "BMI",
+  bodyShape: "Body Shape",
+  water: "Water",
+};
 
 export interface PillarScore {
   id: PillarId;
@@ -42,36 +66,4 @@ export const scoreTrendRangeLabels: Record<ScoreTrendRange, string> = {
 export interface ScoreTrendPoint {
   date: string;
   score: number;
-}
-
-/**
- * Body Balance — the six-axis radar on Insights. Per docs/PHYSIQ_SCORE.md
- * this is a DISPLAY-ONLY decomposition, never a second scoring system — it
- * renders from the same underlying signals as the four score pillars, not a
- * stored composite of its own.
- *
- * Open question (flagged in PHYSIQ_SCORE.md, unresolved): the mapping
- * between the four score pillars (Training/Nutrition/Recovery/Consistency)
- * and these six axes (two of which — Strength, Cardio — aren't tracked
- * anywhere else yet) needs product confirmation before a real derivation is
- * written. Mock data here is authored directly, not derived from the pillars.
- */
-export type BodyBalanceAxis =
-  | "strength"
-  | "nutrition"
-  | "hydration"
-  | "recovery"
-  | "cardio"
-  | "consistency";
-
-export interface BodyBalancePoint {
-  id: BodyBalanceAxis;
-  label: string;
-  /** 0–100 */
-  value: number;
-}
-
-export interface BodyBalance {
-  points: BodyBalancePoint[];
-  weakestAxisId: BodyBalanceAxis;
 }

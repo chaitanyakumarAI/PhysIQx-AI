@@ -18,11 +18,14 @@ adding components.
 | `Avatar` | Initials or image avatar; brand gradient variant for the current user |
 | `Badge` | Static label pill: neutral / brand / warning / danger / info / outline |
 | `DeltaBadge` | Signed-change badge built on Badge: up/down icon, brand/danger tone, "+N"/"N" formatting |
-| `Chip` | Toggleable filter pill (aria-pressed); solid or accent selected style |
+| `Chip` | Toggleable filter pill (aria-pressed); solid or accent selected style. `h-11` (44px touch target, per docs/UI_Guideliness.md) |
 | `FilterChipRow` | Horizontally scrollable single-select chip row built on Chip; promoted from Train once a third feature (Compete) needed it |
 | `ProgressBar` | Linear progress; brand / info / warning / danger / neutral / legendary tones |
 | `CircularProgress` | SVG progress ring with center-content slot; optional brand glow |
 | `Skeleton` | Pulsing loading placeholder, shaped via className |
+| `Switch` | Toggle switch (`role="switch"`); first real use of a primitive listed since Foundation |
+| `OptionCard` | Large single-select card with icon/description/checkmark; promoted from Onboarding once Settings' theme picker needed the same pattern |
+| `StatTile` | Bento cell: icon + big mono numeral + label; built for the Home/Insights pillar-grid density pass |
 
 ## layout/
 

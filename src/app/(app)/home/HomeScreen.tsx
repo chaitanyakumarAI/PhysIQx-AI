@@ -11,7 +11,7 @@ import { getGreeting } from "@/features/home/lib/greeting";
 import { AIInsightCard } from "@/features/shared/components/AIInsightCard";
 import { DailyMissionCard } from "@/features/home/components/DailyMissionCard";
 import { FuelStatCard } from "@/features/home/components/FuelStatCard";
-import { HealthPillarSummary } from "@/features/home/components/HealthPillarSummary";
+import { PillarGrid } from "@/features/shared/components/PillarGrid";
 import { PhysIQScoreCard } from "@/features/home/components/PhysIQScoreCard";
 import { WeeklyActivityCard } from "@/features/home/components/WeeklyActivityCard";
 import { WelcomeHeader } from "@/features/home/components/WelcomeHeader";
@@ -78,7 +78,7 @@ export function HomeScreen({
             headline={score.headline}
             state={score.state}
           />
-          <HealthPillarSummary
+          <PillarGrid
             pillars={score.pillars}
             weakestPillarId={score.weakestPillarId}
           />
