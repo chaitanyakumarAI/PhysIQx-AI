@@ -50,10 +50,10 @@
   --color-danger: #ef4444;
   --color-info: #3b82f6;
 
-  /* The violet secondary accent — special moments ONLY (Legendary rarity,
-     PhysIQ DNA, the user's own avatar gradient, the score ring's tail).
-     Never a general-purpose second accent; green remains the identity.
-     #a78bfa: 7.2:1 on background — AA passes as text. */
+  /* Violet — Legendary rarity and trophy accents ONLY, always as a flat
+     tint. Green→violet gradient mixes were tried (ring tail, avatar, DNA
+     banner) and reverted after user review — they read as odd against the
+     green identity. #a78bfa: 7.2:1 on background — AA passes as text. */
   --color-legendary: #a78bfa;
 
   /* Typography. Display slot resolved: Space Grotesk (loaded in layout.tsx)
@@ -99,7 +99,7 @@
        on flat black. Fixed so scrolling content moves through the light. */
     background-image:
       radial-gradient(ellipse 80% 45% at 50% -12%, rgb(34 197 94 / 0.1), transparent 70%),
-      radial-gradient(ellipse 60% 40% at 88% 108%, rgb(139 92 246 / 0.05), transparent 70%);
+      radial-gradient(ellipse 60% 40% at 88% 108%, rgb(59 130 246 / 0.05), transparent 70%);
     background-attachment: fixed;
   }
 }

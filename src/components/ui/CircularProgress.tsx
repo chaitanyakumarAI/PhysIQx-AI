@@ -8,12 +8,11 @@ const tones = {
   danger: "stroke-danger",
 } as const;
 
-/** Brand rings sweep green into a violet tail — the score ring is the
- *  product's signature moment, one of the few sanctioned violet uses. */
+/** Brand rings sweep light→deep green; a flat single-color stroke reads flat.
+ *  (A violet tail was tried and reverted — it read as odd, per user review.) */
 const brandGradientStops = [
   { offset: "0%", color: "var(--color-brand)" },
-  { offset: "65%", color: "var(--color-brand-strong)" },
-  { offset: "100%", color: "var(--color-legendary)" },
+  { offset: "100%", color: "var(--color-brand-strong)" },
 ];
 
 export interface CircularProgressProps
