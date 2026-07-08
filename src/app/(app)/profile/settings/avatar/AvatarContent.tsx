@@ -58,13 +58,14 @@ export function AvatarContent() {
                 aria-pressed={preset.id === avatarPresetId}
                 onClick={() => setPresetAvatar(preset.id)}
                 className={cn(
-                  "grid aspect-square place-items-center rounded-full text-lg font-semibold uppercase transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/60 focus-visible:ring-offset-2 focus-visible:ring-offset-surface",
-                  preset.className,
+                  "aspect-square overflow-hidden rounded-full transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/60 focus-visible:ring-offset-2 focus-visible:ring-offset-surface",
                   preset.id === avatarPresetId &&
                     "ring-2 ring-brand ring-offset-2 ring-offset-surface",
                 )}
               >
-                {mockProfile.displayName.slice(0, 1)}
+                {/* eslint-disable-next-line @next/next/no-img-element -- small
+                    static asset grid; next/image adds nothing at this size */}
+                <img src={preset.src} alt="" className="size-full object-cover" />
               </button>
             ))}
           </div>
