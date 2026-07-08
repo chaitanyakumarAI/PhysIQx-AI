@@ -22,12 +22,18 @@ export interface ExerciseSet {
 export interface SessionExercise {
   exerciseId: string;
   exerciseName: string;
+  /** Denormalized from the template, same reasoning as exerciseName —
+   *  the rest timer must not need a template lookup mid-workout. */
+  restSeconds: number;
   sets: ExerciseSet[];
 }
 
 export interface WorkoutSession {
   id: string;
   missionId: string;
+  /** Denormalized display title ("Push Day A" / a custom plan day's name) —
+   *  sessions started from user plans have no Mission entity to look up. */
+  title: string;
   status: SessionStatus;
   startedAt: string;
   completedAt: string | null;

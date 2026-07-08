@@ -16,6 +16,7 @@ import type { ExerciseSet, SessionExercise, WorkoutSession } from "@/types/worko
 
 interface StartSessionParams {
   missionId: string;
+  title: string;
   template: WorkoutTemplate;
   exercises: Exercise[];
   xpReward: number;
@@ -31,6 +32,9 @@ interface SessionStoreState {
   startSession: (params: StartSessionParams) => void;
   logSet: (exerciseId: string, setId: string, patch: SetPatch) => void;
   toggleSetCompleted: (exerciseId: string, setId: string) => void;
+  /** Mid-workout set count is the athlete's call — any number of sets. */
+  addSet: (exerciseId: string) => void;
+  removeSet: (exerciseId: string, setId: string) => void;
   finishSession: () => void;
   abandonSession: () => void;
   clearSession: () => void;
@@ -42,23 +46,27 @@ function buildSessionExercises(
 ): SessionExercise[] {
   return template.exercises.map((templateExercise) => {
     const exercise = exercises.find((item) => item.id === templateExercise.exerciseId);
-    const sets: ExerciseSet[] = Array.from(
-      { length: templateExercise.targetSets },
-      (_, index) => ({
-        id: `${templateExercise.exerciseId}-set-${index + 1}`,
-        setNumber: index + 1,
-        targetReps: templateExercise.targetReps,
-        weight: null,
-        reps: null,
-        completed: false,
-      }),
-    );
+    // One planned set per template entry — per-set reps, any count.
+    const sets: ExerciseSet[] = templateExercise.sets.map((templateSet, index) => ({
+      id: `${templateExercise.exerciseId}-set-${index + 1}`,
+      setNumber: index + 1,
+      targetReps: templateSet.targetReps,
+      weight: null,
+      reps: null,
+      completed: false,
+    }));
     return {
       exerciseId: templateExercise.exerciseId,
       exerciseName: exercise?.name ?? "Exercise",
+      restSeconds: templateExercise.restSeconds,
       sets,
     };
   });
+}
+
+/** Re-derive 1-based setNumbers after an add/remove. */
+function renumber(sets: ExerciseSet[]): ExerciseSet[] {
+  return sets.map((exerciseSet, index) => ({ ...exerciseSet, setNumber: index + 1 }));
 }
 
 function updateSet(
@@ -87,7 +95,7 @@ export const useSessionStore = create<SessionStoreState>()(
     (set, get) => ({
       session: null,
 
-      startSession: ({ missionId, template, exercises, xpReward }) => {
+      startSession: ({ missionId, title, template, exercises, xpReward }) => {
         const current = get().session;
         // Resume rather than recreate if this mission's session is already active.
         if (current && current.missionId === missionId && current.status === "active") {
@@ -97,12 +105,60 @@ export const useSessionStore = create<SessionStoreState>()(
           session: {
             id: `session-${missionId}-${Date.now()}`,
             missionId,
+            title,
             status: "active",
             startedAt: new Date().toISOString(),
             completedAt: null,
             exercises: buildSessionExercises(template, exercises),
             xpReward,
           },
+        });
+      },
+
+      addSet: (exerciseId) => {
+        set((state) => {
+          if (!state.session) return state;
+          return {
+            session: {
+              ...state.session,
+              exercises: state.session.exercises.map((sessionExercise) => {
+                if (sessionExercise.exerciseId !== exerciseId) return sessionExercise;
+                const lastSet = sessionExercise.sets.at(-1);
+                const nextSet: ExerciseSet = {
+                  // Time-based id: stays unique even after removals.
+                  id: `${exerciseId}-set-${Date.now()}`,
+                  setNumber: sessionExercise.sets.length + 1,
+                  targetReps: lastSet?.targetReps ?? 10,
+                  weight: null,
+                  reps: null,
+                  completed: false,
+                };
+                return { ...sessionExercise, sets: [...sessionExercise.sets, nextSet] };
+              }),
+            },
+          };
+        });
+      },
+
+      removeSet: (exerciseId, setId) => {
+        set((state) => {
+          if (!state.session) return state;
+          return {
+            session: {
+              ...state.session,
+              exercises: state.session.exercises.map((sessionExercise) => {
+                if (sessionExercise.exerciseId !== exerciseId) return sessionExercise;
+                // An exercise always keeps at least one set.
+                if (sessionExercise.sets.length <= 1) return sessionExercise;
+                return {
+                  ...sessionExercise,
+                  sets: renumber(
+                    sessionExercise.sets.filter((exerciseSet) => exerciseSet.id !== setId),
+                  ),
+                };
+              }),
+            },
+          };
         });
       },
 

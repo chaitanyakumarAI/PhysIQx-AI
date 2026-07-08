@@ -150,11 +150,26 @@ A training split the user follows (PPL, Upper/Lower, Bro, Full Body, AI).
 
 ### WorkoutTemplate
 A planned workout blueprint ("Push Day A": chest/shoulders/triceps, 6 lifts).
-- **Fields:** name, target muscle groups, ordered exercise list with target
-  sets/reps/rest, estimated duration, intensity tag (the "High" chip),
-  base XP reward.
+- **Fields:** name, target muscle groups, ordered exercise list with
+  **per-set rep targets** (an ordered set array per exercise — "8, 8, 6, 4"
+  is representable; revised July 2026 from single sets×reps scalars, which
+  user-authored plans made untenable) plus rest seconds, estimated duration,
+  intensity tag (the "High" chip), base XP reward.
 - **Relationships:** belongs to a Program; instantiated by WorkoutSessions;
   surfaced daily as a Mission.
+
+### UserPlan / PlanDay
+User-authored workout plans — pulled forward from "Future" as a July 2026
+product decision (most athletes run their own split; presets are a starting
+point).
+- **Fields:** UserPlan: name, ordered PlanDays. PlanDay: name, ordered
+  template-exercise list (same per-set shape as WorkoutTemplate).
+- **Relationships:** a PlanDay launches WorkoutSessions exactly like a
+  preset template; deliberately NOT a Program (no schedule pattern or AI
+  regeneration semantics — a simpler, user-owned entity).
+- **Lifecycle:** client-persisted (device-local in the mock phase; syncs in
+  Phase 4). Sessions started from a plan day resume from local state — no
+  server resolution exists for user content yet.
 
 ### WorkoutSession
 An actual training occurrence — the live screen and the historical record.

@@ -12,6 +12,7 @@ import { SearchInput } from "@/components/ui/SearchInput";
 import { fadeInUp, staggerChildren } from "@/lib/motion";
 import { FilterChipRow, type FilterChipOption } from "@/components/ui/FilterChipRow";
 import { ExerciseListItem } from "@/features/train/components/ExerciseListItem";
+import { MyPlansSection } from "@/features/train/components/MyPlansSection";
 import { WorkoutHeroCard } from "@/features/train/components/WorkoutHeroCard";
 import {
   muscleFilterOptions,
@@ -85,6 +86,10 @@ export function TrainScreen({
               onSelect={setProgramId}
             />
           </Section>
+        </m.div>
+
+        <m.div variants={fadeInUp}>
+          <MyPlansSection />
         </m.div>
 
         <m.div variants={fadeInUp} className="flex flex-col gap-4">

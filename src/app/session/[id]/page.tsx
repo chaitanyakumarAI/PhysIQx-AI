@@ -17,14 +17,10 @@ export default async function SessionPage({
 }) {
   const { id } = await params;
   const setup = await getSessionSetup(id);
-  if (!setup) notFound();
+  // "plan-*" ids are user-authored plan days: they live in the client's
+  // localStorage (no server-resolvable setup exists) and are launched by
+  // Train's Start button — the screen resumes them from the store.
+  if (!setup && !id.startsWith("plan-")) notFound();
 
-  return (
-    <SessionScreen
-      missionId={id}
-      mission={setup.mission}
-      template={setup.template}
-      exercises={setup.exercises}
-    />
-  );
+  return <SessionScreen missionId={id} setup={setup} />;
 }

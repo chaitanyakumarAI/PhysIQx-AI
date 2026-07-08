@@ -32,6 +32,7 @@ export default function SessionPlaygroundPage() {
       if (!cancelled) {
         startSession({
           missionId: mockTodayMission.id,
+          title: mockTodayMission.title,
           template: mockPushDayATemplate,
           exercises: mockExercises,
           xpReward: mockTodayMission.xpReward,

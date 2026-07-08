@@ -1,4 +1,4 @@
-import { Check } from "lucide-react";
+import { Check, X } from "lucide-react";
 import { iconSize } from "@/constants/icons";
 import { cn } from "@/lib/utils";
 import type { ExerciseSet } from "@/types/workoutSession";
@@ -9,6 +9,8 @@ export interface SetRowProps {
   onChangeWeight: (weight: number | null) => void;
   onChangeReps: (reps: number | null) => void;
   onToggleCompleted: () => void;
+  /** Present only where removal is allowed (last, uncompleted set). */
+  onRemove?: () => void;
 }
 
 function parseNumberInput(raw: string): number | null {
@@ -29,6 +31,7 @@ export function SetRow({
   onChangeWeight,
   onChangeReps,
   onToggleCompleted,
+  onRemove,
 }: SetRowProps) {
   return (
     <div
@@ -89,6 +92,17 @@ export function SetRow({
       >
         <Check size={iconSize.sm} aria-hidden />
       </button>
+
+      {onRemove && (
+        <button
+          type="button"
+          aria-label={`Remove set ${set.setNumber}`}
+          onClick={onRemove}
+          className="grid size-11 shrink-0 place-items-center rounded-full text-foreground-secondary transition-colors hover:bg-surface-elevated hover:text-danger focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/60"
+        >
+          <X size={iconSize.sm} aria-hidden />
+        </button>
+      )}
     </div>
   );
 }

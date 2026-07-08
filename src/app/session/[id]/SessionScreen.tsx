@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { X } from "lucide-react";
+import { ClipboardX, X } from "lucide-react";
+import { EmptyState } from "@/components/feedback/EmptyState";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { Button } from "@/components/ui/Button";
 import { IconButton } from "@/components/ui/IconButton";
@@ -13,16 +14,18 @@ import { SessionSummaryCard } from "@/features/session/components/SessionSummary
 import { SessionTimer } from "@/features/session/components/SessionTimer";
 import { useElapsedSeconds } from "@/features/session/hooks/useElapsedSeconds";
 import { computeSessionProgress, computeSessionVolume } from "@/features/session/lib/derive";
+import type { SessionSetup } from "@/features/session/api/getSessionSetup";
 import { useSessionStore } from "@/store/sessionStore";
-import type { Exercise } from "@/types/exercise";
-import type { Mission } from "@/types/training";
-import type { WorkoutTemplate } from "@/types/workoutTemplate";
 
 export interface SessionScreenProps {
   missionId: string;
-  mission: Mission;
-  template: WorkoutTemplate;
-  exercises: Exercise[];
+  /**
+   * null for user-plan sessions ("plan-*" ids): those are launched
+   * client-side by Train's Start button (user plans live in localStorage,
+   * which the server can't resolve), so this screen only ever *resumes*
+   * them from the persisted store.
+   */
+  setup: SessionSetup | null;
 }
 
 /**
@@ -31,36 +34,71 @@ export interface SessionScreenProps {
  * "pause and keep" wording, the leave-guard means preserving state (already
  * handled by the persisted store), not blocking navigation with a prompt.
  */
-export function SessionScreen({ missionId, mission, template, exercises }: SessionScreenProps) {
+export function SessionScreen({ missionId, setup }: SessionScreenProps) {
   const router = useRouter();
-  const { session, startSession, logSet, toggleSetCompleted, finishSession, clearSession } =
-    useSessionStore();
+  const [hydrated, setHydrated] = useState(false);
+  const {
+    session,
+    startSession,
+    logSet,
+    toggleSetCompleted,
+    addSet,
+    removeSet,
+    finishSession,
+    clearSession,
+  } = useSessionStore();
 
   useEffect(() => {
     // Explicitly rehydrate before deciding whether to resume or start fresh
     // — the store uses skipHydration (see sessionStore.ts), and React fires
     // effects bottom-up on mount, so the root-level StoreHydrator's
     // rehydration would otherwise race with (and could clobber) this call.
-    // Doing it locally makes this effect correct regardless of that timing.
     // rehydrate() types as `Promise<void> | void` (localStorage reads are
     // synchronous) — Promise.resolve() normalizes both so .then() always runs.
     let cancelled = false;
     void Promise.resolve(useSessionStore.persist.rehydrate()).then(() => {
-      if (!cancelled) {
-        startSession({ missionId, template, exercises, xpReward: mission.xpReward });
+      if (cancelled) return;
+      if (setup) {
+        startSession({
+          missionId,
+          title: setup.mission.title,
+          template: setup.template,
+          exercises: setup.exercises,
+          xpReward: setup.mission.xpReward,
+        });
       }
+      setHydrated(true);
     });
     return () => {
       cancelled = true;
     };
-  }, [missionId, template, exercises, mission.xpReward, startSession]);
+  }, [missionId, setup, startSession]);
 
   const elapsedSeconds = useElapsedSeconds(
     session?.startedAt ?? null,
     session?.status === "active",
   );
 
-  if (!session) return null;
+  // Plan sessions can only resume what the Start button already created —
+  // a stale/shared URL with nothing in the store gets an honest state.
+  const sessionMatches = session?.missionId === missionId;
+  if (!session || !sessionMatches) {
+    if (!hydrated || setup) return null;
+    return (
+      <PageContainer withBottomNav={false}>
+        <div className="flex flex-1 flex-col justify-center">
+          <EmptyState
+            icon={ClipboardX}
+            title="No active session"
+            description="This workout isn't running — start it from your plan on Train."
+            action={
+              <Button onClick={() => router.push("/train")}>Go to Train</Button>
+            }
+          />
+        </div>
+      </PageContainer>
+    );
+  }
 
   function handleDone() {
     clearSession();
@@ -103,7 +141,7 @@ export function SessionScreen({ missionId, mission, template, exercises }: Sessi
         <IconButton label="Leave session" variant="ghost" onClick={() => router.push("/home")}>
           <X size={iconSize.sm} aria-hidden />
         </IconButton>
-        <p className="text-sm font-semibold text-foreground-secondary">{mission.title}</p>
+        <p className="text-sm font-semibold text-foreground-secondary">{session.title}</p>
         <span aria-hidden className="size-11" />
       </div>
 
@@ -118,19 +156,18 @@ export function SessionScreen({ missionId, mission, template, exercises }: Sessi
       </div>
 
       <div className="flex flex-col gap-4">
-        {session.exercises.map((exercise, index) => {
-          const templateExercise = template.exercises[index];
-          return (
-            <ExerciseSessionCard
-              key={exercise.exerciseId}
-              exercise={exercise}
-              restSeconds={templateExercise?.restSeconds ?? 60}
-              unit="kg"
-              onLogSet={(setId, patch) => logSet(exercise.exerciseId, setId, patch)}
-              onToggleSetCompleted={(setId) => toggleSetCompleted(exercise.exerciseId, setId)}
-            />
-          );
-        })}
+        {session.exercises.map((exercise) => (
+          <ExerciseSessionCard
+            key={exercise.exerciseId}
+            exercise={exercise}
+            restSeconds={exercise.restSeconds}
+            unit="kg"
+            onLogSet={(setId, patch) => logSet(exercise.exerciseId, setId, patch)}
+            onToggleSetCompleted={(setId) => toggleSetCompleted(exercise.exerciseId, setId)}
+            onAddSet={() => addSet(exercise.exerciseId)}
+            onRemoveSet={(setId) => removeSet(exercise.exerciseId, setId)}
+          />
+        ))}
       </div>
 
       <Button size="lg" fullWidth onClick={finishSession}>
