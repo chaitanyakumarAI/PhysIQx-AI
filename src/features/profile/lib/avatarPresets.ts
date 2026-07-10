@@ -1,8 +1,9 @@
 /**
- * The built-in avatars: 15 fitness personas (user-generated art, cropped
- * from avatars/Gemini_Generated_Image_*.png into public/avatars/). They
- * replaced the original CSS-gradient placeholders the moment real art
- * existed. Ids are stable — persisted picks survive art swaps.
+ * The built-in avatars: 16 fitness personas (user-generated art, cropped
+ * from avatars/Gemini_Generated_Image_*.png into public/avatars/). 14 slots
+ * were upgraded to dedicated high-res portraits (July 8); Creative Artist
+ * and Outdoor Adventurer still use contact-sheet crops. Ids are stable —
+ * persisted picks survive art swaps.
  */
 export interface AvatarPreset {
   id: string;
@@ -27,6 +28,7 @@ export const AVATAR_PRESETS: AvatarPreset[] = [
   { id: "creative-artist", label: "Creative Artist", src: "/avatars/preset-13.png" },
   { id: "minimalist-athlete", label: "Minimalist Athlete", src: "/avatars/preset-14.png" },
   { id: "outdoor-adventurer", label: "Outdoor Adventurer", src: "/avatars/preset-15.png" },
+  { id: "city-athlete", label: "City Athlete", src: "/avatars/preset-16.png" },
 ];
 
 export function findAvatarPreset(id: string | null): AvatarPreset | undefined {
