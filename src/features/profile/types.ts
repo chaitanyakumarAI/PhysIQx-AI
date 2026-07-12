@@ -22,7 +22,14 @@ export interface ProfileStats {
   totalXP: number;
 }
 
-export type SettingsIconId = "bell" | "moon" | "shield" | "download" | "user" | "play";
+export type SettingsIconId =
+  | "bell"
+  | "moon"
+  | "shield"
+  | "download"
+  | "user"
+  | "play"
+  | "ruler";
 
 export interface SettingsItem {
   id: string;

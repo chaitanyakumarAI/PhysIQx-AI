@@ -32,7 +32,11 @@ const rarityLabel: Record<AchievementRarity, string> = {
   legendary: "Legendary",
 };
 
-/** One collection grid tile. Locked/in-progress shows a lock + progress bar; unlocked shows the real icon. */
+/**
+ * One collection grid tile. Unlocked shows the real icon in its rarity
+ * color; locked renders as a muted gray "not yet revealed" tile — dimmed,
+ * colorless (rarity withheld), just a lock, the name, and progress.
+ */
 export function AchievementBadge({ achievement, className }: AchievementBadgeProps) {
   const unlocked = achievement.state === "unlocked";
   const Icon = achievementIcon[achievement.iconId];
@@ -42,7 +46,9 @@ export function AchievementBadge({ achievement, className }: AchievementBadgePro
     <div
       className={cn(
         "flex flex-col items-center gap-2 rounded-card border p-3 text-center",
-        unlocked ? "border-brand/20 bg-brand/10" : "border-border/60 bg-surface",
+        unlocked
+          ? "border-brand/20 bg-brand/10"
+          : "border-border/40 bg-surface opacity-55 saturate-0",
         className,
       )}
     >
@@ -60,16 +66,28 @@ export function AchievementBadge({ achievement, className }: AchievementBadgePro
         )}
       </span>
       <div>
-        <p className="text-sm font-semibold">{achievement.name}</p>
-        <p className={cn("text-xs font-semibold uppercase tracking-[0.08em]", tone.text)}>
-          {rarityLabel[achievement.rarity]}
+        <p
+          className={cn(
+            "text-sm font-semibold",
+            !unlocked && "text-foreground-secondary",
+          )}
+        >
+          {achievement.name}
+        </p>
+        <p
+          className={cn(
+            "text-xs font-semibold uppercase tracking-[0.08em]",
+            unlocked ? tone.text : "text-foreground-secondary",
+          )}
+        >
+          {unlocked ? rarityLabel[achievement.rarity] : "Locked"}
         </p>
       </div>
       {!unlocked && (
         <ProgressBar
           value={achievement.progress * 100}
           size="sm"
-          tone={tone.bar}
+          tone="neutral"
           aria-label={`${achievement.name} progress ${Math.round(achievement.progress * 100)}%`}
         />
       )}

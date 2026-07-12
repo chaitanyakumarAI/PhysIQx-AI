@@ -6,6 +6,7 @@ import {
   Download,
   Moon,
   Play,
+  Ruler,
   Shield,
   type LucideIcon,
 } from "lucide-react";
@@ -25,6 +26,7 @@ const settingsIcon: Record<SettingsIconId, LucideIcon> = {
   download: Download,
   user: CircleUserRound,
   play: Play,
+  ruler: Ruler,
 };
 
 /**

@@ -5,7 +5,7 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { Section } from "@/components/layout/Section";
 import { ScreenHeader } from "@/components/navigation/ScreenHeader";
 import { fadeInUp, staggerChildren } from "@/lib/motion";
-import { AchievementBadge } from "@/features/profile/components/AchievementBadge";
+import { CollectionShowcase } from "@/features/profile/components/CollectionShowcase";
 import { DNABanner } from "@/features/profile/components/DNABanner";
 import { ProfileHeaderCard } from "@/features/profile/components/ProfileHeaderCard";
 import { SettingsRow } from "@/features/profile/components/SettingsRow";
@@ -13,7 +13,6 @@ import { StatChipRow } from "@/features/shared/components/StatChipRow";
 import {
   buildIdentityStats,
   buildProgressStats,
-  countUnlockedAchievements,
 } from "@/features/profile/lib/derive";
 import type { ProfileData } from "@/features/profile/types";
 
@@ -34,8 +33,6 @@ export function ProfileScreen({
   achievements,
   settings,
 }: ProfileScreenProps) {
-  const unlockedCount = countUnlockedAchievements(achievements);
-
   return (
     <PageContainer>
       {/* display:contents keeps PageContainer's flex/gap acting directly on
@@ -63,22 +60,7 @@ export function ProfileScreen({
         </m.div>
 
         <m.div variants={fadeInUp}>
-          <Section
-            title="Collection"
-            action={
-              <span className="text-sm text-foreground-secondary">
-                {unlockedCount} / {achievements.length}
-              </span>
-            }
-          >
-            <ul aria-label="Achievement collection" className="grid grid-cols-3 gap-3">
-              {achievements.map((achievement) => (
-                <li key={achievement.id}>
-                  <AchievementBadge achievement={achievement} />
-                </li>
-              ))}
-            </ul>
-          </Section>
+          <CollectionShowcase achievements={achievements} />
         </m.div>
 
         <m.div variants={fadeInUp}>
