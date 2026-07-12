@@ -11,7 +11,7 @@ export function WaterGoalStep({ value, onChange }: WaterGoalStepProps) {
       <div>
         <h2 className="font-display text-2xl font-bold">Daily water goal</h2>
         <p className="mt-1 text-sm text-foreground-secondary">
-          Hydration feeds your Nutrition pillar.
+          Hydration protects strength and recovery — we&apos;ll track it daily.
         </p>
       </div>
       <GoalStepper

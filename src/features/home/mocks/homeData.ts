@@ -74,12 +74,14 @@ const fuel: FuelProgress[] = [
   },
 ];
 
+// Coach insights only speak from tracked inputs (sessions, cardio logs,
+// weigh-ins) — hydration is a self-serve habit with no coach commentary.
 const insight: Insight = {
-  id: "insight-hydration-gap",
-  category: "nutrition",
+  id: "insight-cardio-gap",
+  category: "training",
   severity: "suggest",
-  headline: "Hydration dropped this week.",
-  body: "500ml before your session protects strength output — your bench trends confirm it.",
+  headline: "Cardio is your weakest pillar.",
+  body: "One 20-min zone-2 session today starts closing the gap — easy pace counts.",
   state: "fresh",
   actionLabel: "Ask AI Coach",
   actionHref: "/insights",
@@ -98,7 +100,7 @@ const priorities: DailyPriority[] = [
   {
     id: "priority-hydration",
     label: `Drink ${hydrationRemaining.toFixed(1)}L more`,
-    detail: "Hydration is your weakest pillar — this closes today's gap",
+    detail: "Hydration protects strength output — this closes today's gap",
     iconId: "droplets",
     completed: hydrationRemaining <= 0,
     href: "/home?log=water",
@@ -114,10 +116,10 @@ const priorities: DailyPriority[] = [
   {
     id: "priority-weigh-in",
     label: "Weekly weigh-in",
-    detail: "Keeps your BMI and Body Shape pillars current",
+    detail: "Keeps your Body Shape pillar current",
     iconId: "scale",
     completed: false,
-    href: "/profile",
+    href: "/profile/body",
   },
 ];
 

@@ -119,11 +119,11 @@ const insights: Insight[] = [
     state: "fresh",
   },
   {
-    id: "insight-hydration-gap",
-    category: "nutrition",
+    id: "insight-cardio-gap",
+    category: "training",
     severity: "suggest",
-    headline: "Hydration gap",
-    body: "Averaging 1.2L short of your daily goal. 500ml before training closes most of it.",
+    headline: "Cardio gap",
+    body: "Cardio is your weakest pillar at 75%. Two zone-2 sessions this week would move it most.",
     state: "fresh",
   },
 ];

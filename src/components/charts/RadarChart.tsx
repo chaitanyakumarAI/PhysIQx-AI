@@ -39,7 +39,7 @@ function toPolygonAttr(vertices: { x: number; y: number }[]): string {
 }
 
 /**
- * Generic N-axis radar/polygon chart (used with 6 axes for Body Balance).
+ * Generic N-axis radar/polygon chart (used with 4 axes for Body Balance).
  * A hidden text list carries the actual axis:value data for screen readers —
  * the SVG geometry itself conveys nothing a non-visual user could act on.
  */
@@ -58,12 +58,15 @@ export function RadarChart({ points, size = 220, className }: RadarChartProps) {
 
   return (
     <div className={cn("relative", className)}>
+      {/* overflow-visible: axis labels sit outside the drawing box and would
+          otherwise clip mid-word ("Body Shape" → "Shape"); the parent card's
+          padding provides the room. */}
       <svg
         width={size}
         height={size}
         role="img"
         aria-labelledby={titleId}
-        className="mx-auto"
+        className="mx-auto overflow-visible"
       >
         <title id={titleId}>{`Body balance across ${count} dimensions`}</title>
 

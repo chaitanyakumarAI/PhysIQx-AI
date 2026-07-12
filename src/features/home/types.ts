@@ -29,7 +29,7 @@ export interface QuickAction {
 export interface DailyPriority {
   id: string;
   label: string;
-  /** The payoff — why this action matters today ("moves Hydration past 70"). */
+  /** The payoff — why this action matters today ("lifts Cardio, your weakest pillar"). */
   detail: string;
   iconId: "dumbbell" | "droplets" | "heart-pulse" | "scale";
   completed: boolean;

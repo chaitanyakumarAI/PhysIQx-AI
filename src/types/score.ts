@@ -5,32 +5,21 @@
  * authored as already-computed — in the real system they're produced by
  * `lib/score`, never derived in the UI layer.
  *
- * Pillar set v2 (revised from the original Training/Nutrition/Recovery/
- * Consistency): Nutrition and Recovery were weak signals without daily food
- * logging or wearables, and Training/Consistency measured almost the same
- * thing. Replaced with six pillars chosen for what's actually trackable
- * without either burden, weighted by health impact (see `pillarWeights` in
- * `@/lib/score`) rather than treated as equal. This is also the single
- * pillar set the Body Balance radar renders (see BodyBalanceCard) — there is
- * no longer a separate, differently-shaped axis list to reconcile.
+ * Pillar set v3: four pillars, weighted by health impact (see
+ * `pillarWeights` in `@/lib/score`) rather than treated as equal. v2's BMI
+ * and Hydration pillars were removed — BMI double-counted body composition
+ * with Body Shape (and punishes muscular users), and hydration is a daily
+ * habit (still tracked on Home), not a fitness outcome. This is also the
+ * single pillar set the Body Balance radar renders (see BodyBalanceCard) —
+ * there is no separate, differently-shaped axis list to reconcile.
  */
-export type PillarId =
-  | "consistency"
-  | "strength"
-  | "cardio"
-  | "bmi"
-  | "bodyShape"
-  | "water";
+export type PillarId = "consistency" | "strength" | "cardio" | "bodyShape";
 
 export const pillarLabels: Record<PillarId, string> = {
   consistency: "Consistency",
   strength: "Strength",
   cardio: "Cardio",
-  bmi: "BMI",
   bodyShape: "Body Shape",
-  // Label says "Hydration" (the behavior), id stays "water" — renaming the
-  // id would ripple through weights/meta/fixtures for zero user value.
-  water: "Hydration",
 };
 
 export interface PillarScore {

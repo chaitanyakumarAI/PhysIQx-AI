@@ -14,18 +14,17 @@ export function findWeakestPillar(pillars: PillarScore[]): PillarId {
 }
 
 /**
- * Relative health-impact weight per pillar (sums to 1). Consistency and the
- * two performance pillars (Strength, Cardio) carry the most weight —
- * evidence-backed, durable signals. Water carries the least: real, but the
- * lowest-effort metric to hit, so it shouldn't dominate the composite.
+ * Relative health-impact weight per pillar (sums to 1). Consistency leads —
+ * nothing else improves without it. Cardio and Strength follow, matching the
+ * mortality evidence (cardiorespiratory fitness and muscular strength are
+ * the two strongest modifiable predictors). Body Shape rounds it out as the
+ * body-composition signal.
  */
 export const pillarWeights: Record<PillarId, number> = {
-  consistency: 0.25,
-  strength: 0.2,
-  cardio: 0.2,
-  bmi: 0.15,
-  bodyShape: 0.12,
-  water: 0.08,
+  consistency: 0.3,
+  strength: 0.25,
+  cardio: 0.25,
+  bodyShape: 0.2,
 };
 
 /**

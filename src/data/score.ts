@@ -14,9 +14,7 @@ const pillars: PillarScore[] = [
   { id: "consistency", label: pillarLabels.consistency, value: 90 },
   { id: "strength", label: pillarLabels.strength, value: 88 },
   { id: "cardio", label: pillarLabels.cardio, value: 75 },
-  { id: "bmi", label: pillarLabels.bmi, value: 82 },
   { id: "bodyShape", label: pillarLabels.bodyShape, value: 79 },
-  { id: "water", label: pillarLabels.water, value: 58 },
 ];
 
 const score = computeWeightedScore(pillars);
@@ -40,8 +38,9 @@ export const mockPhysIQScore: PhysIQScoreSnapshot = {
   weakestPillarId: findWeakestPillar(pillars),
   // Specific, quantified, evidence-based (user-provided copy direction):
   // the 14% figure matches the "Volume up 14%" insight on Insights — one
-  // fact, two surfaces, zero contradictions. Ends with today's action.
-  headline: "Pressing volume up 14% in two weeks — maintain hydration today to support recovery.",
+  // fact, two surfaces, zero contradictions. Ends with today's action,
+  // aimed at the weakest pillar (Cardio at these fixture values).
+  headline: "Pressing volume up 14% in two weeks — a 20-min zone-2 walk today lifts Cardio, your weakest pillar.",
   state: "active",
   scoreVersion: "v2",
 };

@@ -43,7 +43,7 @@ accurate it is.
 - Always shown with **context**: current value, weekly delta, and a one-line
   explanation. A bare number is never rendered.
 - Score changes animate; changes are celebrated when positive and framed as
-  guidance when negative ("Hydration is your weakest link this week"), never
+  guidance when negative ("Cardio is your weakest link this week"), never
   as failure.
 - The user should be able to predict the score's behavior after one week of
   use. Predictability is a feature.
@@ -59,7 +59,7 @@ accurate it is.
 | `score` | Integer 0–100. The composite. |
 | `delta` | Signed change vs. 7 days ago (the "+4 this week" chip). |
 | `trend` | Daily score series, queryable at 7D / 30D / 90D / 1Y ranges. |
-| `pillars` | Six pillar sub-scores, each 0–100 (see below). |
+| `pillars` | Four pillar sub-scores, each 0–100 (see below). |
 | `weakestPillar` | The pillar currently holding the score back. |
 | `headline` | One human-readable sentence explaining the current state. |
 | `state` | `calibrating` \| `active` \| `stale` (see lifecycle). |
@@ -67,33 +67,30 @@ accurate it is.
 
 ### Pillars
 
-Six pillars, matching the Home screen exactly. Revised from the original
-Training/Nutrition/Recovery/Consistency set: Nutrition required daily food
-logging most users won't sustain, Recovery had no real signal without
-wearables, and Training/Consistency measured almost the same thing. This set
-was chosen for what's actually trackable without either burden, and is
-**weighted by health impact rather than treated as equal**:
+Four pillars (v3), matching the Home screen exactly. v2's BMI and Hydration
+pillars were removed: BMI double-counted body composition with Body Shape
+while punishing muscular users, and hydration is a daily habit — still
+tracked on Home with its own goal — not a fitness outcome. The set is
+**weighted by health impact rather than treated as equal**, following the
+mortality evidence (cardiorespiratory fitness and muscular strength are the
+two strongest modifiable predictors):
 
 | Pillar | Weight | What it measures | Primary inputs |
 |---|---|---|---|
-| **Consistency** | 25% | Showing up over time | Streaks, weekly plan adherence, return-after-break behavior |
-| **Strength** | 20% | Getting stronger over time | Workout session PRs, volume progression, load trends |
-| **Cardio** | 20% | Cardiovascular effort and capacity | Cardio session logs; later: heart-rate zones, VO2 max from wearables |
-| **BMI** | 15% | Coarse body-composition signal | Height (one-time) + periodic weight entry — no daily logging required |
-| **Body Shape** | 12% | Physique/composition trend | Body measurement entries; later: progress-photo comparison |
-| **Hydration** | 8% | Hydration adequacy | Hydration logs vs. goal |
+| **Consistency** | 30% | Showing up over time | Streaks, weekly plan adherence, return-after-break behavior |
+| **Strength** | 25% | Getting stronger over time | Workout session PRs, volume progression, load trends |
+| **Cardio** | 25% | Cardiovascular effort and capacity | Cardio session logs; later: heart-rate zones, VO2 max from wearables |
+| **Body Shape** | 20% | Physique level vs. difficulty | User-selected body type (visual picker), confirmed on height/weight updates |
 
 Weights sum to 1 and live in `lib/score` (`pillarWeights`), stamped by
-`scoreVersion` — this document fixes the *relative* ordering (Consistency and
-the two performance pillars matter most; Hydration matters least, since it's the
-lowest-effort signal to hit) but not the exact decimals, which `lib/score` may
-tune. What *is* fixed: every pillar always contributes, and no single day's
-data can move the composite by more than a few points.
+`scoreVersion` — this document fixes the *relative* ordering (Consistency
+leads; the two performance pillars follow) but not the exact decimals, which
+`lib/score` may tune. What *is* fixed: every pillar always contributes, and
+no single day's data can move the composite by more than a few points.
 
-The "Body Balance" radar on Insights renders these same six pillars directly
+The "Body Balance" radar on Insights renders these same four pillars directly
 — it is a visualization of the score's own data, not a second, differently-
-shaped scoring system. (This resolves the previous 4-pillar/6-axis mismatch:
-there is now only one pillar set, used everywhere.)
+shaped scoring system. (There is only one pillar set, used everywhere.)
 
 ### Inputs and data sources
 
@@ -101,9 +98,7 @@ there is now only one pillar set, used everywhere.)
 |---|---|---|
 | Workout sessions (completed, PRs, volume) | Strength, Consistency | 4–5 |
 | Cardio session logs | Cardio | 4–5 |
-| Height + weight entries | BMI | 4–5 |
-| Body measurement entries | Body Shape | 4–5 |
-| Hydration logs | Hydration | 4–5 |
+| Body-type selection + height/weight entries | Body Shape | 4–5 |
 | DayStatus series (derived: Program schedule vs. sessions — see DATA_MODELS.md) | Consistency | 4–5 |
 | Wearables: HR zones, VO2 max | Cardio | Future |
 | ML predictions | Trend forecasting only | Phase 7 |
@@ -147,11 +142,11 @@ designed deliberately, not improvised:
 The score must distinguish **absence of behavior** from **absence of tracking**:
 
 - A pillar with no recent logs enters `low-signal`: its last known value decays
-  gently toward neutral (not toward zero) and the UI labels it ("No hydration
+  gently toward neutral (not toward zero) and the UI labels it ("No cardio
   logs this week") rather than scoring it down hard.
 - If the user has disabled a tracking feature entirely, the pillar is
-  reweighted out of the composite rather than penalized. Users who don't track
-  water are not "failing hydration."
+  reweighted out of the composite rather than penalized. Users who don't log
+  cardio sessions are not "failing cardio."
 - After 14+ days of total inactivity the score enters `stale`: **snapshot
   production pauses** (no fabricated decay data), the last finalized value is
   shown dimmed with a re-engagement prompt, and the trend chart renders the

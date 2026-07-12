@@ -16,7 +16,7 @@ Check here before adding an Insights component.
 |---|---|
 | `ScoreTrendCard` | Score numeral + delta + headline + range selector + trend chart. Deliberately separate from Home's `PhysIQScoreCard` (radial gauge) — same score data, different anatomy per surface. |
 | `RangeSelector` | Vertical 7D/30D/90D/1Y picker. Not built on `Chip` — plain-text unselected state is a distinct pattern from Train's horizontal chip rows. |
-| `BodyBalanceCard` | Six-pillar radar + weakest-pillar caption + `PillarGrid` beneath for precise numbers. Takes `pillars`/`weakestPillarId` straight from `PhysIQScoreSnapshot` — no separate Body Balance data of its own (see below). |
+| `BodyBalanceCard` | Four-pillar radar + weakest-pillar caption + `PillarGrid` beneath for precise numbers. Takes `pillars`/`weakestPillarId` straight from `PhysIQScoreSnapshot` — no separate Body Balance data of its own (see below). |
 | `PersonalRecordCard` | One exercise's PR: value, delta, trend chart. |
 | `StreakHeatmapCard` | 12-week training heatmap + legend. |
 
@@ -26,10 +26,11 @@ as-is for "What the data says" — no new component needed for that.
 ## Pillar model revision (resolved the old open question)
 
 The Body Balance radar used to be a separately-authored six-axis fixture
-that didn't map cleanly onto the four score pillars of the time (two axes,
+that didn't map cleanly onto the score pillars of the time (two axes,
 Strength and Cardio, weren't tracked anywhere else). The pillar model was
-revised (see docs/PHYSIQ_SCORE.md) to six pillars used identically
-everywhere — Consistency, Strength, Cardio, BMI, Body Shape, Water. The
+revised (see docs/PHYSIQ_SCORE.md) to one pillar set used identically
+everywhere — now Consistency, Strength, Cardio, Body Shape (v3: BMI and
+Hydration were dropped from the score; hydration stays as a Home habit). The
 radar now renders `score.pillars` directly; there is no second dataset to
 keep in sync, and `findWeakestAxis` (the old per-feature helper) was removed
 in favor of `@/lib/score`'s `findWeakestPillar`, already computed once on the
