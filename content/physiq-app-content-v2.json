@@ -1,0 +1,581 @@
+{
+  "_meta": {
+    "version": "2.0",
+    "notes": "Exercise list compiled from widely-referenced strength training sources (Hevy, Fitbod, StrengthLog, BuiltWithScience, FitnessVolt exercise libraries) cross-checked for the most commonly programmed compound/isolation/bodyweight movements per muscle group. Coaching messages are rule-based (condition -> message), not randomly selected, so they should only fire when the underlying metric condition is true. Nutrition is NOT tracked in this app per product decision, so nutrition content is served opportunistically (see nutritionTips.deliveryRule), never as a data-driven trigger."
+  },
+
+  "exerciseLibrary": {
+    "difficultyLegend": { "B": "Beginner", "I": "Intermediate", "A": "Advanced" },
+    "typeLegend": { "C": "Compound", "ISO": "Isolation", "BW": "Bodyweight/Functional" },
+
+    "chest": [
+      { "name": "Barbell Bench Press", "equipment": "Barbell", "difficulty": "I", "type": "C" },
+      { "name": "Incline Barbell Bench Press", "equipment": "Barbell", "difficulty": "I", "type": "C" },
+      { "name": "Decline Barbell Bench Press", "equipment": "Barbell", "difficulty": "I", "type": "C" },
+      { "name": "Dumbbell Bench Press", "equipment": "Dumbbell", "difficulty": "B", "type": "C" },
+      { "name": "Incline Dumbbell Press", "equipment": "Dumbbell", "difficulty": "B", "type": "C" },
+      { "name": "Decline Dumbbell Press", "equipment": "Dumbbell", "difficulty": "I", "type": "C" },
+      { "name": "Dumbbell Fly", "equipment": "Dumbbell", "difficulty": "B", "type": "ISO" },
+      { "name": "Incline Dumbbell Fly", "equipment": "Dumbbell", "difficulty": "I", "type": "ISO" },
+      { "name": "Cable Fly (Mid)", "equipment": "Cable", "difficulty": "B", "type": "ISO" },
+      { "name": "Low-to-High Cable Fly", "equipment": "Cable", "difficulty": "I", "type": "ISO" },
+      { "name": "High-to-Low Cable Fly", "equipment": "Cable", "difficulty": "I", "type": "ISO" },
+      { "name": "Pec Deck Machine", "equipment": "Machine", "difficulty": "B", "type": "ISO" },
+      { "name": "Machine Chest Press", "equipment": "Machine", "difficulty": "B", "type": "C" },
+      { "name": "Push-Up", "equipment": "Bodyweight", "difficulty": "B", "type": "BW" },
+      { "name": "Incline Push-Up", "equipment": "Bodyweight", "difficulty": "B", "type": "BW" },
+      { "name": "Decline Push-Up", "equipment": "Bodyweight", "difficulty": "I", "type": "BW" },
+      { "name": "Chest Dip", "equipment": "Bodyweight", "difficulty": "A", "type": "C" },
+      { "name": "Svend Press", "equipment": "Plate", "difficulty": "B", "type": "ISO" },
+      { "name": "Landmine Press", "equipment": "Barbell", "difficulty": "I", "type": "C" },
+      { "name": "Dumbbell Pullover", "equipment": "Dumbbell", "difficulty": "I", "type": "ISO" },
+      { "name": "Smith Machine Bench Press", "equipment": "Machine", "difficulty": "B", "type": "C" }
+    ],
+
+    "back": [
+      { "name": "Conventional Deadlift", "equipment": "Barbell", "difficulty": "A", "type": "C" },
+      { "name": "Sumo Deadlift", "equipment": "Barbell", "difficulty": "A", "type": "C" },
+      { "name": "Bent-Over Barbell Row", "equipment": "Barbell", "difficulty": "I", "type": "C" },
+      { "name": "Pendlay Row", "equipment": "Barbell", "difficulty": "I", "type": "C" },
+      { "name": "T-Bar Row", "equipment": "Barbell", "difficulty": "I", "type": "C" },
+      { "name": "Seated Cable Row", "equipment": "Cable", "difficulty": "B", "type": "C" },
+      { "name": "Single-Arm Dumbbell Row", "equipment": "Dumbbell", "difficulty": "B", "type": "C" },
+      { "name": "Chest-Supported Row", "equipment": "Machine", "difficulty": "B", "type": "C" },
+      { "name": "Lat Pulldown (Wide Grip)", "equipment": "Cable", "difficulty": "B", "type": "C" },
+      { "name": "Lat Pulldown (Close Grip)", "equipment": "Cable", "difficulty": "B", "type": "C" },
+      { "name": "Pull-Up", "equipment": "Bodyweight", "difficulty": "I", "type": "C" },
+      { "name": "Chin-Up", "equipment": "Bodyweight", "difficulty": "I", "type": "C" },
+      { "name": "Neutral-Grip Pull-Up", "equipment": "Bodyweight", "difficulty": "I", "type": "C" },
+      { "name": "Assisted Pull-Up", "equipment": "Machine", "difficulty": "B", "type": "C" },
+      { "name": "Straight-Arm Pulldown", "equipment": "Cable", "difficulty": "B", "type": "ISO" },
+      { "name": "Face Pull", "equipment": "Cable", "difficulty": "B", "type": "ISO" },
+      { "name": "Rack Pull", "equipment": "Barbell", "difficulty": "A", "type": "C" },
+      { "name": "Inverted Row", "equipment": "Bodyweight", "difficulty": "B", "type": "C" },
+      { "name": "Meadows Row", "equipment": "Barbell", "difficulty": "I", "type": "C" },
+      { "name": "Wide-Grip Cable Row", "equipment": "Cable", "difficulty": "B", "type": "C" },
+      { "name": "Good Morning", "equipment": "Barbell", "difficulty": "A", "type": "C" },
+      { "name": "Back Extension", "equipment": "Bodyweight", "difficulty": "B", "type": "ISO" }
+    ],
+
+    "shoulders": [
+      { "name": "Barbell Overhead Press", "equipment": "Barbell", "difficulty": "I", "type": "C" },
+      { "name": "Seated Dumbbell Shoulder Press", "equipment": "Dumbbell", "difficulty": "B", "type": "C" },
+      { "name": "Arnold Press", "equipment": "Dumbbell", "difficulty": "I", "type": "C" },
+      { "name": "Push Press", "equipment": "Barbell", "difficulty": "A", "type": "C" },
+      { "name": "Lateral Raise", "equipment": "Dumbbell", "difficulty": "B", "type": "ISO" },
+      { "name": "Cable Lateral Raise", "equipment": "Cable", "difficulty": "B", "type": "ISO" },
+      { "name": "Front Raise", "equipment": "Dumbbell", "difficulty": "B", "type": "ISO" },
+      { "name": "Rear Delt Fly (Dumbbell)", "equipment": "Dumbbell", "difficulty": "B", "type": "ISO" },
+      { "name": "Rear Delt Fly (Cable)", "equipment": "Cable", "difficulty": "B", "type": "ISO" },
+      { "name": "Reverse Pec Deck", "equipment": "Machine", "difficulty": "B", "type": "ISO" },
+      { "name": "Upright Row", "equipment": "Barbell", "difficulty": "I", "type": "C" },
+      { "name": "Barbell Shrug", "equipment": "Barbell", "difficulty": "B", "type": "ISO" },
+      { "name": "Dumbbell Shrug", "equipment": "Dumbbell", "difficulty": "B", "type": "ISO" },
+      { "name": "Landmine Lateral Raise", "equipment": "Barbell", "difficulty": "I", "type": "ISO" },
+      { "name": "Machine Shoulder Press", "equipment": "Machine", "difficulty": "B", "type": "C" },
+      { "name": "Plate Front Raise", "equipment": "Plate", "difficulty": "B", "type": "ISO" },
+      { "name": "Bradford Press", "equipment": "Barbell", "difficulty": "A", "type": "C" },
+      { "name": "Cuban Press", "equipment": "Dumbbell", "difficulty": "I", "type": "ISO" }
+    ],
+
+    "biceps": [
+      { "name": "Barbell Curl", "equipment": "Barbell", "difficulty": "B", "type": "ISO" },
+      { "name": "EZ-Bar Curl", "equipment": "Barbell", "difficulty": "B", "type": "ISO" },
+      { "name": "Dumbbell Curl", "equipment": "Dumbbell", "difficulty": "B", "type": "ISO" },
+      { "name": "Hammer Curl", "equipment": "Dumbbell", "difficulty": "B", "type": "ISO" },
+      { "name": "Incline Dumbbell Curl", "equipment": "Dumbbell", "difficulty": "I", "type": "ISO" },
+      { "name": "Preacher Curl", "equipment": "Machine", "difficulty": "B", "type": "ISO" },
+      { "name": "Concentration Curl", "equipment": "Dumbbell", "difficulty": "B", "type": "ISO" },
+      { "name": "Cable Curl", "equipment": "Cable", "difficulty": "B", "type": "ISO" },
+      { "name": "Spider Curl", "equipment": "Barbell", "difficulty": "I", "type": "ISO" },
+      { "name": "21s Bicep Curl", "equipment": "Barbell", "difficulty": "I", "type": "ISO" },
+      { "name": "Reverse Curl", "equipment": "Barbell", "difficulty": "I", "type": "ISO" },
+      { "name": "Zottman Curl", "equipment": "Dumbbell", "difficulty": "I", "type": "ISO" }
+    ],
+
+    "triceps": [
+      { "name": "Triceps Rope Pushdown", "equipment": "Cable", "difficulty": "B", "type": "ISO" },
+      { "name": "Triceps Bar Pushdown", "equipment": "Cable", "difficulty": "B", "type": "ISO" },
+      { "name": "Skull Crusher", "equipment": "Barbell", "difficulty": "I", "type": "ISO" },
+      { "name": "Overhead Dumbbell Triceps Extension", "equipment": "Dumbbell", "difficulty": "B", "type": "ISO" },
+      { "name": "Overhead Cable Triceps Extension", "equipment": "Cable", "difficulty": "I", "type": "ISO" },
+      { "name": "Close-Grip Bench Press", "equipment": "Barbell", "difficulty": "I", "type": "C" },
+      { "name": "Triceps Dip", "equipment": "Bodyweight", "difficulty": "A", "type": "C" },
+      { "name": "Triceps Kickback", "equipment": "Dumbbell", "difficulty": "B", "type": "ISO" },
+      { "name": "Diamond Push-Up", "equipment": "Bodyweight", "difficulty": "I", "type": "BW" },
+      { "name": "JM Press", "equipment": "Barbell", "difficulty": "A", "type": "ISO" },
+      { "name": "Tate Press", "equipment": "Dumbbell", "difficulty": "I", "type": "ISO" },
+      { "name": "Bench Dip", "equipment": "Bodyweight", "difficulty": "B", "type": "BW" }
+    ],
+
+    "legs": [
+      { "name": "Barbell Back Squat", "equipment": "Barbell", "difficulty": "I", "type": "C" },
+      { "name": "Front Squat", "equipment": "Barbell", "difficulty": "A", "type": "C" },
+      { "name": "Goblet Squat", "equipment": "Dumbbell", "difficulty": "B", "type": "C" },
+      { "name": "Hack Squat", "equipment": "Machine", "difficulty": "I", "type": "C" },
+      { "name": "Leg Press", "equipment": "Machine", "difficulty": "B", "type": "C" },
+      { "name": "Bulgarian Split Squat", "equipment": "Dumbbell", "difficulty": "I", "type": "C" },
+      { "name": "Walking Lunge", "equipment": "Dumbbell", "difficulty": "B", "type": "C" },
+      { "name": "Reverse Lunge", "equipment": "Dumbbell", "difficulty": "B", "type": "C" },
+      { "name": "Step-Up", "equipment": "Dumbbell", "difficulty": "B", "type": "C" },
+      { "name": "Leg Extension", "equipment": "Machine", "difficulty": "B", "type": "ISO" },
+      { "name": "Sissy Squat", "equipment": "Bodyweight", "difficulty": "A", "type": "ISO" },
+      { "name": "Zercher Squat", "equipment": "Barbell", "difficulty": "A", "type": "C" },
+      { "name": "Romanian Deadlift", "equipment": "Barbell", "difficulty": "I", "type": "C" },
+      { "name": "Stiff-Leg Deadlift", "equipment": "Barbell", "difficulty": "I", "type": "C" },
+      { "name": "Lying Leg Curl", "equipment": "Machine", "difficulty": "B", "type": "ISO" },
+      { "name": "Seated Leg Curl", "equipment": "Machine", "difficulty": "B", "type": "ISO" },
+      { "name": "Nordic Hamstring Curl", "equipment": "Bodyweight", "difficulty": "A", "type": "ISO" },
+      { "name": "Glute-Ham Raise", "equipment": "Machine", "difficulty": "A", "type": "C" },
+      { "name": "Barbell Hip Thrust", "equipment": "Barbell", "difficulty": "I", "type": "C" },
+      { "name": "Glute Bridge", "equipment": "Barbell", "difficulty": "B", "type": "C" },
+      { "name": "Cable Pull-Through", "equipment": "Cable", "difficulty": "B", "type": "C" },
+      { "name": "Cable Kickback", "equipment": "Cable", "difficulty": "B", "type": "ISO" },
+      { "name": "Sumo Squat", "equipment": "Dumbbell", "difficulty": "B", "type": "C" },
+      { "name": "Box Squat", "equipment": "Barbell", "difficulty": "I", "type": "C" },
+      { "name": "Overhead Squat", "equipment": "Barbell", "difficulty": "A", "type": "C" },
+      { "name": "Static Split Squat", "equipment": "Dumbbell", "difficulty": "I", "type": "C" },
+      { "name": "Curtsy Lunge", "equipment": "Dumbbell", "difficulty": "I", "type": "C" },
+      { "name": "Single-Leg Press", "equipment": "Machine", "difficulty": "I", "type": "C" },
+      { "name": "Belt Squat", "equipment": "Machine", "difficulty": "I", "type": "C" },
+      { "name": "Trap Bar Deadlift", "equipment": "Barbell", "difficulty": "I", "type": "C" },
+      { "name": "Adductor Machine", "equipment": "Machine", "difficulty": "B", "type": "ISO" },
+      { "name": "Abductor Machine", "equipment": "Machine", "difficulty": "B", "type": "ISO" },
+      { "name": "Pistol Squat", "equipment": "Bodyweight", "difficulty": "A", "type": "C" },
+      { "name": "Wall Sit", "equipment": "Bodyweight", "difficulty": "B", "type": "ISO" }
+    ],
+
+    "calves": [
+      { "name": "Standing Calf Raise", "equipment": "Machine", "difficulty": "B", "type": "ISO" },
+      { "name": "Seated Calf Raise", "equipment": "Machine", "difficulty": "B", "type": "ISO" },
+      { "name": "Leg Press Calf Raise", "equipment": "Machine", "difficulty": "B", "type": "ISO" },
+      { "name": "Donkey Calf Raise", "equipment": "Machine", "difficulty": "I", "type": "ISO" },
+      { "name": "Single-Leg Calf Raise", "equipment": "Bodyweight", "difficulty": "I", "type": "ISO" },
+      { "name": "Smith Machine Calf Raise", "equipment": "Machine", "difficulty": "B", "type": "ISO" }
+    ],
+
+    "glutes": [
+      { "name": "Glute Kickback Machine", "equipment": "Machine", "difficulty": "B", "type": "ISO" },
+      { "name": "Banded Glute Bridge", "equipment": "Bodyweight", "difficulty": "B", "type": "ISO" },
+      { "name": "Frog Pump", "equipment": "Bodyweight", "difficulty": "B", "type": "ISO" },
+      { "name": "Single-Leg Hip Thrust", "equipment": "Bodyweight", "difficulty": "I", "type": "ISO" },
+      { "name": "Cable Hip Abduction", "equipment": "Cable", "difficulty": "B", "type": "ISO" },
+      { "name": "Fire Hydrant", "equipment": "Bodyweight", "difficulty": "B", "type": "ISO" },
+      { "name": "Clamshell", "equipment": "Bodyweight", "difficulty": "B", "type": "ISO" },
+      { "name": "Sumo Deadlift High Pull", "equipment": "Barbell", "difficulty": "I", "type": "C" },
+      { "name": "Machine Hip Thrust", "equipment": "Machine", "difficulty": "B", "type": "C" }
+    ],
+
+    "core": [
+      { "name": "Plank", "equipment": "Bodyweight", "difficulty": "B", "type": "ISO" },
+      { "name": "Side Plank", "equipment": "Bodyweight", "difficulty": "B", "type": "ISO" },
+      { "name": "Hanging Leg Raise", "equipment": "Bodyweight", "difficulty": "A", "type": "ISO" },
+      { "name": "Hanging Knee Raise", "equipment": "Bodyweight", "difficulty": "I", "type": "ISO" },
+      { "name": "Cable Crunch", "equipment": "Cable", "difficulty": "B", "type": "ISO" },
+      { "name": "Crunch", "equipment": "Bodyweight", "difficulty": "B", "type": "ISO" },
+      { "name": "Bicycle Crunch", "equipment": "Bodyweight", "difficulty": "B", "type": "ISO" },
+      { "name": "Russian Twist", "equipment": "Bodyweight", "difficulty": "B", "type": "ISO" },
+      { "name": "Ab Wheel Rollout", "equipment": "Bodyweight", "difficulty": "A", "type": "ISO" },
+      { "name": "Weighted Sit-Up", "equipment": "Dumbbell", "difficulty": "I", "type": "ISO" },
+      { "name": "V-Up", "equipment": "Bodyweight", "difficulty": "I", "type": "ISO" },
+      { "name": "Toe Touch", "equipment": "Bodyweight", "difficulty": "B", "type": "ISO" },
+      { "name": "Flutter Kick", "equipment": "Bodyweight", "difficulty": "B", "type": "ISO" },
+      { "name": "Mountain Climber", "equipment": "Bodyweight", "difficulty": "B", "type": "BW" },
+      { "name": "Dead Bug", "equipment": "Bodyweight", "difficulty": "B", "type": "ISO" },
+      { "name": "Bird Dog", "equipment": "Bodyweight", "difficulty": "B", "type": "ISO" },
+      { "name": "Reverse Crunch", "equipment": "Bodyweight", "difficulty": "B", "type": "ISO" },
+      { "name": "Cable Woodchopper", "equipment": "Cable", "difficulty": "I", "type": "ISO" },
+      { "name": "Pallof Press", "equipment": "Cable", "difficulty": "I", "type": "ISO" },
+      { "name": "Sit-Up", "equipment": "Bodyweight", "difficulty": "B", "type": "ISO" },
+      { "name": "Lying Leg Raise", "equipment": "Bodyweight", "difficulty": "B", "type": "ISO" },
+      { "name": "Decline Sit-Up", "equipment": "Bodyweight", "difficulty": "I", "type": "ISO" },
+      { "name": "Captain's Chair Leg Raise", "equipment": "Machine", "difficulty": "I", "type": "ISO" },
+      { "name": "Stability Ball Rollout", "equipment": "Bodyweight", "difficulty": "I", "type": "ISO" }
+    ],
+
+    "cardio": [
+      { "name": "Treadmill Run", "equipment": "Machine", "difficulty": "B", "type": "BW" },
+      { "name": "Treadmill Incline Walk", "equipment": "Machine", "difficulty": "B", "type": "BW" },
+      { "name": "Rowing Machine", "equipment": "Machine", "difficulty": "B", "type": "BW" },
+      { "name": "Assault Bike", "equipment": "Machine", "difficulty": "I", "type": "BW" },
+      { "name": "Stationary Bike", "equipment": "Machine", "difficulty": "B", "type": "BW" },
+      { "name": "Stair Climber", "equipment": "Machine", "difficulty": "B", "type": "BW" },
+      { "name": "Elliptical", "equipment": "Machine", "difficulty": "B", "type": "BW" },
+      { "name": "Jump Rope", "equipment": "Bodyweight", "difficulty": "B", "type": "BW" },
+      { "name": "Sled Push", "equipment": "Sled", "difficulty": "I", "type": "BW" },
+      { "name": "Sled Pull", "equipment": "Sled", "difficulty": "I", "type": "BW" },
+      { "name": "Battle Ropes", "equipment": "Rope", "difficulty": "I", "type": "BW" },
+      { "name": "Burpees", "equipment": "Bodyweight", "difficulty": "I", "type": "BW" },
+      { "name": "High Knees", "equipment": "Bodyweight", "difficulty": "B", "type": "BW" },
+      { "name": "Box Jumps", "equipment": "Bodyweight", "difficulty": "I", "type": "BW" },
+      { "name": "Sprint Intervals", "equipment": "Bodyweight", "difficulty": "A", "type": "BW" },
+      { "name": "Swimming", "equipment": "Bodyweight", "difficulty": "B", "type": "BW" },
+      { "name": "Ski Erg", "equipment": "Machine", "difficulty": "I", "type": "BW" },
+      { "name": "Shadow Boxing", "equipment": "Bodyweight", "difficulty": "B", "type": "BW" }
+    ],
+
+    "functionalFullBody": [
+      { "name": "Clean and Jerk", "equipment": "Barbell", "difficulty": "A", "type": "C" },
+      { "name": "Power Clean", "equipment": "Barbell", "difficulty": "A", "type": "C" },
+      { "name": "Snatch", "equipment": "Barbell", "difficulty": "A", "type": "C" },
+      { "name": "Kettlebell Swing", "equipment": "Kettlebell", "difficulty": "I", "type": "C" },
+      { "name": "Turkish Get-Up", "equipment": "Kettlebell", "difficulty": "A", "type": "C" },
+      { "name": "Farmer's Carry", "equipment": "Dumbbell", "difficulty": "B", "type": "BW" },
+      { "name": "Man Maker", "equipment": "Dumbbell", "difficulty": "A", "type": "C" },
+      { "name": "Thruster", "equipment": "Barbell", "difficulty": "I", "type": "C" },
+      { "name": "Wall Ball", "equipment": "Medicine Ball", "difficulty": "I", "type": "C" },
+      { "name": "Medicine Ball Slam", "equipment": "Medicine Ball", "difficulty": "B", "type": "BW" },
+      { "name": "Renegade Row", "equipment": "Dumbbell", "difficulty": "I", "type": "C" },
+      { "name": "Bear Crawl", "equipment": "Bodyweight", "difficulty": "I", "type": "BW" },
+      { "name": "Tire Flip", "equipment": "Tire", "difficulty": "A", "type": "C" },
+      { "name": "Sled Drag", "equipment": "Sled", "difficulty": "I", "type": "BW" },
+      { "name": "Clean Pull", "equipment": "Barbell", "difficulty": "A", "type": "C" },
+      { "name": "Devil Press", "equipment": "Dumbbell", "difficulty": "A", "type": "C" },
+      { "name": "Dumbbell Snatch", "equipment": "Dumbbell", "difficulty": "I", "type": "C" },
+      { "name": "Suitcase Carry", "equipment": "Dumbbell", "difficulty": "B", "type": "BW" }
+    ],
+
+    "forearmsGrip": [
+      { "name": "Wrist Curl", "equipment": "Barbell", "difficulty": "B", "type": "ISO" },
+      { "name": "Reverse Wrist Curl", "equipment": "Barbell", "difficulty": "B", "type": "ISO" },
+      { "name": "Plate Pinch", "equipment": "Plate", "difficulty": "I", "type": "ISO" },
+      { "name": "Dead Hang", "equipment": "Bodyweight", "difficulty": "B", "type": "ISO" },
+      { "name": "Gripper Squeeze", "equipment": "Grip Tool", "difficulty": "B", "type": "ISO" },
+      { "name": "Barbell Wrist Roller", "equipment": "Barbell", "difficulty": "I", "type": "ISO" }
+    ]
+  },
+
+  "exerciseCountByGroup": {
+    "chest": 21, "back": 22, "shoulders": 18, "biceps": 12, "triceps": 12,
+    "legs": 34, "calves": 6, "glutes": 9, "core": 24, "cardio": 18,
+    "functionalFullBody": 18, "forearmsGrip": 6, "total": 200
+  },
+
+  "workoutPrograms": [
+    { "id": "ai", "name": "AI", "label": "AI Programmed", "description": "Adapts sets, load and split week-to-week based on recovery and performance trends." },
+    { "id": "ppl", "name": "PPL", "description": "Push / Pull / Legs — 6-day split for hypertrophy-focused lifters." },
+    { "id": "upper_lower", "name": "Upper/Lower", "description": "4-day split alternating upper and lower body for balanced frequency." },
+    { "id": "bro", "name": "Bro", "description": "Classic one-muscle-group-per-day split, 5 days a week." },
+    { "id": "full_body", "name": "Full Body", "description": "3-day full-body split, ideal for beginners or low weekly frequency." },
+    { "id": "powerlifting", "name": "Powerlifting", "description": "Squat/Bench/Deadlift-centric strength program with heavy top sets and accessory work." },
+    { "id": "functional", "name": "Functional/Hybrid", "description": "Blends strength work with conditioning — kettlebells, carries, sleds, and cardio intervals." }
+  ],
+
+  "workoutTemplates": [
+    {
+      "id": "mission-push-a",
+      "name": "Push Day A",
+      "tags": ["Chest", "Shoulders", "Triceps"],
+      "estDuration": "52 min", "liftCount": 6, "intensity": "High", "xpReward": 320,
+      "exercises": [
+        { "name": "Barbell Bench Press", "sets": 4, "targetReps": 8 },
+        { "name": "Incline Dumbbell Press", "sets": 3, "targetReps": 10 },
+        { "name": "Cable Fly (Mid)", "sets": 3, "targetReps": 12 },
+        { "name": "Barbell Overhead Press", "sets": 3, "targetReps": 10 },
+        { "name": "Lateral Raise", "sets": 3, "targetReps": 15 },
+        { "name": "Triceps Rope Pushdown", "sets": 3, "targetReps": 12 }
+      ]
+    },
+    {
+      "id": "mission-pull-a",
+      "name": "Pull Day A",
+      "tags": ["Back", "Biceps"],
+      "estDuration": "48 min", "liftCount": 6, "intensity": "High", "xpReward": 300,
+      "exercises": [
+        { "name": "Conventional Deadlift", "sets": 4, "targetReps": 6 },
+        { "name": "Pull-Up", "sets": 4, "targetReps": 8 },
+        { "name": "Bent-Over Barbell Row", "sets": 3, "targetReps": 10 },
+        { "name": "Seated Cable Row", "sets": 3, "targetReps": 12 },
+        { "name": "Face Pull", "sets": 3, "targetReps": 15 },
+        { "name": "Barbell Curl", "sets": 3, "targetReps": 12 }
+      ]
+    },
+    {
+      "id": "mission-legs-a",
+      "name": "Leg Day A",
+      "tags": ["Quads", "Hamstrings", "Glutes", "Calves"],
+      "estDuration": "55 min", "liftCount": 6, "intensity": "High", "xpReward": 340,
+      "exercises": [
+        { "name": "Barbell Back Squat", "sets": 4, "targetReps": 8 },
+        { "name": "Romanian Deadlift", "sets": 3, "targetReps": 10 },
+        { "name": "Leg Press", "sets": 3, "targetReps": 12 },
+        { "name": "Bulgarian Split Squat", "sets": 3, "targetReps": 10 },
+        { "name": "Lying Leg Curl", "sets": 3, "targetReps": 12 },
+        { "name": "Standing Calf Raise", "sets": 4, "targetReps": 15 }
+      ]
+    },
+    {
+      "id": "mission-fullbody-a",
+      "name": "Full Body A",
+      "tags": ["Full Body"],
+      "estDuration": "45 min", "liftCount": 5, "intensity": "Moderate", "xpReward": 280,
+      "exercises": [
+        { "name": "Barbell Back Squat", "sets": 3, "targetReps": 8 },
+        { "name": "Barbell Bench Press", "sets": 3, "targetReps": 8 },
+        { "name": "Bent-Over Barbell Row", "sets": 3, "targetReps": 10 },
+        { "name": "Barbell Overhead Press", "sets": 3, "targetReps": 10 },
+        { "name": "Plank", "sets": 3, "targetReps": "45s" }
+      ]
+    },
+    {
+      "id": "mission-functional-a",
+      "name": "Hybrid Conditioning A",
+      "tags": ["Full Body", "Conditioning"],
+      "estDuration": "40 min", "liftCount": 5, "intensity": "High", "xpReward": 260,
+      "exercises": [
+        { "name": "Kettlebell Swing", "sets": 4, "targetReps": 15 },
+        { "name": "Sled Push", "sets": 4, "targetReps": "20m" },
+        { "name": "Wall Ball", "sets": 3, "targetReps": 15 },
+        { "name": "Farmer's Carry", "sets": 3, "targetReps": "40m" },
+        { "name": "Assault Bike", "sets": 3, "targetReps": "30s sprint" }
+      ]
+    }
+  ],
+
+  "physiqScore": {
+    "description": "A composite 0-100 score reflecting training consistency, load progression, recovery and hydration adherence.",
+    "pillars": [
+      {
+        "id": "training",
+        "name": "Training",
+        "signals": ["volume_trend_pct", "rpe_trend", "lift_stall_sessions"],
+        "conditions": {
+          "low": "Volume is down and RPE is climbing — that combination usually means under-recovery. Consider a deload week before pushing more weight.",
+          "medium": "Training load is steady. Add small weekly increments (2.5-5%) to keep progressing.",
+          "high": "Volume up and RPE steady — you're in a strong progression window. Add one heavy top set to your primary lift this week."
+        }
+      },
+      {
+        "id": "consistency",
+        "name": "Consistency",
+        "signals": ["weekly_session_completion_pct", "streak_days"],
+        "conditions": {
+          "low": "You've missed more than half your planned sessions this week. A short, easy session today beats skipping entirely — it protects the habit.",
+          "medium": "Solid attendance this week. One more session would push your streak past your personal best.",
+          "high": "Perfect week — every planned session logged. This is what compounds into results."
+        }
+      },
+      {
+        "id": "recovery",
+        "name": "Recovery",
+        "signals": ["rpe_trend", "session_spacing_hours", "physiq_score_delta"],
+        "conditions": {
+          "low": "Signs of accumulated fatigue — RPE rising three sessions in a row. Prioritize sleep and consider a lighter session tomorrow.",
+          "medium": "Recovery looks balanced against your current training load.",
+          "high": "Recovery and training are well aligned right now — protect this by not adding extra sessions tonight."
+        }
+      },
+      {
+        "id": "hydration",
+        "name": "Hydration",
+        "signals": ["hydration_pct_today"],
+        "conditions": {
+          "low": "Hydration has been under 50% of goal before recent sessions — this raises cramp risk and can quietly cost you reps.",
+          "medium": "Hydration is close to goal most days — keep front-loading water before sessions.",
+          "high": "Hydration goal consistently met — this is supporting your strength output well."
+        }
+      }
+    ]
+  },
+
+  "aiCoachRules": {
+    "description": "Each rule fires ONLY when its condition is true against the user's real logged data. Priority determines which single message shows when multiple conditions are true in the same session (higher number = shown first). No message should be selected at random when a specific data-driven rule applies.",
+    "rules": [
+      {
+        "id": "hydration_critical",
+        "priority": 90,
+        "condition": "hydration_pct_today < 50 AND session_scheduled_today == true",
+        "message": "You're under 50% of today's hydration goal. Low fluid levels before training raise your risk of cramps and can cost you reps late in the session — drink 500ml now before you start."
+      },
+      {
+        "id": "hydration_moderate",
+        "priority": 40,
+        "condition": "hydration_pct_today >= 50 AND hydration_pct_today < 80",
+        "message": "You're at {{hydration_pct_today}}% of today's hydration goal. A bit more water before your session helps you hold output through your last sets."
+      },
+      {
+        "id": "hydration_met",
+        "priority": 10,
+        "condition": "hydration_pct_today >= 100",
+        "message": "Hydration goal already hit today — good foundation heading into your session."
+      },
+      {
+        "id": "training_peak",
+        "priority": 80,
+        "condition": "volume_trend_pct > 10 AND rpe_trend <= 0",
+        "message": "Volume is up {{volume_trend_pct}}% and RPE has stayed flat — that's a strong progression window. Add one heavy top set on {{primary_lift}} this session."
+      },
+      {
+        "id": "overtraining_risk",
+        "priority": 95,
+        "condition": "volume_trend_pct > 10 AND rpe_trend > 1.5",
+        "message": "Your volume is climbing but so is your RPE — three sessions in a row now. This pattern often precedes a stall or injury. Consider a lighter session or an extra rest day before your next heavy lift."
+      },
+      {
+        "id": "lift_plateau",
+        "priority": 70,
+        "condition": "lift_stall_sessions >= 3",
+        "message": "{{lift_name}} hasn't moved in {{lift_stall_sessions}} sessions. Try a rep-range shift for two weeks, or add just 2.5kg and hold there before pushing further."
+      },
+      {
+        "id": "consistency_low",
+        "priority": 85,
+        "condition": "sessions_missed_this_week >= 2 AND weekly_session_completion_pct < 50",
+        "message": "You've missed {{sessions_missed_this_week}} sessions this week. Rather than trying to make them all up, jump back in with today's session as planned — consistency matters more than making up lost volume."
+      },
+      {
+        "id": "consistency_streak_milestone",
+        "priority": 60,
+        "condition": "streak_days > 0 AND streak_days % 7 == 0",
+        "message": "{{streak_days}}-day streak — that's {{streak_weeks}} full weeks without missing a planned session."
+      },
+      {
+        "id": "pr_dry_spell",
+        "priority": 50,
+        "condition": "pr_count_this_month == 0 AND days_since_last_pr > 21",
+        "message": "It's been {{days_since_last_pr}} days since your last PR. That's normal during a volume-building phase, but if {{primary_lift}} still feels heavy at the same reps, a deload might unlock the next jump."
+      },
+      {
+        "id": "pr_streak",
+        "priority": 75,
+        "condition": "pr_count_this_month >= 3",
+        "message": "{{pr_count_this_month}} PRs this month. Momentum is real right now — this is a good window to test a new top set on {{primary_lift}}, with a spotter if you're going heavy."
+      },
+      {
+        "id": "physiq_score_drop",
+        "priority": 88,
+        "condition": "physiq_score_delta <= -5",
+        "message": "Your PhysIQ Score dropped {{physiq_score_delta_abs}} points this week — usually a mix of missed sessions and rising RPE. Consider a lighter week to reset before pushing load again."
+      },
+      {
+        "id": "physiq_score_rise",
+        "priority": 55,
+        "condition": "physiq_score_delta >= 5",
+        "message": "Your PhysIQ Score climbed {{physiq_score_delta}} points this week — training, consistency and recovery are all pulling in the same direction."
+      },
+      {
+        "id": "missed_session_recovery",
+        "priority": 65,
+        "condition": "sessions_missed_yesterday == true AND sessions_missed_this_week < 2",
+        "message": "No session logged yesterday — that's fine. Today's session is scaled slightly lighter by the AI to ease back in without adding fatigue."
+      },
+      {
+        "id": "default_neutral",
+        "priority": 0,
+        "condition": "no other rule matched",
+        "message": "Logged and on track. Keep the same effort today and let the week add up."
+      }
+    ]
+  },
+
+  "nutritionTips": {
+    "trackingStatus": "Nutrition is not tracked in-app. These tips are shown opportunistically, not based on logged data.",
+    "deliveryRule": "Show at most 1 tip per day, with roughly a 1-in-4 chance after finishing a workout or opening the Insights tab. Never phrase these as if they're based on the user's actual intake.",
+    "tips": [
+      "A 20-30g protein dose within about 2 hours after training supports muscle recovery.",
+      "Carbs before a high-intensity session tend to fuel output better than training fasted for most lifters.",
+      "Sipping water steadily through the day beats one large gulp right before you train.",
+      "A slow, steady eater long-term tends to hold strength gains better than someone who yo-yos intake week to week.",
+      "If a session feels flat despite good sleep, an under-fueled day beforehand is a common, overlooked cause.",
+      "Simple carbs plus a little sodium after a long or sweaty session can speed rehydration."
+    ]
+  },
+
+  "achievements": {
+    "description": "Grouped into collectible families with flavor text so the collection feels like a set to complete, not a random checklist.",
+    "families": [
+      {
+        "family": "First Steps",
+        "badges": [
+          { "name": "First Rep", "tier": "Common", "icon": "footprints", "flavorText": "Every legend starts with one set.", "criteria": "Complete 1 set" },
+          { "name": "Week Warrior", "tier": "Common", "icon": "flame", "flavorText": "Seven days, zero excuses.", "criteria": "Complete all planned sessions in a week" },
+          { "name": "Full House", "tier": "Rare", "icon": "layout-grid", "flavorText": "You touched every split in one week.", "criteria": "Complete Push, Pull, Legs and one bonus session in the same week" }
+        ]
+      },
+      {
+        "family": "Iron Streak",
+        "badges": [
+          { "name": "Iron Month", "tier": "Rare", "icon": "calendar-check", "flavorText": "30 days deep. The habit is real now.", "criteria": "30-day training streak" },
+          { "name": "Consistency King", "tier": "Legendary", "icon": "crown", "flavorText": "90 days without breaking the chain.", "criteria": "90-day training streak" },
+          { "name": "Unbreakable", "tier": "Legendary", "icon": "shield", "flavorText": "365 days. This isn't a phase anymore.", "criteria": "365-day training streak" }
+        ]
+      },
+      {
+        "family": "Strength Milestones",
+        "badges": [
+          { "name": "Gym Warrior", "tier": "Epic", "icon": "dumbbell", "flavorText": "100 sessions in the books.", "criteria": "Log 100 total sessions" },
+          { "name": "Strength Titan", "tier": "Legendary", "icon": "trophy", "flavorText": "Real strength, earned one plate at a time.", "criteria": "Add 20kg to any tracked 1RM within a year" },
+          { "name": "PR Hunter", "tier": "Rare", "icon": "target", "flavorText": "Five new bests in thirty days.", "criteria": "5 PRs within 30 days" },
+          { "name": "Volume Titan", "tier": "Epic", "icon": "bar-chart-3", "flavorText": "100,000kg moved in a single month.", "criteria": "100,000kg total volume in 30 days" },
+          { "name": "Deload Discipline", "tier": "Rare", "icon": "battery-charging", "flavorText": "Smart enough to back off on purpose.", "criteria": "Complete 1 AI-recommended deload week exactly as prescribed" }
+        ]
+      },
+      {
+        "family": "Hydration & Recovery",
+        "badges": [
+          { "name": "Hydration Master", "tier": "Rare", "icon": "droplet", "flavorText": "Cramp-free and proud of it.", "criteria": "Hit hydration goal 7 days running" },
+          { "name": "Recovery Champion", "tier": "Epic", "icon": "moon", "flavorText": "You listened to your body — and it paid off.", "criteria": "Keep average RPE under 8 for a full week" }
+        ]
+      },
+      {
+        "family": "Circle & Compete",
+        "badges": [
+          { "name": "Circle Climber", "tier": "Rare", "icon": "trending-up", "flavorText": "You passed three people this week.", "criteria": "Move up 3+ ranks on the weekly leaderboard" },
+          { "name": "Podium Finish", "tier": "Epic", "icon": "medal", "flavorText": "Top 3 in your circle this week.", "criteria": "Finish top 3 on the weekly XP leaderboard" },
+          { "name": "Early Bird", "tier": "Rare", "icon": "sunrise", "flavorText": "The gym before sunrise crew.", "criteria": "Complete 10 sessions before 7am" }
+        ]
+      }
+    ]
+  },
+
+  "achievementTierColors": {
+    "Common": "#9CA3AF",
+    "Rare": "#3B82F6",
+    "Epic": "#10B981",
+    "Legendary": "#C026D3"
+  },
+
+  "weeklyChallenges": [
+    { "name": "Volume King", "tagline": "Outlift everyone in your circle.", "description": "Lift {{target}}kg this week", "metric": "total_volume_kg", "reward": "Legendary badge for top 10%" },
+    { "name": "PR Hunter", "tagline": "Chase new bests, not just reps.", "description": "Set 3 personal records this week", "metric": "pr_count", "reward": "Epic badge" },
+    { "name": "Iron Streak", "tagline": "Show up. Every single day planned.", "description": "Complete every planned session this week", "metric": "session_completion", "reward": "+500 bonus XP" },
+    { "name": "Cardio Crusher", "tagline": "Get the heart rate up.", "description": "Log 90 minutes of cardio this week", "metric": "cardio_minutes", "reward": "+300 bonus XP" },
+    { "name": "Recovery Champion", "tagline": "Train smart, not just hard.", "description": "Keep RPE under 8 across all sessions this week", "metric": "avg_rpe", "reward": "Rare badge" },
+    { "name": "Hydration Sprint", "tagline": "Cramp-proof your week.", "description": "Hit your hydration goal every day this week", "metric": "hydration_days_hit", "reward": "Rare badge" },
+    { "name": "Early Riser", "tagline": "Beat the gym rush.", "description": "Complete 4 sessions before 8am this week", "metric": "early_sessions", "reward": "+250 bonus XP" },
+    { "name": "Full House", "tagline": "Hit every muscle group.", "description": "Train Push, Pull, Legs and Core at least once this week", "metric": "unique_categories_trained", "reward": "Epic badge" }
+  ],
+
+  "leaderboardActivityFeedTemplates": [
+    "{{name}} unlocked {{badgeName}}",
+    "{{name}} hit a new PR on {{lift}} · {{weight}}kg",
+    "{{name}} started {{challengeName}}",
+    "{{name}} climbed to rank #{{rank}} this week",
+    "{{name}} completed a {{streakLength}}-day streak"
+  ],
+
+  "profileMicrocopy": {
+    "goalTags": ["Cut", "Bulk", "Maintain", "Recomp", "Strength", "Endurance"],
+    "splitTags": ["PPL", "Upper/Lower", "Bro", "Full Body", "AI", "Powerlifting", "Functional/Hybrid"],
+    "physiqDnaExamples": [
+      "Endurance-forward hybrid athlete",
+      "Strength-dominant powerbuilder",
+      "Balanced hypertrophy focus",
+      "High-frequency volume responder"
+    ]
+  },
+
+  "emptyStates": {
+    "noWorkoutsThisWeek": "No sessions logged yet — your AI Coach will adjust next week's plan based on what you complete.",
+    "noPRsYet": "Log a few sessions to start tracking personal records.",
+    "noChallengeJoined": "Join a weekly challenge to start climbing the leaderboard."
+  },
+
+  "notificationCopy": [
+    "🔥 {{name}} just beat your streak — reclaim the top spot!",
+    "💪 Your PhysIQ Score moved to {{score}} — up {{delta}} this week.",
+    "⏰ {{workoutName}} is scheduled for today — {{duration}}, {{liftCount}} lifts.",
+    "🏆 You're {{xp}} XP from unlocking {{badgeName}}.",
+    "💧 Under 50% hydration today — top up before your session to protect strength output."
+  ]
+}
