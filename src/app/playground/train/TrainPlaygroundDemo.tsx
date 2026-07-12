@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { SearchX, Sparkles } from "lucide-react";
+import { ChevronDown, SearchX, Sparkles } from "lucide-react";
 import { EmptyState } from "@/components/feedback/EmptyState";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { Section } from "@/components/layout/Section";
+import { Button } from "@/components/ui/Button";
 import { SearchInput } from "@/components/ui/SearchInput";
 import {
   FilterChipRow,
@@ -27,8 +28,16 @@ export function TrainPlaygroundDemo({
   catalogSize,
 }: TrainData) {
   const [programId, setProgramId] = useState(activeProgramId);
-  const { query, setQuery, muscle, toggleMuscle, filteredExercises } =
-    useExerciseFilters(exercises);
+  const {
+    query,
+    setQuery,
+    muscle,
+    toggleMuscle,
+    filteredExercises,
+    visibleExercises,
+    hiddenCount,
+    showMore,
+  } = useExerciseFilters(exercises);
 
   const programOptions: FilterChipOption[] = programs.map((program) => ({
     id: program.id,
@@ -54,7 +63,7 @@ export function TrainPlaygroundDemo({
 
       <Section title="Exercise library">
         <SearchInput
-          placeholder={`Search ${catalogSize}+ exercises`}
+          placeholder={`Search ${catalogSize} exercises`}
           value={query}
           onChange={(event) => setQuery(event.target.value)}
         />
@@ -67,13 +76,24 @@ export function TrainPlaygroundDemo({
         />
         <div className="flex flex-col gap-3">
           {filteredExercises.length > 0 ? (
-            filteredExercises.map((exercise) => (
-              <ExerciseListItem
-                key={exercise.id}
-                exercise={exercise}
-                href={`/train/exercises/${exercise.id}`}
-              />
-            ))
+            <>
+              {visibleExercises.map((exercise) => (
+                <ExerciseListItem
+                  key={exercise.id}
+                  exercise={exercise}
+                  href={`/train/exercises/${exercise.id}`}
+                />
+              ))}
+              {hiddenCount > 0 && (
+                <Button variant="secondary" size="sm" fullWidth onClick={showMore}>
+                  Show more
+                  <span className="text-foreground-secondary">
+                    {hiddenCount} remaining
+                  </span>
+                  <ChevronDown aria-hidden className="size-4" />
+                </Button>
+              )}
+            </>
           ) : (
             <EmptyState
               icon={SearchX}

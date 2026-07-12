@@ -24,7 +24,12 @@ export type ExerciseDifficulty = "beginner" | "intermediate" | "advanced";
 export interface Exercise {
   id: string;
   name: string;
-  /** First entry is the primary muscle — drives list-row subtitles. */
+  /**
+   * Ordered by involvement: first entry is the primary muscle (drives
+   * list-row subtitles), later entries are progressively more minor.
+   * filterExercises ranks results by this order — a lift leads the filter
+   * of its primary group and sinks in groups it only assists.
+   */
   muscleGroups: MuscleGroup[];
   equipment: Equipment;
   /** The difficulty tier behind the letter badge in the catalog list. */

@@ -32,5 +32,6 @@ export const mockTrainData: TrainData = {
   programs,
   activeProgramId: "program-ai",
   exercises: mockExercises,
-  catalogSize: 412,
+  // Honest count: the curated catalog itself, not an aspirational number.
+  catalogSize: mockExercises.length,
 };

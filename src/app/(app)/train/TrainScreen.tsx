@@ -1,13 +1,14 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { SearchX, Sparkles } from "lucide-react";
+import { ChevronDown, SearchX, Sparkles } from "lucide-react";
 import { m } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { EmptyState } from "@/components/feedback/EmptyState";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { Section } from "@/components/layout/Section";
 import { ScreenHeader } from "@/components/navigation/ScreenHeader";
+import { Button } from "@/components/ui/Button";
 import { SearchInput } from "@/components/ui/SearchInput";
 import { fadeInUp, staggerChildren } from "@/lib/motion";
 import { FilterChipRow, type FilterChipOption } from "@/components/ui/FilterChipRow";
@@ -38,8 +39,16 @@ export function TrainScreen({
 }: TrainScreenProps) {
   const router = useRouter();
   const [programId, setProgramId] = useState(activeProgramId);
-  const { query, setQuery, muscle, toggleMuscle, filteredExercises } =
-    useExerciseFilters(exercises);
+  const {
+    query,
+    setQuery,
+    muscle,
+    toggleMuscle,
+    filteredExercises,
+    visibleExercises,
+    hiddenCount,
+    showMore,
+  } = useExerciseFilters(exercises);
 
   const programOptions: FilterChipOption[] = useMemo(
     () =>
@@ -94,7 +103,7 @@ export function TrainScreen({
 
         <m.div variants={fadeInUp} className="flex flex-col gap-4">
           <SearchInput
-            placeholder={`Search ${catalogSize}+ exercises`}
+            placeholder={`Search ${catalogSize} exercises`}
             shortcut="⌘K"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
@@ -109,16 +118,27 @@ export function TrainScreen({
           />
 
           {filteredExercises.length > 0 ? (
-            <ul aria-label="Exercises" className="flex flex-col gap-3">
-              {filteredExercises.map((exercise) => (
-                <li key={exercise.id}>
-                  <ExerciseListItem
-                    exercise={exercise}
-                    href={`/train/exercises/${exercise.id}`}
-                  />
-                </li>
-              ))}
-            </ul>
+            <>
+              <ul aria-label="Exercises" className="flex flex-col gap-3">
+                {visibleExercises.map((exercise) => (
+                  <li key={exercise.id}>
+                    <ExerciseListItem
+                      exercise={exercise}
+                      href={`/train/exercises/${exercise.id}`}
+                    />
+                  </li>
+                ))}
+              </ul>
+              {hiddenCount > 0 && (
+                <Button variant="secondary" size="sm" fullWidth onClick={showMore}>
+                  Show more
+                  <span className="text-foreground-secondary">
+                    {hiddenCount} remaining
+                  </span>
+                  <ChevronDown aria-hidden className="size-4" />
+                </Button>
+              )}
+            </>
           ) : (
             <EmptyState
               icon={SearchX}
