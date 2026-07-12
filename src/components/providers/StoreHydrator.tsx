@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useCardioStore } from "@/store/cardioStore";
 import { usePlansStore } from "@/store/plansStore";
 import { useProfileStore } from "@/store/profileStore";
 import { useSessionStore } from "@/store/sessionStore";
@@ -17,6 +18,7 @@ export function StoreHydrator() {
     useSessionStore.persist.rehydrate();
     useProfileStore.persist.rehydrate();
     usePlansStore.persist.rehydrate();
+    useCardioStore.persist.rehydrate();
   }, []);
 
   return null;

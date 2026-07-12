@@ -108,10 +108,10 @@ const priorities: DailyPriority[] = [
   {
     id: "priority-cardio",
     label: "20-min zone-2 walk",
-    detail: "Cardio carries 20% of your score — an easy walk counts",
+    detail: "Cardio carries 25% of your score — an easy walk counts",
     iconId: "heart-pulse",
     completed: false,
-    href: "/train",
+    href: "/train/cardio",
   },
   {
     id: "priority-weigh-in",

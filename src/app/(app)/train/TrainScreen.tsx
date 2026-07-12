@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ChevronDown, SearchX, Sparkles } from "lucide-react";
+import { ChevronDown, HeartPulse, SearchX, Sparkles } from "lucide-react";
+import Link from "next/link";
 import { m } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { EmptyState } from "@/components/feedback/EmptyState";
@@ -77,13 +78,19 @@ export function TrainScreen({
           />
         </m.div>
 
-        <m.div variants={fadeInUp}>
+        <m.div variants={fadeInUp} className="flex flex-col gap-3">
           <WorkoutHeroCard
             mission={mission}
             onStart={
               mission ? () => router.push(`/session/${mission.id}`) : undefined
             }
           />
+          <Button variant="secondary" size="sm" fullWidth asChild>
+            <Link href="/train/cardio">
+              <HeartPulse aria-hidden className="size-4" />
+              Log cardio
+            </Link>
+          </Button>
         </m.div>
 
         <m.div variants={fadeInUp}>
