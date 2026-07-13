@@ -20,7 +20,15 @@ export function TourContent() {
   return (
     <PageContainer>
       <SettingsPageHeader title="App tour" />
-      <m.div key={slide.id} initial="hidden" animate="visible" variants={fadeInUp}>
+      {/* flex-1 + centered: the slide floats mid-screen instead of hugging
+          the header with a void above the button (visual-audit finding). */}
+      <m.div
+        key={slide.id}
+        initial="hidden"
+        animate="visible"
+        variants={fadeInUp}
+        className="flex flex-1 flex-col justify-center"
+      >
         <TourSlideView slide={slide} />
       </m.div>
       <div className="mt-auto flex flex-col gap-3 pt-8">

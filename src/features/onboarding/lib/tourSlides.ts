@@ -22,7 +22,7 @@ export const tourSlides: TourSlide[] = [
     id: "tour-score",
     iconId: "gauge",
     title: "Your PhysIQ Score",
-    body: "One number from six pillars — consistency matters most, and it's computed from what you actually do, never self-reported guesses.",
+    body: "One number from four pillars — Consistency, Strength, Cardio, Body Shape. Computed from what you actually do, never self-reported guesses.",
   },
   {
     id: "tour-train",
