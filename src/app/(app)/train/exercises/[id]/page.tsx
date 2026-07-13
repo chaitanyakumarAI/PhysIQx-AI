@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, Dumbbell, Gauge, Plus } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { ProgressBar } from "@/components/ui/ProgressBar";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { Section } from "@/components/layout/Section";
 import { iconSize } from "@/constants/icons";
@@ -13,6 +14,7 @@ import {
   equipmentLabels,
   muscleGroupLabels,
   type ExerciseDifficulty,
+  type MuscleGroup,
 } from "@/types/exercise";
 
 interface ExercisePageProps {
@@ -48,7 +50,10 @@ export default async function ExercisePage({ params }: ExercisePageProps) {
   if (!exercise) notFound();
 
   const difficulty = difficultyMeta[exercise.difficulty];
-  const [primary, ...secondary] = exercise.muscleGroups;
+  // Highest share first — authored EMG-informed content (see the catalog).
+  const muscleShares = (
+    Object.entries(exercise.muscleHit) as [MuscleGroup, number][]
+  ).sort((a, b) => b[1] - a[1]);
 
   return (
     <PageContainer>
@@ -78,27 +83,29 @@ export default async function ExercisePage({ params }: ExercisePageProps) {
         </span>
       </div>
 
-      <Section title="Muscles worked">
-        <Card padding="md" className="flex flex-col gap-3">
-          {primary && (
-            <div className="flex items-center justify-between">
-              <span className="font-semibold">{muscleGroupLabels[primary]}</span>
-              <span className="text-xs font-semibold uppercase tracking-[0.08em] text-brand">
-                Primary
-              </span>
-            </div>
-          )}
-          {secondary.map((muscle) => (
-            <div
-              key={muscle}
-              className="flex items-center justify-between border-t border-border/60 pt-3"
-            >
-              <span className="text-foreground-secondary">
-                {muscleGroupLabels[muscle]}
-              </span>
-              <span className="text-xs uppercase tracking-[0.08em] text-foreground-secondary">
-                Assists
-              </span>
+      <Section title="Muscle hit">
+        <Card padding="md" className="flex flex-col gap-4">
+          {muscleShares.map(([muscle, share], index) => (
+            <div key={muscle} className="flex flex-col gap-1.5">
+              <div className="flex items-baseline justify-between">
+                <span className={index === 0 ? "font-semibold" : "text-foreground-secondary"}>
+                  {muscleGroupLabels[muscle]}
+                </span>
+                <span
+                  className={cn(
+                    "font-display text-sm font-bold tabular-nums",
+                    index === 0 ? "text-brand" : "text-foreground-secondary",
+                  )}
+                >
+                  {share}%
+                </span>
+              </div>
+              <ProgressBar
+                value={share}
+                size="sm"
+                tone={index === 0 ? "brand" : "neutral"}
+                aria-label={`${muscleGroupLabels[muscle]} receives ${share}% of the stimulus`}
+              />
             </div>
           ))}
         </Card>

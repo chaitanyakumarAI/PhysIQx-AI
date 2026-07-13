@@ -17,7 +17,10 @@ export type Equipment =
   | "dumbbell"
   | "cable"
   | "machine"
-  | "bodyweight";
+  | "bodyweight"
+  | "kettlebell"
+  | "plate"
+  | "sled";
 
 export type ExerciseDifficulty = "beginner" | "intermediate" | "advanced";
 
@@ -25,14 +28,19 @@ export interface Exercise {
   id: string;
   name: string;
   /**
-   * Ordered by involvement: first entry is the primary muscle (drives
-   * list-row subtitles), later entries are progressively more minor.
-   * filterExercises ranks results by this order — a lift leads the filter
-   * of its primary group and sinks in groups it only assists.
+   * Stimulus share per muscle group, 0–100, summing to ~100 — authored
+   * EMG-informed content (content/muscle-involvement_filled.json). Drives
+   * the hit-% badge in the catalog, the per-muscle bars on the detail
+   * page, and filterExercises' relevance ranking.
+   */
+  muscleHit: Partial<Record<MuscleGroup, number>>;
+  /**
+   * Derived from muscleHit, highest share first: first entry is the
+   * primary muscle (drives list-row subtitles).
    */
   muscleGroups: MuscleGroup[];
   equipment: Equipment;
-  /** The difficulty tier behind the letter badge in the catalog list. */
+  /** The tier behind the detail page's level guide. */
   difficulty: ExerciseDifficulty;
 }
 
@@ -51,4 +59,7 @@ export const equipmentLabels: Record<Equipment, string> = {
   cable: "Cable",
   machine: "Machine",
   bodyweight: "Bodyweight",
+  kettlebell: "Kettlebell",
+  plate: "Plate",
+  sled: "Sled",
 };

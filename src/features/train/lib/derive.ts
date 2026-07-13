@@ -12,17 +12,6 @@ export interface ExerciseFilters {
   muscleGroup?: MuscleGroup | null;
 }
 
-/**
- * Lower = more relevant: an exercise's `muscleGroups` array is ordered by
- * involvement (see the Exercise type contract), so the position of the
- * selected group IS its relevance. Deadlift (back-primary) ranks top of the
- * Back filter but below leg-primary lifts in the Legs filter — exercises
- * that only minorly hit a group sink, never lead.
- */
-function involvementRank(exercise: Exercise, muscleGroup: MuscleGroup): number {
-  return exercise.muscleGroups.indexOf(muscleGroup);
-}
-
 export function filterExercises(
   exercises: Exercise[],
   filters: ExerciseFilters,
@@ -39,10 +28,12 @@ export function filterExercises(
   });
 
   if (muscleGroup) {
-    // Stable sort: primary-muscle lifts first, then secondary, then minor —
-    // catalog order (compounds before isolations) breaks ties within a tier.
+    // Ranked by the authored stimulus share (muscleHit): the harder a lift
+    // hits the selected group, the higher it lists — Deadlift (back 45)
+    // tops Back but sits under leg-primary lifts in Legs. Stable sort, so
+    // catalog order (compounds before isolations) breaks percentage ties.
     matches.sort(
-      (a, b) => involvementRank(a, muscleGroup) - involvementRank(b, muscleGroup),
+      (a, b) => (b.muscleHit[muscleGroup] ?? 0) - (a.muscleHit[muscleGroup] ?? 0),
     );
   }
 

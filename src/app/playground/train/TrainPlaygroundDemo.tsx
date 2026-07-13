@@ -82,6 +82,7 @@ export function TrainPlaygroundDemo({
                   key={exercise.id}
                   exercise={exercise}
                   href={`/train/exercises/${exercise.id}`}
+                  highlightMuscle={muscle}
                 />
               ))}
               {hiddenCount > 0 && (

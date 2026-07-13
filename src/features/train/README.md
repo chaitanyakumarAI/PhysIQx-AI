@@ -13,10 +13,10 @@ Named `train` to match the `/train` route per the canonical naming rule in
   list length — the aspirational "412+" copy is gone.
 - `lib/derive.ts` — `filterExercises(exercises, { query, muscleGroup })`,
   the pure filtering rule behind search + muscle chips. Results are ranked
-  by involvement: a lift leads the filter of its primary muscle and sinks
-  in groups it only assists (Deadlift tops Back, sits low in Legs) —
-  the muscleGroups array order IS the relevance signal (see the Exercise
-  type contract).
+  by the authored `muscleHit` stimulus share (EMG-informed content from
+  content/muscle-involvement_filled.json): the harder a lift hits the
+  selected group, the higher it lists. The list rows surface the same
+  number as the hit-% badge, so the ranking is self-explaining.
 - `lib/planLaunch.ts` — `buildPlanDayLaunch(plan, day)`: turns a user
   plan's day into startSession params (the "plan-*" mission-id contract
   with /session/[id]).

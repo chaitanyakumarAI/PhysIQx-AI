@@ -135,6 +135,7 @@ export function TrainScreen({
                     <ExerciseListItem
                       exercise={exercise}
                       href={`/train/exercises/${exercise.id}`}
+                      highlightMuscle={muscle}
                     />
                   </li>
                 ))}
