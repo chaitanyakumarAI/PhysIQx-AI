@@ -1,0 +1,79 @@
+{
+  "_what_this_is": "Content request: suggested workout programs behind Train's program chips (PPL, Upper/Lower, Bro, Full Body). Each program offers one or more variants by training days per week; selecting a program shows its weekly schedule and lets the user adopt it as their plan.",
+  "_how_to_fill": [
+    "For each program, provide at least one variant. A variant = a specific days-per-week layout (e.g. PPL as a 6-day and a 5-day variant).",
+    "recommendedDaysPerWeek: which weekly frequencies this program suits — used to recommend a program from the user's onboarding answer (e.g. Upper/Lower suits 4, PPL suits 5-6).",
+    "Each day: a name and an ordered exercise list. exerciseId MUST be an id from content/muscle-involvement_filled.json (the 189-exercise catalog).",
+    "sets: number of sets. reps: target reps per set (one number; if you want pyramid sets like 12/10/8, use repsPerSet as an array instead of reps). restSeconds: rest between sets.",
+    "Optional per day: focus (one line shown under the day name, e.g. 'Chest, shoulders, triceps').",
+    "Optional per variant: notes (one or two lines of coaching guidance shown with the schedule).",
+    "Fill the four presets. The 'Coach' program is generated in-app and needs no content."
+  ],
+  "programs": [
+    {
+      "type": "ppl",
+      "name": "Push Pull Legs",
+      "description": "",
+      "recommendedDaysPerWeek": [5, 6],
+      "variants": [
+        {
+          "daysPerWeek": 6,
+          "notes": "",
+          "days": [
+            {
+              "name": "Push A",
+              "focus": "",
+              "exercises": [
+                { "exerciseId": "", "sets": 0, "reps": 0, "restSeconds": 0 }
+              ]
+            }
+          ]
+        },
+        {
+          "daysPerWeek": 5,
+          "notes": "",
+          "days": []
+        }
+      ]
+    },
+    {
+      "type": "upper-lower",
+      "name": "Upper / Lower",
+      "description": "",
+      "recommendedDaysPerWeek": [4],
+      "variants": [
+        {
+          "daysPerWeek": 4,
+          "notes": "",
+          "days": []
+        }
+      ]
+    },
+    {
+      "type": "bro",
+      "name": "Bro Split",
+      "description": "",
+      "recommendedDaysPerWeek": [5],
+      "variants": [
+        {
+          "daysPerWeek": 5,
+          "notes": "",
+          "days": []
+        }
+      ]
+    },
+    {
+      "type": "full-body",
+      "name": "Full Body",
+      "description": "",
+      "recommendedDaysPerWeek": [2, 3],
+      "variants": [
+        {
+          "daysPerWeek": 3,
+          "notes": "",
+          "days": []
+        }
+      ]
+    }
+  ]
+}
