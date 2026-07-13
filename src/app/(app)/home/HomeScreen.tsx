@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { m } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { PageContainer } from "@/components/layout/PageContainer";
@@ -11,6 +11,7 @@ import { getGreeting } from "@/features/home/lib/greeting";
 import { deriveRecoveryStatus } from "@/features/home/lib/derive";
 import { AchievementSpotlight } from "@/features/home/components/AchievementSpotlight";
 import { DailyMissionCard } from "@/features/home/components/DailyMissionCard";
+import { GuidedTour } from "@/features/home/components/GuidedTour";
 import { PhysIQScoreCard } from "@/features/home/components/PhysIQScoreCard";
 import { StatusStrip } from "@/features/home/components/StatusStrip";
 import { TodaysPriorities } from "@/features/home/components/TodaysPriorities";
@@ -72,7 +73,7 @@ export function HomeScreen({
           />
         </m.div>
 
-        <m.div variants={fadeInUp}>
+        <m.div variants={fadeInUp} data-tour="mission">
           <Section title="Today's mission">
             <DailyMissionCard
               mission={mission}
@@ -89,7 +90,7 @@ export function HomeScreen({
           </Section>
         </m.div>
 
-        <m.div variants={fadeInUp}>
+        <m.div variants={fadeInUp} data-tour="score">
           <PhysIQScoreCard
             score={score.score}
             delta={score.delta}
@@ -104,13 +105,18 @@ export function HomeScreen({
           <AchievementSpotlight win={spotlight} />
         </m.div>
 
-        <m.div variants={fadeInUp}>
+        <m.div variants={fadeInUp} data-tour="week">
           <WeeklyActivityCard
             completionPercent={week.completionPercent}
             days={week.days}
           />
         </m.div>
       </m.div>
+
+      {/* Suspense: useSearchParams inside must not block static prerender. */}
+      <Suspense fallback={null}>
+        <GuidedTour />
+      </Suspense>
     </PageContainer>
   );
 }
