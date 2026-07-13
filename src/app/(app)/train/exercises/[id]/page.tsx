@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { mockExercises } from "@/data/exercises";
 import {
   equipmentLabels,
+  exerciseTypeLabels,
   muscleGroupLabels,
   type ExerciseDifficulty,
   type MuscleGroup,
@@ -80,6 +81,9 @@ export default async function ExercisePage({ params }: ExercisePageProps) {
         <span className="flex items-center gap-1.5 rounded-full bg-surface-elevated px-3 py-1 text-xs font-semibold text-foreground-secondary">
           <Dumbbell size={iconSize.xs} aria-hidden />
           {equipmentLabels[exercise.equipment]}
+        </span>
+        <span className="rounded-full bg-info/15 px-3 py-1 text-xs font-semibold text-info">
+          {exerciseTypeLabels[exercise.type]}
         </span>
       </div>
 

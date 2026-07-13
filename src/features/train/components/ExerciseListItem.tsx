@@ -4,6 +4,7 @@ import { iconSize } from "@/constants/icons";
 import { cn } from "@/lib/utils";
 import {
   equipmentLabels,
+  exerciseTypeLabels,
   muscleGroupLabels,
   type Exercise,
   type MuscleGroup,
@@ -57,7 +58,8 @@ export function ExerciseListItem({
         <span className="truncate font-semibold">{exercise.name}</span>
         <span className="truncate text-sm text-foreground-secondary">
           {primaryMuscle ? muscleGroupLabels[primaryMuscle] : "—"} ·{" "}
-          {equipmentLabels[exercise.equipment]}
+          {equipmentLabels[exercise.equipment]} ·{" "}
+          {exerciseTypeLabels[exercise.type]}
         </span>
       </span>
       {badgeMuscle && (

@@ -24,6 +24,13 @@ export type Equipment =
 
 export type ExerciseDifficulty = "beginner" | "intermediate" | "advanced";
 
+/**
+ * Movement classification (authored content, C/ISO/BW in the source file):
+ * compound = multi-joint, isolation = single-joint, bodyweight =
+ * bodyweight-loaded or functional/cardio-style movement.
+ */
+export type ExerciseType = "compound" | "isolation" | "bodyweight";
+
 export interface Exercise {
   id: string;
   name: string;
@@ -40,6 +47,7 @@ export interface Exercise {
    */
   muscleGroups: MuscleGroup[];
   equipment: Equipment;
+  type: ExerciseType;
   /** The tier behind the detail page's level guide. */
   difficulty: ExerciseDifficulty;
 }
@@ -51,6 +59,12 @@ export const muscleGroupLabels: Record<MuscleGroup, string> = {
   shoulders: "Shoulders",
   arms: "Arms",
   core: "Core",
+};
+
+export const exerciseTypeLabels: Record<ExerciseType, string> = {
+  compound: "Compound",
+  isolation: "Isolation",
+  bodyweight: "Bodyweight",
 };
 
 export const equipmentLabels: Record<Equipment, string> = {
