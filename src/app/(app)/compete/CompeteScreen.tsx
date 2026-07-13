@@ -7,6 +7,7 @@ import { Section } from "@/components/layout/Section";
 import { ScreenHeader } from "@/components/navigation/ScreenHeader";
 import { FilterChipRow, type FilterChipOption } from "@/components/ui/FilterChipRow";
 import { fadeInUp, staggerChildren } from "@/lib/motion";
+import { useEntranceOnce } from "@/lib/useEntranceOnce";
 import { ActivityFeedItem } from "@/features/compete/components/ActivityFeedItem";
 import { ClimbingCard } from "@/features/compete/components/ClimbingCard";
 import { LeaderboardRow } from "@/features/compete/components/LeaderboardRow";
@@ -42,7 +43,7 @@ export function CompeteScreen({
           these items — this node exists only to orchestrate the stagger. */}
       <m.div
         variants={staggerChildren}
-        initial="hidden"
+        initial={useEntranceOnce("compete")}
         animate="visible"
         className="contents"
       >

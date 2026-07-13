@@ -31,6 +31,7 @@ export function PersonalRecordCard({ record, className }: PersonalRecordCardProp
         tone="info"
         height={100}
         interactive
+        detail
         className="mt-4"
         aria-label={`${record.exerciseName} trend, ${record.value}${record.unit} currently. Drag across the chart to inspect each day.`}
       />

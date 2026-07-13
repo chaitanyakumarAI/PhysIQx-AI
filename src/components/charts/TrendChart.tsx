@@ -25,6 +25,14 @@ export interface TrendChartProps {
    * sparklines where a tooltip would be bigger than the chart.
    */
   interactive?: boolean;
+  /**
+   * Full-dress mode for card-sized charts: faint gridlines plus min/max
+   * value labels, so the y-scale reads at a glance. Leave off for
+   * sparklines.
+   */
+  detail?: boolean;
+  /** Marks the latest value with a dot at the line's end (default true). */
+  endpointDot?: boolean;
   className?: string;
   "aria-label"?: string;
 }
@@ -70,6 +78,8 @@ export function TrendChart({
   tone = "brand",
   height = 120,
   interactive = false,
+  detail = false,
+  endpointDot = true,
   className,
   "aria-label": ariaLabel,
 }: TrendChartProps) {
@@ -142,13 +152,43 @@ export function TrendChart({
       >
         <defs>
           <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-            {/* Kept faint on purpose: at 0.35 the fill rendered as a solid
-                slab over the dark ground (verified in screenshots). */}
-            <stop offset="0%" stopColor={color} stopOpacity={0.16} />
+            {/* Bright at the line, gone by mid-chart: a fast falloff reads
+                as the line glowing onto the surface — a flat 0.35 fill
+                rendered as a solid slab, and 0.16 as nothing at all (both
+                verified in screenshots). */}
+            <stop offset="0%" stopColor={color} stopOpacity={0.3} />
+            <stop offset="45%" stopColor={color} stopOpacity={0.07} />
             <stop offset="100%" stopColor={color} stopOpacity={0} />
           </linearGradient>
         </defs>
+
+        {detail &&
+          [0.25, 0.5, 0.75].map((ratio) => (
+            <line
+              key={ratio}
+              aria-hidden
+              x1={0}
+              y1={height * ratio}
+              x2={VIEWBOX_WIDTH}
+              y2={height * ratio}
+              className="stroke-border"
+              strokeOpacity={0.5}
+              strokeWidth={1}
+              strokeDasharray="3 5"
+            />
+          ))}
+
         <path d={areaPath} fill={`url(#${gradientId})`} stroke="none" />
+        {/* Soft under-stroke = line glow without a filter (cheap to paint). */}
+        <path
+          d={linePath}
+          fill="none"
+          stroke={color}
+          strokeOpacity={0.16}
+          strokeWidth={7}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
         <path
           d={linePath}
           fill="none"
@@ -170,6 +210,37 @@ export function TrendChart({
           />
         )}
       </svg>
+
+      {/* Latest-value marker: the line ends somewhere — show exactly where.
+          HTML like the scrub dot (see below), with a soft halo. */}
+      {endpointDot && (
+        <span
+          aria-hidden
+          className="pointer-events-none absolute -translate-x-1/2 -translate-y-1/2"
+          style={{
+            left: `${(coords[coords.length - 1]!.x / VIEWBOX_WIDTH) * 100}%`,
+            top: `${(coords[coords.length - 1]!.y / height) * 100}%`,
+          }}
+        >
+          <span
+            className="block size-2 rounded-full"
+            style={{ backgroundColor: color, boxShadow: `0 0 8px ${color}` }}
+          />
+        </span>
+      )}
+
+      {/* Y-scale anchors — max top-left, min bottom-left, above the line's
+          quiet corners more often than not. */}
+      {detail && (
+        <>
+          <span className="pointer-events-none absolute left-0 top-0 text-[10px] tabular-nums text-foreground-secondary">
+            {max}
+          </span>
+          <span className="pointer-events-none absolute bottom-0 left-0 text-[10px] tabular-nums text-foreground-secondary">
+            {min}
+          </span>
+        </>
+      )}
 
       {/* The pinned dot is HTML, not SVG — the stretched viewBox
           (preserveAspectRatio="none") would distort a <circle> into an oval. */}

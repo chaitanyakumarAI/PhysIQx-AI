@@ -5,6 +5,7 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { Section } from "@/components/layout/Section";
 import { ScreenHeader } from "@/components/navigation/ScreenHeader";
 import { fadeInUp, staggerChildren } from "@/lib/motion";
+import { useEntranceOnce } from "@/lib/useEntranceOnce";
 import { CollectionShowcase } from "@/features/profile/components/CollectionShowcase";
 import { DNABanner } from "@/features/profile/components/DNABanner";
 import { ProfileHeaderCard } from "@/features/profile/components/ProfileHeaderCard";
@@ -39,7 +40,7 @@ export function ProfileScreen({
           these items — this node exists only to orchestrate the stagger. */}
       <m.div
         variants={staggerChildren}
-        initial="hidden"
+        initial={useEntranceOnce("profile")}
         animate="visible"
         className="contents"
       >

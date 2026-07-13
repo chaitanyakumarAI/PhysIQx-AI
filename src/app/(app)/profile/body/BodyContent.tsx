@@ -152,6 +152,7 @@ export function BodyContent() {
         <Card padding="md">
           <TrendChart
             interactive
+            detail
             aria-label="Weight over time"
             points={entries.map((entry) => ({
               value: entry.weightKg,

@@ -1,21 +1,38 @@
 import { Card } from "@/components/ui/Card";
 import { Section } from "@/components/layout/Section";
 import { cn } from "@/lib/utils";
-import { dayStatusTone, type DayStatus, type DayStatusValue } from "@/types/training";
+import {
+  dayStatusLabels,
+  type DayStatus,
+  type DayStatusValue,
+} from "@/types/training";
 
 export interface WeeklyActivityCardProps extends React.ComponentProps<"div"> {
   completionPercent: number;
   days: DayStatus[];
 }
 
-const statusBarHeight: Record<DayStatusValue, string> = {
-  trained: "h-16",
-  "rest-honored": "h-8",
-  missed: "h-3",
-  unplanned: "h-2",
+/**
+ * One geometry, many states: every day is the same full-height capsule and
+ * only the FILL carries meaning — the old design encoded status in bar
+ * height AND shape AND color at once, which read as rendering bugs
+ * (a 3px "missed" sliver, a floating today-dot). Today is a ring around
+ * its capsule, and the legend beneath makes the colors self-explanatory.
+ */
+const statusFill: Record<DayStatusValue, string> = {
+  trained: "bg-gradient-to-b from-brand to-brand-strong",
+  "rest-honored": "bg-foreground/15",
+  missed: "bg-danger/25",
+  unplanned: "bg-foreground/[0.07]",
 };
 
-/** The "This Week" completion % + daily bar chart. */
+const legendItems: { status: DayStatusValue; dot: string }[] = [
+  { status: "trained", dot: "bg-brand" },
+  { status: "rest-honored", dot: "bg-foreground/40" },
+  { status: "missed", dot: "bg-danger/60" },
+];
+
+/** The "This Week" completion % + uniform day capsules. */
 export function WeeklyActivityCard({
   className,
   completionPercent,
@@ -42,23 +59,16 @@ export function WeeklyActivityCard({
               key={day.date}
               className="flex flex-1 flex-col items-center gap-2"
             >
-              <div className="relative flex h-16 w-full items-end justify-center">
-                {day.isToday && (
-                  <span
-                    aria-hidden
-                    className="absolute -top-3 size-1.5 rounded-full bg-brand"
-                  />
+              <span
+                role="img"
+                aria-label={`${day.weekdayLabel}: ${dayStatusLabels[day.status]}${day.isToday ? " (today)" : ""}`}
+                className={cn(
+                  "h-14 w-full max-w-7 rounded-full",
+                  statusFill[day.status],
+                  day.isToday &&
+                    "ring-2 ring-brand/70 ring-offset-2 ring-offset-surface",
                 )}
-                <span
-                  role="img"
-                  aria-label={`${day.weekdayLabel}: ${day.status.replace("-", " ")}`}
-                  className={cn(
-                    "w-full max-w-8 rounded-full",
-                    statusBarHeight[day.status],
-                    dayStatusTone[day.status],
-                  )}
-                />
-              </div>
+              />
               <span
                 className={cn(
                   "text-xs",
@@ -70,6 +80,18 @@ export function WeeklyActivityCard({
                 {day.weekdayLabel}
               </span>
             </div>
+          ))}
+        </div>
+
+        <div
+          aria-hidden
+          className="mt-1 flex items-center justify-center gap-4 text-[11px] text-foreground-secondary"
+        >
+          {legendItems.map(({ status, dot }) => (
+            <span key={status} className="flex items-center gap-1.5">
+              <span className={cn("size-1.5 rounded-full", dot)} />
+              {dayStatusLabels[status]}
+            </span>
           ))}
         </div>
       </Section>

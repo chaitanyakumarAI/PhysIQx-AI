@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { Section } from "@/components/layout/Section";
 import { fadeInUp, staggerChildren } from "@/lib/motion";
+import { useEntranceOnce } from "@/lib/useEntranceOnce";
 import { getGreeting } from "@/features/home/lib/greeting";
 import { deriveRecoveryStatus } from "@/features/home/lib/derive";
 import { AchievementSpotlight } from "@/features/home/components/AchievementSpotlight";
@@ -56,7 +57,7 @@ export function HomeScreen({
           these items — this node exists only to orchestrate the stagger. */}
       <m.div
         variants={staggerChildren}
-        initial="hidden"
+        initial={useEntranceOnce("home")}
         animate="visible"
         className="contents"
       >

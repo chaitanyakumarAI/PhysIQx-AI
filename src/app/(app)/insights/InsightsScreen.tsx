@@ -7,6 +7,7 @@ import { Section } from "@/components/layout/Section";
 import { FilterChipRow } from "@/components/ui/FilterChipRow";
 import { ScreenHeader } from "@/components/navigation/ScreenHeader";
 import { fadeInUp, staggerChildren } from "@/lib/motion";
+import { useEntranceOnce } from "@/lib/useEntranceOnce";
 import { AIInsightCard } from "@/features/shared/components/AIInsightCard";
 import { BodyBalanceCard } from "@/features/insights/components/BodyBalanceCard";
 import { PersonalRecordCard } from "@/features/insights/components/PersonalRecordCard";
@@ -43,7 +44,7 @@ export function InsightsScreen({
           these items — this node exists only to orchestrate the stagger. */}
       <m.div
         variants={staggerChildren}
-        initial="hidden"
+        initial={useEntranceOnce("insights")}
         animate="visible"
         className="contents"
       >

@@ -63,6 +63,7 @@ export function ScoreTrendCard({
           tone="brand"
           height={120}
           interactive
+          detail
           className="mt-6"
           aria-label={`Score trend, ${points.at(-1)?.score ?? score} currently. Drag across the chart to inspect each day.`}
         />

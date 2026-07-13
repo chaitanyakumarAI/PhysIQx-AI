@@ -12,6 +12,7 @@ import { ScreenHeader } from "@/components/navigation/ScreenHeader";
 import { Button } from "@/components/ui/Button";
 import { SearchInput } from "@/components/ui/SearchInput";
 import { fadeInUp, staggerChildren } from "@/lib/motion";
+import { useEntranceOnce } from "@/lib/useEntranceOnce";
 import { FilterChipRow, type FilterChipOption } from "@/components/ui/FilterChipRow";
 import { ExerciseListItem } from "@/features/train/components/ExerciseListItem";
 import { MyPlansSection } from "@/features/train/components/MyPlansSection";
@@ -67,7 +68,7 @@ export function TrainScreen({
           these items — this node exists only to orchestrate the stagger. */}
       <m.div
         variants={staggerChildren}
-        initial="hidden"
+        initial={useEntranceOnce("train")}
         animate="visible"
         className="contents"
       >

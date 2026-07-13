@@ -34,3 +34,11 @@ export const AVATAR_PRESETS: AvatarPreset[] = [
 export function findAvatarPreset(id: string | null): AvatarPreset | undefined {
   return AVATAR_PRESETS.find((preset) => preset.id === id);
 }
+
+/**
+ * Shown before the user has picked anything — a real portrait beats a
+ * letter-in-a-circle as the profile's hero moment (visual-audit finding).
+ * Gym Lover: the most goal-neutral persona of the sixteen.
+ */
+export const DEFAULT_AVATAR_PRESET =
+  AVATAR_PRESETS.find((preset) => preset.id === "gym-lover") ?? AVATAR_PRESETS[0]!;
