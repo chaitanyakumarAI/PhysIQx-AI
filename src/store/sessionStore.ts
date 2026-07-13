@@ -27,8 +27,83 @@ interface SetPatch {
   reps?: number | null;
 }
 
+/** The best (heaviest) logged set of one exercise in one session. */
+export interface TopSet {
+  exerciseId: string;
+  exerciseName: string;
+  weightKg: number;
+  reps: number;
+}
+
+/**
+ * What a finished workout leaves behind — the ledger that live progress
+ * derivations (Home spotlight, coach insights) and the strength formula
+ * read. Computed once at finish time from the completed sets.
+ */
+export interface CompletedSessionSummary {
+  id: string;
+  missionId: string;
+  title: string;
+  /** ISO date (yyyy-mm-dd) of completion. */
+  date: string;
+  completedAt: string;
+  durationSec: number;
+  setsCompleted: number;
+  totalVolumeKg: number;
+  xpEarned: number;
+  topSets: TopSet[];
+}
+
+/** Keep the ledger bounded — localStorage, not a database. */
+const HISTORY_LIMIT = 60;
+
+function summarize(session: WorkoutSession, completedAt: string): CompletedSessionSummary {
+  let setsCompleted = 0;
+  let totalVolumeKg = 0;
+  const topSets: TopSet[] = [];
+  for (const exercise of session.exercises) {
+    let best: TopSet | null = null;
+    for (const exerciseSet of exercise.sets) {
+      if (!exerciseSet.completed) continue;
+      setsCompleted += 1;
+      const weight = exerciseSet.weight ?? 0;
+      const reps = exerciseSet.reps ?? 0;
+      totalVolumeKg += weight * reps;
+      if (weight > 0 && reps > 0 && (!best || weight > best.weightKg)) {
+        best = {
+          exerciseId: exercise.exerciseId,
+          exerciseName: exercise.exerciseName,
+          weightKg: weight,
+          reps,
+        };
+      }
+    }
+    if (best) topSets.push(best);
+  }
+  const durationSec = Math.max(
+    0,
+    Math.round(
+      (new Date(completedAt).getTime() - new Date(session.startedAt).getTime()) / 1000,
+    ),
+  );
+  return {
+    id: session.id,
+    missionId: session.missionId,
+    title: session.title,
+    date: completedAt.slice(0, 10),
+    completedAt,
+    durationSec,
+    setsCompleted,
+    totalVolumeKg: Math.round(totalVolumeKg),
+    xpEarned: session.xpReward,
+    topSets,
+  };
+}
+
 interface SessionStoreState {
   session: WorkoutSession | null;
+  /** Completed-workout ledger, newest last. */
+  history: CompletedSessionSummary[];
   startSession: (params: StartSessionParams) => void;
   logSet: (exerciseId: string, setId: string, patch: SetPatch) => void;
   toggleSetCompleted: (exerciseId: string, setId: string) => void;
@@ -94,6 +169,7 @@ export const useSessionStore = create<SessionStoreState>()(
   persist(
     (set, get) => ({
       session: null,
+      history: [],
 
       startSession: ({ missionId, title, template, exercises, xpReward }) => {
         const current = get().session;
@@ -187,17 +263,17 @@ export const useSessionStore = create<SessionStoreState>()(
       },
 
       finishSession: () => {
-        set((state) =>
-          state.session
-            ? {
-                session: {
-                  ...state.session,
-                  status: "completed",
-                  completedAt: new Date().toISOString(),
-                },
-              }
-            : state,
-        );
+        set((state) => {
+          if (!state.session) return state;
+          const completedAt = new Date().toISOString();
+          return {
+            session: { ...state.session, status: "completed", completedAt },
+            history: [
+              ...state.history,
+              summarize(state.session, completedAt),
+            ].slice(-HISTORY_LIMIT),
+          };
+        });
       },
 
       abandonSession: () => {
@@ -210,7 +286,7 @@ export const useSessionStore = create<SessionStoreState>()(
     }),
     {
       name: "physiqx-session",
-      partialize: (state) => ({ session: state.session }),
+      partialize: (state) => ({ session: state.session, history: state.history }),
       // skipHydration: rehydrating automatically at store-creation time
       // would make the client's first render disagree with the server's
       // (which never sees localStorage) — a real hydration-mismatch risk

@@ -9,6 +9,10 @@ import { fadeInUp, staggerChildren } from "@/lib/motion";
 import { useEntranceOnce } from "@/lib/useEntranceOnce";
 import { getGreeting } from "@/features/home/lib/greeting";
 import { deriveRecoveryStatus } from "@/features/home/lib/derive";
+import { deriveSpotlight } from "@/features/shared/lib/liveProgress";
+import { useCardioStore } from "@/store/cardioStore";
+import { useProfileStore } from "@/store/profileStore";
+import { useSessionStore } from "@/store/sessionStore";
 import { AchievementSpotlight } from "@/features/home/components/AchievementSpotlight";
 import { DailyMissionCard } from "@/features/home/components/DailyMissionCard";
 import { PhysIQScoreCard } from "@/features/home/components/PhysIQScoreCard";
@@ -50,6 +54,14 @@ export function HomeScreen({
   // expected SSG-vs-client hydration text difference.
   const [greeting] = useState(() => getGreeting(new Date().getHours()));
   const recovery = deriveRecoveryStatus(week.days);
+
+  // Live spotlight: the user's freshest REAL win outranks the fixture.
+  // Stores are empty during SSR and the first client render (skipHydration),
+  // so both sides agree on the fixture until rehydration swaps in the truth.
+  const history = useSessionStore((state) => state.history);
+  const cardio = useCardioStore((state) => state.sessions);
+  const weights = useProfileStore((state) => state.weightEntries);
+  const liveSpotlight = deriveSpotlight(spotlight, { history, cardio, weights });
 
   return (
     <PageContainer>
@@ -101,7 +113,7 @@ export function HomeScreen({
         </m.div>
 
         <m.div variants={fadeInUp}>
-          <AchievementSpotlight win={spotlight} />
+          <AchievementSpotlight win={liveSpotlight} />
         </m.div>
 
         <m.div variants={fadeInUp} data-tour="week">

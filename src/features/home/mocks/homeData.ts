@@ -83,7 +83,7 @@ const insight: Insight = {
   headline: "Cardio is your weakest pillar.",
   body: "One 20-min zone-2 session today starts closing the gap — easy pace counts.",
   state: "fresh",
-  actionLabel: "Ask AI Coach",
+  actionLabel: "Open Insights",
   actionHref: "/insights",
 };
 

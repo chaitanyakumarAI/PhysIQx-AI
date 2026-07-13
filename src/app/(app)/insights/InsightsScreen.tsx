@@ -9,6 +9,10 @@ import { ScreenHeader } from "@/components/navigation/ScreenHeader";
 import { fadeInUp, staggerChildren } from "@/lib/motion";
 import { useEntranceOnce } from "@/lib/useEntranceOnce";
 import { AIInsightCard } from "@/features/shared/components/AIInsightCard";
+import { deriveInsights } from "@/features/shared/lib/liveProgress";
+import { useCardioStore } from "@/store/cardioStore";
+import { useProfileStore } from "@/store/profileStore";
+import { useSessionStore } from "@/store/sessionStore";
 import { BodyBalanceCard } from "@/features/insights/components/BodyBalanceCard";
 import { PersonalRecordCard } from "@/features/insights/components/PersonalRecordCard";
 import { ScoreTrendCard } from "@/features/insights/components/ScoreTrendCard";
@@ -32,6 +36,12 @@ export function InsightsScreen({
   streakWeeks,
 }: InsightsScreenProps) {
   const [range, setRange] = useState<ScoreTrendRange>("30d");
+  // Coach cards speak from real ledgers once anything is logged; fixtures
+  // are only the day-zero fallback (and the SSR-safe first render).
+  const history = useSessionStore((state) => state.history);
+  const cardio = useCardioStore((state) => state.sessions);
+  const weights = useProfileStore((state) => state.weightEntries);
+  const liveInsights = deriveInsights(insights, { history, cardio, weights });
   // PR switcher: one exercise's chart at a time, chip row to change lift.
   const [selectedPRId, setSelectedPRId] = useState(personalRecords[0]?.id ?? "");
   const selectedRecord =
@@ -65,7 +75,7 @@ export function InsightsScreen({
 
         <m.div variants={fadeInUp}>
           <Section title="What the data says">
-            {insights.map((insight) => (
+            {liveInsights.map((insight) => (
               <AIInsightCard key={insight.id} insight={insight} />
             ))}
           </Section>
