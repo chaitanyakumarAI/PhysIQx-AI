@@ -52,7 +52,7 @@ export function InsightsScreen({
           <ScreenHeader title="Insights" subtitle="Signal, not noise." />
         </m.div>
 
-        <m.div variants={fadeInUp}>
+        <m.div variants={fadeInUp} data-tour="insights-trend">
           <ScoreTrendCard
             score={score.score}
             delta={score.delta}
@@ -103,7 +103,7 @@ export function InsightsScreen({
           </Section>
         </m.div>
 
-        <m.div variants={fadeInUp}>
+        <m.div variants={fadeInUp} data-tour="insights-heatmap">
           <Section title="12 week streak">
             <StreakHeatmapCard weeks={streakWeeks} />
           </Section>

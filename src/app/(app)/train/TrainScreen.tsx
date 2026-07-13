@@ -87,7 +87,7 @@ export function TrainScreen({
             }
           />
           <Button variant="secondary" size="sm" fullWidth asChild>
-            <Link href="/train/cardio">
+            <Link href="/train/cardio" data-tour="train-cardio">
               <HeartPulse aria-hidden className="size-4" />
               Log cardio
             </Link>
@@ -105,25 +105,27 @@ export function TrainScreen({
           </Section>
         </m.div>
 
-        <m.div variants={fadeInUp}>
+        <m.div variants={fadeInUp} data-tour="train-plans">
           <MyPlansSection />
         </m.div>
 
         <m.div variants={fadeInUp} className="flex flex-col gap-4">
-          <SearchInput
-            placeholder={`Search ${catalogSize} exercises`}
-            shortcut="⌘K"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-          />
+          <div className="flex flex-col gap-4" data-tour="train-search">
+            <SearchInput
+              placeholder={`Search ${catalogSize} exercises`}
+              shortcut="⌘K"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+            />
 
-          <FilterChipRow
-            label="Muscle groups"
-            variant="accent"
-            options={muscleFilterOptions}
-            selectedId={muscle}
-            onSelect={(id) => toggleMuscle(id as MuscleGroup)}
-          />
+            <FilterChipRow
+              label="Muscle groups"
+              variant="accent"
+              options={muscleFilterOptions}
+              selectedId={muscle}
+              onSelect={(id) => toggleMuscle(id as MuscleGroup)}
+            />
+          </div>
 
           {filteredExercises.length > 0 ? (
             <>

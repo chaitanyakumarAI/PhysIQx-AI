@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { useState } from "react";
 import { m } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { PageContainer } from "@/components/layout/PageContainer";
@@ -11,7 +11,6 @@ import { getGreeting } from "@/features/home/lib/greeting";
 import { deriveRecoveryStatus } from "@/features/home/lib/derive";
 import { AchievementSpotlight } from "@/features/home/components/AchievementSpotlight";
 import { DailyMissionCard } from "@/features/home/components/DailyMissionCard";
-import { GuidedTour } from "@/features/home/components/GuidedTour";
 import { PhysIQScoreCard } from "@/features/home/components/PhysIQScoreCard";
 import { StatusStrip } from "@/features/home/components/StatusStrip";
 import { TodaysPriorities } from "@/features/home/components/TodaysPriorities";
@@ -112,11 +111,6 @@ export function HomeScreen({
           />
         </m.div>
       </m.div>
-
-      {/* Suspense: useSearchParams inside must not block static prerender. */}
-      <Suspense fallback={null}>
-        <GuidedTour />
-      </Suspense>
     </PageContainer>
   );
 }

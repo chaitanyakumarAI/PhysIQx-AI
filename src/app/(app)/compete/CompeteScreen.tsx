@@ -51,7 +51,11 @@ export function CompeteScreen({
           <ScreenHeader title="Compete" subtitle="Climb with your circle." />
         </m.div>
 
-        <m.div variants={fadeInUp} className="flex flex-col gap-4">
+        <m.div
+          variants={fadeInUp}
+          className="flex flex-col gap-4"
+          data-tour="compete-challenge"
+        >
           <WeeklyChallengeCard challenge={challenge} participation={participation} />
           <ClimbingCard entries={entries} currentUserId={currentUserId} />
         </m.div>

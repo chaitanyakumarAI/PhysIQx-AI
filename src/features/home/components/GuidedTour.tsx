@@ -1,13 +1,15 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { AnimatePresence, m, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { duration, easeOut } from "@/lib/motion";
 
 interface TourStep {
   id: string;
+  /** The tab this beat lives on — the tour navigates there itself. */
+  route: string;
   /** CSS selector for the element the spotlight frames. */
   target: string;
   /** Fixed elements (the nav) never need the page scrolled to them. */
@@ -17,43 +19,83 @@ interface TourStep {
 }
 
 /**
- * The walkthrough teaches on the REAL interface: each beat spotlights a live
- * element the user will use tomorrow morning, in the order they'll use them.
- * The last two beats point at the actual nav tabs — teaching where things
- * live beats teleporting the user through screens they haven't earned yet.
+ * The walkthrough teaches on the REAL interface, travelling across tabs in
+ * the order a new user will actually live them: the Home morning flow, how
+ * to find and plan training, where the data pays off, the social layer,
+ * and finally where the body measures live. The spotlight stays mounted
+ * across navigations, so it glides from one screen's element to the
+ * next — continuity instead of a hard cut.
  */
 const tourSteps: TourStep[] = [
   {
     id: "mission",
+    route: "/home",
     target: '[data-tour="mission"]',
     title: "One mission a day",
     body: "Your morning starts here — a single clear workout. Tap Start when you're ready.",
   },
   {
     id: "score",
+    route: "/home",
     target: '[data-tour="score"]',
     title: "The PhysIQ Score",
     body: "Four pillars, one number. It only moves on what you actually do.",
   },
   {
     id: "week",
+    route: "/home",
     target: '[data-tour="week"]',
     title: "Consistency wins",
-    body: "Green days are the biggest force on your score. Rest days you planned count too.",
+    body: "Green days are the biggest force on your score. Planned rest counts too.",
   },
   {
-    id: "nav-train",
-    target: 'nav a[href="/train"]',
-    fixed: true,
-    title: "Train lives here",
-    body: "The exercise catalog, programs, and your own custom plans.",
+    id: "train-search",
+    route: "/train",
+    target: '[data-tour="train-search"]',
+    title: "Find any exercise",
+    body: "Search the catalog or tap a muscle — results rank by how hard they hit it.",
   },
   {
-    id: "nav-insights",
-    target: 'nav a[href="/insights"]',
-    fixed: true,
-    title: "Watch it pay off",
-    body: "Trends, records, and your streak. That's the tour — go earn some green.",
+    id: "train-plans",
+    route: "/train",
+    target: '[data-tour="train-plans"]',
+    title: "Build your own split",
+    body: "Any days, any exercises, any sets and reps. Each day starts with one tap.",
+  },
+  {
+    id: "train-cardio",
+    route: "/train",
+    target: '[data-tour="train-cardio"]',
+    title: "Cardio counts too",
+    body: "A quarter of your score. Logging a session takes three taps.",
+  },
+  {
+    id: "insights-trend",
+    route: "/insights",
+    target: '[data-tour="insights-trend"]',
+    title: "Your story in charts",
+    body: "Drag across any chart to scrub through your history day by day.",
+  },
+  {
+    id: "insights-heatmap",
+    route: "/insights",
+    target: '[data-tour="insights-heatmap"]',
+    title: "Twelve weeks at a glance",
+    body: "Your consistency map. Tap any square to see what happened that day.",
+  },
+  {
+    id: "compete",
+    route: "/compete",
+    target: '[data-tour="compete-challenge"]',
+    title: "Climb with your circle",
+    body: "Weekly challenges and XP leaderboards. XP is social — your score stays personal.",
+  },
+  {
+    id: "body-stats",
+    route: "/profile",
+    target: 'a[href="/profile/body"]',
+    title: "Body measures live here",
+    body: "Height, weight and trends — weekly weigh-ins keep Body Shape honest. That's the tour; go earn some green.",
   },
 ];
 
@@ -65,16 +107,21 @@ interface SpotlightRect {
 }
 
 const SPOTLIGHT_PADDING = 8;
+/** How long we poll for a step's target after navigating to its route. */
+const TARGET_WAIT_MS = 5000;
+const TARGET_POLL_MS = 120;
 
 /**
- * Guided product walkthrough over the live Home screen. A spotlight window
- * (everything else dimmed) glides between real UI elements while the page
- * auto-scrolls — motion does the teaching, captions stay to one line.
- * Activated by ?tour=1 (onboarding's finale and Profile's "Replay app
- * tour"), skippable at every beat, Escape included, reduced-motion aware.
+ * Guided product walkthrough over the live app. A spotlight window
+ * (everything else dimmed) glides between real UI elements — navigating
+ * tabs and auto-scrolling as it goes — while one-line captions do the
+ * least talking possible. Activated by ?tour=1 (onboarding's finale and
+ * Profile's "Replay app tour"), skippable at every beat, Escape included,
+ * reduced-motion aware.
  */
 export function GuidedTour() {
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const reducedMotion = useReducedMotion();
   const [active, setActive] = useState(false);
@@ -90,13 +137,24 @@ export function GuidedTour() {
       setStepIndex(0);
       setActive(true);
     }
+    // Param disappearing mid-tour is expected (the tour navigates away from
+    // the triggering URL) — never deactivate here.
   }, [searchParams]);
 
-  const finish = useCallback(() => {
-    setActive(false);
-    setRect(null);
-    router.replace("/home", { scroll: false });
-  }, [router]);
+  const finish = useCallback(
+    (goHome: boolean) => {
+      setActive(false);
+      setRect(null);
+      if (goHome) {
+        router.push("/home");
+      } else if (searchParams.get("tour") === "1") {
+        // Skipped on the triggering URL: strip the param so refresh doesn't
+        // restart the tour. Elsewhere, stay exactly where the user skipped.
+        router.replace(pathname, { scroll: false });
+      }
+    },
+    [router, pathname, searchParams],
+  );
 
   const measure = useCallback(() => {
     const el = document.querySelector(step.target);
@@ -110,30 +168,54 @@ export function GuidedTour() {
     });
   }, [step.target]);
 
-  // Scroll the target into view, then frame it. The initial delay lets the
-  // screen's entrance stagger settle so we measure resting positions.
+  // Travel to the step's tab if needed, wait for its target to exist, then
+  // scroll it into view and frame it. Polling covers route compilation and
+  // each screen's first-visit entrance stagger.
   useEffect(() => {
     if (!active) return;
-    const el = document.querySelector(step.target);
-    if (!el) {
-      finish();
-      return;
+    let cancelled = false;
+    let waited = 0;
+
+    if (pathname !== step.route) {
+      router.push(step.route);
+      return; // pathname change re-runs this effect on arrival
     }
-    if (!step.fixed) {
-      el.scrollIntoView({
-        behavior: reducedMotion ? "auto" : "smooth",
-        block: "center",
-      });
-    }
-    const settle = window.setTimeout(
-      () => {
-        measure();
-        nextButtonRef.current?.focus({ preventScroll: true });
-      },
-      reducedMotion ? 80 : stepIndex === 0 ? 750 : 480,
-    );
-    return () => window.clearTimeout(settle);
-  }, [active, step, stepIndex, measure, finish, reducedMotion]);
+
+    const frameTarget = () => {
+      if (cancelled) return;
+      const el = document.querySelector(step.target);
+      if (!el) {
+        waited += TARGET_POLL_MS;
+        if (waited >= TARGET_WAIT_MS) {
+          finish(false); // target truly missing — bail rather than hang
+          return;
+        }
+        window.setTimeout(frameTarget, TARGET_POLL_MS);
+        return;
+      }
+      if (!step.fixed) {
+        el.scrollIntoView({
+          behavior: reducedMotion ? "auto" : "smooth",
+          block: "center",
+        });
+      }
+      window.setTimeout(
+        () => {
+          if (cancelled) return;
+          measure();
+          nextButtonRef.current?.focus({ preventScroll: true });
+        },
+        reducedMotion ? 80 : 500,
+      );
+    };
+
+    // Initial delay lets the entrance stagger settle before first measure.
+    const start = window.setTimeout(frameTarget, stepIndex === 0 ? 700 : 250);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(start);
+    };
+  }, [active, step, stepIndex, pathname, router, measure, finish, reducedMotion]);
 
   // The spotlight tracks its target through user scrolls and resizes.
   useEffect(() => {
@@ -155,7 +237,7 @@ export function GuidedTour() {
   useEffect(() => {
     if (!active) return;
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") finish();
+      if (event.key === "Escape") finish(false);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -211,7 +293,7 @@ export function GuidedTour() {
                 <span
                   key={s.id}
                   className={`h-1 rounded-full transition-all duration-300 ${
-                    index === stepIndex ? "w-6 bg-brand" : "w-1.5 bg-foreground/20"
+                    index === stepIndex ? "w-5 bg-brand" : "w-1.5 bg-foreground/20"
                   }`}
                 />
               ))}
@@ -221,7 +303,7 @@ export function GuidedTour() {
               {step.body}
             </p>
             <div className="mt-4 flex items-center gap-3">
-              <Button variant="ghost" size="sm" onClick={finish}>
+              <Button variant="ghost" size="sm" onClick={() => finish(false)}>
                 Skip
               </Button>
               <Button
@@ -229,7 +311,7 @@ export function GuidedTour() {
                 size="sm"
                 className="flex-1"
                 onClick={() =>
-                  isLast ? finish() : setStepIndex((index) => index + 1)
+                  isLast ? finish(true) : setStepIndex((index) => index + 1)
                 }
               >
                 {isLast ? "Start exploring" : "Next"}
