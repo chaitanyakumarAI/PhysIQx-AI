@@ -46,7 +46,9 @@ const settings: ProfileData["settings"] = [
   { id: "appearance", label: "Appearance", value: "Dark", iconId: "moon", href: "/profile/settings/appearance" },
   { id: "privacy", label: "Privacy", iconId: "shield", href: "/profile/settings/privacy" },
   { id: "export-data", label: "Export data", iconId: "download", href: "/profile/settings/export" },
-  { id: "tour", label: "Replay app tour", iconId: "play", href: "/profile/settings/tour" },
+  // Routes to Home with the guided-walkthrough trigger — the tour teaches
+  // on the live interface, there is no slides page anymore.
+  { id: "tour", label: "Replay app tour", iconId: "play", href: "/home?tour=1" },
 ];
 
 export const mockProfileData: ProfileData = {

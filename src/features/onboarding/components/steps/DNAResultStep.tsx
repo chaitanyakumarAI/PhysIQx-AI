@@ -18,7 +18,6 @@ export interface DNAResultStepProps {
   goal: ProfileGoal;
   activeSplit: ProgramType;
   trainingDaysPerWeek: number;
-  hydrationGoalLiters: number;
   goalBodyShape?: GoalBodyShape;
   sessionFrequency?: SessionFrequency;
 }
@@ -32,7 +31,6 @@ export function DNAResultStep({
   goal,
   activeSplit,
   trainingDaysPerWeek,
-  hydrationGoalLiters,
   goalBodyShape,
   sessionFrequency,
 }: DNAResultStepProps) {
@@ -48,7 +46,6 @@ export function DNAResultStep({
     ...(sessionFrequency
       ? [{ label: "Sessions", value: sessionFrequencyLabels[sessionFrequency] }]
       : []),
-    { label: "Hydration", value: `${hydrationGoalLiters}L` },
   ];
 
   return (

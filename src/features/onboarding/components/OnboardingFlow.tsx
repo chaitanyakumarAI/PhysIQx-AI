@@ -17,7 +17,6 @@ import {
   onboardingSchema,
   type OnboardingValues,
 } from "../schemas";
-import { tourSlides } from "../lib/tourSlides";
 import { BodyShapeStep } from "./steps/BodyShapeStep";
 import { DNAResultStep } from "./steps/DNAResultStep";
 import { ExperienceStep } from "./steps/ExperienceStep";
@@ -25,8 +24,6 @@ import { GoalStep } from "./steps/GoalStep";
 import { RestDaysStep } from "./steps/RestDaysStep";
 import { SessionFrequencyStep } from "./steps/SessionFrequencyStep";
 import { SplitStep } from "./steps/SplitStep";
-import { TourSlideView } from "./TourSlideView";
-import { WaterGoalStep } from "./steps/WaterGoalStep";
 import { WelcomeStep } from "./steps/WelcomeStep";
 
 interface StepConfig {
@@ -43,8 +40,9 @@ interface StepConfig {
  * Steps as a config array — inserting or removing a step is one splice, not
  * a renumbering of every index-keyed branch (the old ladder made adding the
  * body-shape question a 4-file diff; this made it one entry). Questions
- * first, the DNA reveal as the celebration, then the feature tour so new
- * users learn the app while the reveal's energy is still warm.
+ * first, the DNA reveal as the celebration and finale — entering the app
+ * hands off to the guided walkthrough (/home?tour=1), which teaches on the
+ * real interface instead of slides about it.
  */
 const steps: StepConfig[] = [
   { id: "welcome", render: () => <WelcomeStep /> },
@@ -105,15 +103,6 @@ const steps: StepConfig[] = [
     canContinue: (values) => !!values.sessionFrequency,
   },
   {
-    id: "water",
-    render: (values, setValue) => (
-      <WaterGoalStep
-        value={values.hydrationGoalLiters}
-        onChange={(value) => setValue("hydrationGoalLiters", value)}
-      />
-    ),
-  },
-  {
     id: "dna-result",
     render: (values) =>
       values.goal && values.activeSplit ? (
@@ -121,16 +110,11 @@ const steps: StepConfig[] = [
           goal={values.goal}
           activeSplit={values.activeSplit}
           trainingDaysPerWeek={values.trainingDaysPerWeek}
-          hydrationGoalLiters={values.hydrationGoalLiters}
           goalBodyShape={values.goalBodyShape}
           sessionFrequency={values.sessionFrequency}
         />
       ) : null,
   },
-  ...tourSlides.map<StepConfig>((slide) => ({
-    id: slide.id,
-    render: () => <TourSlideView slide={slide} />,
-  })),
 ];
 
 export function OnboardingFlow() {
@@ -144,14 +128,14 @@ export function OnboardingFlow() {
   const values = watch();
   const current = steps[step]!;
   const isLast = step === steps.length - 1;
-  const isTourSlide = current.id.startsWith("tour-");
   const canContinue = current.canContinue?.(values) ?? true;
 
   function handleContinue() {
     if (isLast) {
       // No backend yet — nothing is persisted. This is the seam where a
       // real profile-creation call would go before entering the app.
-      router.push("/home");
+      // ?tour=1 starts the guided walkthrough on arrival.
+      router.push("/home?tour=1");
       return;
     }
     setStep((index) => index + 1);
@@ -193,12 +177,12 @@ export function OnboardingFlow() {
         <Button size="lg" fullWidth disabled={!canContinue} onClick={handleContinue}>
           {isLast ? "Enter PhysIQx" : step === 0 ? "Get started" : "Continue"}
         </Button>
-        {(step === 0 || (isTourSlide && !isLast)) && (
+        {step === 0 && (
           <Link
             href="/home"
             className="text-center text-sm text-foreground-secondary hover:underline"
           >
-            {step === 0 ? "Skip for now" : "Skip tour"}
+            Skip for now
           </Link>
         )}
       </div>

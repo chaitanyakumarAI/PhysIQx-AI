@@ -1,4 +1,4 @@
-import { BarChart3, Droplets, Dumbbell } from "lucide-react";
+import { BarChart3, Dumbbell, HeartPulse } from "lucide-react";
 import type { DayStatus } from "@/types/training";
 import { mockTodayMission } from "@/data/mission";
 import { mockLatestPR } from "@/data/personalRecords";
@@ -87,24 +87,12 @@ const insight: Insight = {
   actionHref: "/insights",
 };
 
-// Today's Priorities — every figure derived from the fixtures above (fuel
-// currents/goals, the mission), so the coach can never ask for an amount
-// that contradicts the fuel bars rendered on the same screen.
-const hydrationRemaining = profile.hydrationGoalLiters - 1.8;
-
 // The mission is NOT a priority item — the mission card sits directly above
 // this list on the restructured Home, and repeating it as row one would be
 // noise. Priorities are the supporting actions, each tied to a score pillar
-// so every row can state its payoff.
+// so every row can state its payoff. (Hydration was removed: with no
+// logging surface, "drink more" linked to a dead route — a broken promise.)
 const priorities: DailyPriority[] = [
-  {
-    id: "priority-hydration",
-    label: `Drink ${hydrationRemaining.toFixed(1)}L more`,
-    detail: "Hydration protects strength output — this closes today's gap",
-    iconId: "droplets",
-    completed: hydrationRemaining <= 0,
-    href: "/home?log=water",
-  },
   {
     id: "priority-cardio",
     label: "20-min zone-2 walk",
@@ -124,7 +112,7 @@ const priorities: DailyPriority[] = [
 ];
 
 const quickActions: QuickAction[] = [
-  { id: "log-water", label: "Log water", icon: Droplets, href: "/home?log=water" },
+  { id: "log-cardio", label: "Log cardio", icon: HeartPulse, href: "/train/cardio" },
   { id: "start-workout", label: "Start workout", icon: Dumbbell, href: "/train" },
   { id: "view-insights", label: "View insights", icon: BarChart3, href: "/insights" },
 ];
