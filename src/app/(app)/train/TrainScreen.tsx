@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ChevronDown, HeartPulse, SearchX, Sparkles } from "lucide-react";
+import { ChevronDown, HeartPulse, SearchX } from "lucide-react";
 import Link from "next/link";
 import { m } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -57,7 +57,6 @@ export function TrainScreen({
       programs.map((program) => ({
         id: program.id,
         label: program.name,
-        icon: program.source === "ai" ? Sparkles : undefined,
       })),
     [programs],
   );

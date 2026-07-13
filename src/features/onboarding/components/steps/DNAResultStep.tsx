@@ -1,4 +1,4 @@
-import { Sparkles } from "lucide-react";
+import { Dna } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { CircularProgress } from "@/components/ui/CircularProgress";
 import { iconSize } from "@/constants/icons";
@@ -52,7 +52,7 @@ export function DNAResultStep({
     <div className="flex flex-col gap-6">
       <Card variant="accent" padding="lg" className="flex flex-col items-center gap-4 text-center">
         <CircularProgress value={100} size={100} strokeWidth={8} glow>
-          <Sparkles size={iconSize.lg} className="text-brand" aria-hidden />
+          <Dna size={iconSize.lg} className="text-brand" aria-hidden />
         </CircularProgress>
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-foreground-secondary">

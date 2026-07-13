@@ -35,7 +35,7 @@ const prefs: NotificationPref[] = [
   },
   {
     id: "ai-coach",
-    label: "AI Coach insights",
+    label: "Coach insights",
     description: "New insights about your training and recovery",
   },
 ];

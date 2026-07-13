@@ -1,4 +1,4 @@
-import { Clock, Dumbbell, Flame, Play, Sparkles } from "lucide-react";
+import { Clock, Dumbbell, Flame, Play } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -38,10 +38,7 @@ export function WorkoutHeroCard({
   return (
     <Card variant="accent" padding="lg" className={className}>
       <div className="flex items-center justify-between gap-4">
-        <Badge tone="brand">
-          {mission.aiProgrammed && <Sparkles size={iconSize.xs} aria-hidden />}
-          Today
-        </Badge>
+        <Badge tone="brand">Today</Badge>
         <span className="text-sm font-semibold text-brand">
           +{mission.xpReward} XP
         </span>

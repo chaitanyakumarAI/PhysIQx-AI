@@ -1,4 +1,4 @@
-import { Clock, Dumbbell, Play, Sparkles } from "lucide-react";
+import { Clock, Dumbbell, Play } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { IconButton } from "@/components/ui/IconButton";
@@ -43,12 +43,7 @@ export function DailyMissionCard({
       <div className="flex items-start justify-between gap-4">
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-2">
-            {mission.aiProgrammed && (
-              <Badge tone="brand">
-                <Sparkles size={iconSize.xs} aria-hidden />
-                AI Programmed
-              </Badge>
-            )}
+            {mission.aiProgrammed && <Badge tone="brand">For you</Badge>}
             <span className="text-sm font-semibold text-brand">
               +{mission.xpReward} XP
             </span>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, SearchX, Sparkles } from "lucide-react";
+import { ChevronDown, SearchX } from "lucide-react";
 import { EmptyState } from "@/components/feedback/EmptyState";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { Section } from "@/components/layout/Section";
@@ -42,7 +42,6 @@ export function TrainPlaygroundDemo({
   const programOptions: FilterChipOption[] = programs.map((program) => ({
     id: program.id,
     label: program.name,
-    icon: program.source === "ai" ? Sparkles : undefined,
   }));
 
   return (

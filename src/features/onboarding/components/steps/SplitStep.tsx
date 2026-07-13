@@ -1,4 +1,4 @@
-import { Dumbbell, Sparkles } from "lucide-react";
+import { Dumbbell } from "lucide-react";
 import { programTypeLabels, type ProgramType } from "@/types/training";
 import { OptionCard } from "@/components/ui/OptionCard";
 
@@ -32,7 +32,7 @@ export function SplitStep({ value, onChange }: SplitStepProps) {
             key={split}
             label={programTypeLabels[split]}
             description={splitDescription[split]}
-            icon={split === "ai" ? Sparkles : Dumbbell}
+            icon={Dumbbell}
             selected={value === split}
             onSelect={() => onChange(split)}
           />

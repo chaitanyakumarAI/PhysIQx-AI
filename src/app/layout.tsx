@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     default: "PhysIQx AI",
     template: "%s · PhysIQx AI",
   },
-  description: "AI-powered fitness. Every rep feeds your PhysIQ Score.",
+  description: "Every rep feeds your PhysIQ Score.",
 };
 
 export const viewport: Viewport = {

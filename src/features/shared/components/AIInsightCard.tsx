@@ -1,4 +1,4 @@
-import { Sparkles } from "lucide-react";
+import { Lightbulb } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { iconSize } from "@/constants/icons";
 import { cn } from "@/lib/utils";
@@ -11,9 +11,10 @@ export interface AIInsightCardProps extends React.ComponentProps<"div"> {
 }
 
 /**
- * AI Coach card. Used by Home (single insight) and Insights ("What the data
+ * Coach card. Used by Home (single insight) and Insights ("What the data
  * says" cards) — shared here rather than owned by one feature, the same
- * promotion pattern as src/data/'s shared fixtures.
+ * promotion pattern as src/data/'s shared fixtures. Deliberately quiet
+ * branding: "Coach", one lightbulb — no AI badging (user: it read as spam).
  */
 export function AIInsightCard({
   className,
@@ -25,8 +26,8 @@ export function AIInsightCard({
     <Card variant="accent" className={cn(className)} {...props}>
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-2">
-          <Sparkles size={iconSize.sm} aria-hidden className="text-brand" />
-          <span className="text-sm font-semibold text-brand">AI Coach</span>
+          <Lightbulb size={iconSize.sm} aria-hidden className="text-brand" />
+          <span className="text-sm font-semibold text-brand">Coach</span>
         </div>
         {insight?.actionLabel && (
           <button

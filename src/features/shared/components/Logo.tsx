@@ -1,4 +1,4 @@
-import { Sparkles } from "lucide-react";
+import { Dumbbell } from "lucide-react";
 import { iconSize } from "@/constants/icons";
 import { cn } from "@/lib/utils";
 
@@ -16,7 +16,7 @@ export function Logo({ className }: LogoProps) {
   return (
     <div className={cn("flex items-center gap-2", className)}>
       <span className="grid size-9 place-items-center rounded-field bg-brand text-zinc-950">
-        <Sparkles size={iconSize.sm} aria-hidden />
+        <Dumbbell size={iconSize.sm} aria-hidden />
       </span>
       <span className="font-display text-xl font-bold">PhysIQx</span>
     </div>
