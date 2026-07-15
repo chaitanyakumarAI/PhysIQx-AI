@@ -64,10 +64,10 @@ export const programLibrary: ProgramDefinition[] = [
     variants: [
       {
         daysPerWeek: 6,
-        notes: "Each muscle group is trained twice per week. Run Heavy Push / Heavy Pull / Power Legs one cycle, then Shoulder Push / Width Pull / Hip Power the next, back to back with one rest day per week wherever it fits your schedule.",
+        notes: "Each muscle group is trained twice per week. Run Push-Heavy / Pull-Heavy / Legs-Quads one cycle, then Push-Shoulders / Pull-Width / Legs-Glutes the next, back to back with one rest day per week wherever it fits your schedule.",
         days: [
           {
-            name: "Heavy Push",
+            name: "Push-Heavy",
             focus: "Chest, shoulders, triceps",
             exercises: [
               { exerciseId: "ex-bench-press", sets: [{ targetReps: 10 }, { targetReps: 8 }, { targetReps: 6 }, { targetReps: 6 }], restSeconds: 150 },
@@ -79,7 +79,7 @@ export const programLibrary: ProgramDefinition[] = [
             ],
           },
           {
-            name: "Heavy Pull",
+            name: "Pull-Heavy",
             focus: "Back, biceps",
             exercises: [
               { exerciseId: "ex-deadlift", sets: [{ targetReps: 6 }, { targetReps: 5 }, { targetReps: 4 }, { targetReps: 4 }], restSeconds: 180 },
@@ -91,7 +91,7 @@ export const programLibrary: ProgramDefinition[] = [
             ],
           },
           {
-            name: "Power Legs",
+            name: "Legs-Quads",
             focus: "Quads, hamstrings, glutes, calves",
             exercises: [
               { exerciseId: "ex-back-squat", sets: [{ targetReps: 10 }, { targetReps: 8 }, { targetReps: 6 }, { targetReps: 6 }], restSeconds: 150 },
@@ -103,7 +103,7 @@ export const programLibrary: ProgramDefinition[] = [
             ],
           },
           {
-            name: "Shoulder Push",
+            name: "Push-Shoulders",
             focus: "Shoulders, chest, triceps",
             exercises: [
               { exerciseId: "ex-seated-db-press", sets: [{ targetReps: 10 }, { targetReps: 8 }, { targetReps: 8 }], restSeconds: 120 },
@@ -115,7 +115,7 @@ export const programLibrary: ProgramDefinition[] = [
             ],
           },
           {
-            name: "Width Pull",
+            name: "Pull-Width",
             focus: "Back width, rear delts, biceps",
             exercises: [
               { exerciseId: "ex-rack-pull", sets: [{ targetReps: 6 }, { targetReps: 6 }, { targetReps: 5 }, { targetReps: 5 }], restSeconds: 150 },
@@ -127,7 +127,7 @@ export const programLibrary: ProgramDefinition[] = [
             ],
           },
           {
-            name: "Hip Power",
+            name: "Legs-Glutes",
             focus: "Hips, hamstrings, quads",
             exercises: [
               { exerciseId: "ex-front-squat", sets: [{ targetReps: 8 }, { targetReps: 8 }, { targetReps: 6 }, { targetReps: 6 }], restSeconds: 150 },
@@ -142,10 +142,10 @@ export const programLibrary: ProgramDefinition[] = [
       },
       {
         daysPerWeek: 5,
-        notes: "A single weekly leg session with two push and two pull sessions. Good for lifters who want most of the PPL benefit without training 6 days a week — rotate which leg day (Power Legs or Hip Power) you use week to week.",
+        notes: "A single weekly leg session with two push and two pull sessions. Good for lifters who want most of the PPL benefit without training 6 days a week — rotate which leg day (Legs-Quads or Legs-Glutes) you use week to week.",
         days: [
           {
-            name: "Heavy Push",
+            name: "Push-Heavy",
             focus: "Chest, shoulders, triceps",
             exercises: [
               { exerciseId: "ex-bench-press", sets: [{ targetReps: 10 }, { targetReps: 8 }, { targetReps: 6 }, { targetReps: 6 }], restSeconds: 150 },
@@ -157,7 +157,7 @@ export const programLibrary: ProgramDefinition[] = [
             ],
           },
           {
-            name: "Heavy Pull",
+            name: "Pull-Heavy",
             focus: "Back, biceps",
             exercises: [
               { exerciseId: "ex-deadlift", sets: [{ targetReps: 6 }, { targetReps: 5 }, { targetReps: 4 }, { targetReps: 4 }], restSeconds: 180 },
@@ -169,7 +169,7 @@ export const programLibrary: ProgramDefinition[] = [
             ],
           },
           {
-            name: "Power Legs",
+            name: "Legs-Quads",
             focus: "Quads, hamstrings, glutes, calves",
             exercises: [
               { exerciseId: "ex-back-squat", sets: [{ targetReps: 10 }, { targetReps: 8 }, { targetReps: 6 }, { targetReps: 6 }], restSeconds: 150 },
@@ -181,7 +181,7 @@ export const programLibrary: ProgramDefinition[] = [
             ],
           },
           {
-            name: "Shoulder Push",
+            name: "Push-Shoulders",
             focus: "Shoulders, chest, triceps",
             exercises: [
               { exerciseId: "ex-seated-db-press", sets: [{ targetReps: 10 }, { targetReps: 8 }, { targetReps: 8 }], restSeconds: 120 },
@@ -193,7 +193,7 @@ export const programLibrary: ProgramDefinition[] = [
             ],
           },
           {
-            name: "Width Pull",
+            name: "Pull-Width",
             focus: "Back width, rear delts, biceps",
             exercises: [
               { exerciseId: "ex-rack-pull", sets: [{ targetReps: 6 }, { targetReps: 6 }, { targetReps: 5 }, { targetReps: 5 }], restSeconds: 150 },
@@ -217,10 +217,10 @@ export const programLibrary: ProgramDefinition[] = [
     variants: [
       {
         daysPerWeek: 4,
-        notes: "Run Upper Strength, Lower Strength, Upper Volume, Lower Volume across the week with rest days spaced between, e.g. Mon/Tue/Thu/Fri. Strength days lean heavier and lower-rep; Volume days add sets at moderate reps.",
+        notes: "Run Upper Body-Strength, Lower Body-Strength, Upper Body-Volume, Lower Body-Volume across the week with rest days spaced between, e.g. Mon/Tue/Thu/Fri. Strength days lean heavier and lower-rep; Volume days add sets at moderate reps.",
         days: [
           {
-            name: "Upper Strength",
+            name: "Upper Body-Strength",
             focus: "Chest, back, shoulders — strength focus",
             exercises: [
               { exerciseId: "ex-bench-press", sets: [{ targetReps: 8 }, { targetReps: 6 }, { targetReps: 6 }, { targetReps: 4 }], restSeconds: 150 },
@@ -233,7 +233,7 @@ export const programLibrary: ProgramDefinition[] = [
             ],
           },
           {
-            name: "Lower Strength",
+            name: "Lower Body-Strength",
             focus: "Quads, hamstrings, calves — strength focus",
             exercises: [
               { exerciseId: "ex-back-squat", sets: [{ targetReps: 8 }, { targetReps: 6 }, { targetReps: 6 }, { targetReps: 4 }], restSeconds: 180 },
@@ -245,7 +245,7 @@ export const programLibrary: ProgramDefinition[] = [
             ],
           },
           {
-            name: "Upper Volume",
+            name: "Upper Body-Volume",
             focus: "Chest, back, shoulders — volume focus",
             exercises: [
               { exerciseId: "ex-incline-db-press", sets: [{ targetReps: 12 }, { targetReps: 10 }, { targetReps: 10 }], restSeconds: 90 },
@@ -258,7 +258,7 @@ export const programLibrary: ProgramDefinition[] = [
             ],
           },
           {
-            name: "Lower Volume",
+            name: "Lower Body-Volume",
             focus: "Hips, hamstrings — volume focus",
             exercises: [
               { exerciseId: "ex-front-squat", sets: [{ targetReps: 10 }, { targetReps: 10 }, { targetReps: 8 }], restSeconds: 150 },
