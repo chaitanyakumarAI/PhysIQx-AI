@@ -1,0 +1,2190 @@
+{
+  "_what_this_is": "Content request: suggested workout programs behind Train's program chips (PPL, Upper/Lower, Bro, Full Body). Each program offers one or more variants by training days per week; selecting a program shows its weekly schedule and lets the user adopt it as their plan.",
+  "_sourcing_notes": [
+    "Exercise selection and set/rep/rest prescriptions follow widely-used strength & hypertrophy programming conventions: compound lifts are placed first in each session while recovery is highest, typically in the 6-10 rep range at 90-180s rest for strength-hypertrophy blend; isolation/accessory work follows at 10-15 reps with 45-75s rest, standard for hypertrophy-focused accessory training.",
+    "Several main lifts (the first exercise of most days) use repsPerSet as an ascending-load pyramid (e.g. [10,8,6,6]) rather than a flat rep target, reflecting how these lifts are commonly programmed in real training (moderate warm-up-adjacent sets leading into a heavier top set), and to demonstrate the repsPerSet field working end-to-end.",
+    "All exerciseId values were validated against content/muscle-involvement_filled.json (the 189-exercise catalog) — every id below exists in that file.",
+    "PPL 5-day variant intentionally drops one leg day (keeping Legs A only) rather than trying to force two full PPL cycles into 5 days, since that is how this variant is commonly run in practice.",
+    "Full Body 2-day variant is framed as a maintenance/time-constrained option rather than a primary muscle-building layout, since 2 full-body sessions a week gives each pattern lower total weekly frequency than the 3-day version.",
+    "SCHEMA V2 + THREE NEW PROGRAMS (authored in-repo): reps may now be a number, a repsPerSet pyramid, or the string 'failure' (AMRAP); timed work uses durationSeconds (the old Plank 'reps: 45' was seconds in disguise and is fixed). Every program carries a level. Body Part Split (4-day) follows classic aesthetic-split convention — machine/cable-forward isolation after one barbell anchor per day, each muscle pair owning a full session; it differs from the Bro Split by pairing chest+triceps / back+biceps (one less day, shoulders still get their own). Fat Loss Focus alternates full-body/upper/lower lifting with two circuit conditioning days built from the catalog's functional entries (swings, sled, rope, rower, carries) per concurrent-training practice: resistance work preserves lean mass in a deficit while intervals drive energy expenditure. Arnold Split reflects the documented Chest&Back / Shoulders&Arms / Legs&LowerBack double-run week at 3-4 sets of 'up to 10' — mapped naturally onto targets-plus-failure; abs at 5x25 as he ran them."
+  ],
+  "_how_to_fill": [
+    "For each program, provide at least one variant. A variant = a specific days-per-week layout (e.g. PPL as a 6-day and a 5-day variant).",
+    "recommendedDaysPerWeek: which weekly frequencies this program suits — used to recommend a program from the user's onboarding answer (e.g. Upper/Lower suits 4, PPL suits 5-6).",
+    "Each day: a name and an ordered exercise list. exerciseId MUST be an id from content/muscle-involvement_filled.json (the 189-exercise catalog).",
+    "sets: number of sets. reps: target per set (number), repsPerSet: pyramid array, reps: \"failure\" for AMRAP sets, or durationSeconds for timed holds/carries/intervals. Every rep number is a TARGET, never a cap — training past it to failure is always valid.",
+    "Optional per day: focus (one line shown under the day name, e.g. 'Chest, shoulders, triceps').",
+    "Optional per variant: notes (one or two lines of coaching guidance shown with the schedule).",
+    "Fill the four presets. The 'Coach' program is generated in-app and needs no content."
+  ],
+  "programs": [
+    {
+      "type": "ppl",
+      "name": "Push Pull Legs",
+      "description": "A high-frequency split that trains each movement pattern twice per week, built for lifters who want to prioritize hypertrophy and can commit to 5-6 sessions weekly.",
+      "recommendedDaysPerWeek": [
+        5,
+        6
+      ],
+      "variants": [
+        {
+          "daysPerWeek": 6,
+          "notes": "Each muscle group is trained twice per week. Run Push A/Pull A/Legs A one cycle, then Push B/Pull B/Legs B the next, back to back with one rest day per week wherever it fits your schedule.",
+          "days": [
+            {
+              "name": "Push A",
+              "focus": "Chest, shoulders, triceps",
+              "exercises": [
+                {
+                  "exerciseId": "ex-bench-press",
+                  "sets": 4,
+                  "repsPerSet": [
+                    10,
+                    8,
+                    6,
+                    6
+                  ],
+                  "restSeconds": 150
+                },
+                {
+                  "exerciseId": "ex-incline-db-press",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-cable-fly",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-overhead-press",
+                  "sets": 3,
+                  "reps": 8,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-lateral-raise",
+                  "sets": 3,
+                  "reps": 15,
+                  "restSeconds": 45
+                },
+                {
+                  "exerciseId": "ex-triceps-pushdown",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                }
+              ]
+            },
+            {
+              "name": "Pull A",
+              "focus": "Back, biceps",
+              "exercises": [
+                {
+                  "exerciseId": "ex-deadlift",
+                  "sets": 4,
+                  "repsPerSet": [
+                    6,
+                    5,
+                    4,
+                    4
+                  ],
+                  "restSeconds": 180
+                },
+                {
+                  "exerciseId": "ex-pull-up",
+                  "sets": 4,
+                  "reps": 8,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-barbell-row",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-seated-cable-row",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 75
+                },
+                {
+                  "exerciseId": "ex-face-pull",
+                  "sets": 3,
+                  "reps": 15,
+                  "restSeconds": 45
+                },
+                {
+                  "exerciseId": "ex-barbell-curl",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                }
+              ]
+            },
+            {
+              "name": "Legs A",
+              "focus": "Quads, hamstrings, glutes, calves",
+              "exercises": [
+                {
+                  "exerciseId": "ex-back-squat",
+                  "sets": 4,
+                  "repsPerSet": [
+                    10,
+                    8,
+                    6,
+                    6
+                  ],
+                  "restSeconds": 150
+                },
+                {
+                  "exerciseId": "ex-romanian-deadlift",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-leg-press",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-bulgarian-split-squat",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 75
+                },
+                {
+                  "exerciseId": "ex-lying-leg-curl",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-standing-calf-raise",
+                  "sets": 4,
+                  "reps": 15,
+                  "restSeconds": 45
+                }
+              ]
+            },
+            {
+              "name": "Push B",
+              "focus": "Shoulders, chest, triceps",
+              "exercises": [
+                {
+                  "exerciseId": "ex-seated-db-press",
+                  "sets": 3,
+                  "repsPerSet": [
+                    10,
+                    8,
+                    8
+                  ],
+                  "restSeconds": 120
+                },
+                {
+                  "exerciseId": "ex-incline-bench-press",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-machine-chest-press",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 75
+                },
+                {
+                  "exerciseId": "ex-cable-lateral-raise",
+                  "sets": 3,
+                  "reps": 15,
+                  "restSeconds": 45
+                },
+                {
+                  "exerciseId": "ex-chest-dip",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-overhead-triceps-ext",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                }
+              ]
+            },
+            {
+              "name": "Pull B",
+              "focus": "Back width, rear delts, biceps",
+              "exercises": [
+                {
+                  "exerciseId": "ex-rack-pull",
+                  "sets": 4,
+                  "repsPerSet": [
+                    6,
+                    6,
+                    5,
+                    5
+                  ],
+                  "restSeconds": 150
+                },
+                {
+                  "exerciseId": "ex-lat-pulldown",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-t-bar-row",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-single-arm-db-row",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 75
+                },
+                {
+                  "exerciseId": "ex-rear-delt-fly",
+                  "sets": 3,
+                  "reps": 15,
+                  "restSeconds": 45
+                },
+                {
+                  "exerciseId": "ex-hammer-curl",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                }
+              ]
+            },
+            {
+              "name": "Legs B",
+              "focus": "Hips, hamstrings, quads",
+              "exercises": [
+                {
+                  "exerciseId": "ex-front-squat",
+                  "sets": 4,
+                  "repsPerSet": [
+                    8,
+                    8,
+                    6,
+                    6
+                  ],
+                  "restSeconds": 150
+                },
+                {
+                  "exerciseId": "ex-hip-thrust",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-walking-lunge",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 75
+                },
+                {
+                  "exerciseId": "ex-leg-extension",
+                  "sets": 3,
+                  "reps": 15,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-seated-leg-curl",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-seated-calf-raise",
+                  "sets": 4,
+                  "reps": 15,
+                  "restSeconds": 45
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "daysPerWeek": 5,
+          "notes": "A single weekly leg session with two push and two pull sessions. Good for lifters who want most of the PPL benefit without training 6 days a week — rotate which leg day (A or B) you use week to week.",
+          "days": [
+            {
+              "name": "Push A",
+              "focus": "Chest, shoulders, triceps",
+              "exercises": [
+                {
+                  "exerciseId": "ex-bench-press",
+                  "sets": 4,
+                  "repsPerSet": [
+                    10,
+                    8,
+                    6,
+                    6
+                  ],
+                  "restSeconds": 150
+                },
+                {
+                  "exerciseId": "ex-incline-db-press",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-cable-fly",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-overhead-press",
+                  "sets": 3,
+                  "reps": 8,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-lateral-raise",
+                  "sets": 3,
+                  "reps": 15,
+                  "restSeconds": 45
+                },
+                {
+                  "exerciseId": "ex-triceps-pushdown",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                }
+              ]
+            },
+            {
+              "name": "Pull A",
+              "focus": "Back, biceps",
+              "exercises": [
+                {
+                  "exerciseId": "ex-deadlift",
+                  "sets": 4,
+                  "repsPerSet": [
+                    6,
+                    5,
+                    4,
+                    4
+                  ],
+                  "restSeconds": 180
+                },
+                {
+                  "exerciseId": "ex-pull-up",
+                  "sets": 4,
+                  "reps": 8,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-barbell-row",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-seated-cable-row",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 75
+                },
+                {
+                  "exerciseId": "ex-face-pull",
+                  "sets": 3,
+                  "reps": 15,
+                  "restSeconds": 45
+                },
+                {
+                  "exerciseId": "ex-barbell-curl",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                }
+              ]
+            },
+            {
+              "name": "Legs A",
+              "focus": "Quads, hamstrings, glutes, calves",
+              "exercises": [
+                {
+                  "exerciseId": "ex-back-squat",
+                  "sets": 4,
+                  "repsPerSet": [
+                    10,
+                    8,
+                    6,
+                    6
+                  ],
+                  "restSeconds": 150
+                },
+                {
+                  "exerciseId": "ex-romanian-deadlift",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-leg-press",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-bulgarian-split-squat",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 75
+                },
+                {
+                  "exerciseId": "ex-lying-leg-curl",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-standing-calf-raise",
+                  "sets": 4,
+                  "reps": 15,
+                  "restSeconds": 45
+                }
+              ]
+            },
+            {
+              "name": "Push B",
+              "focus": "Shoulders, chest, triceps",
+              "exercises": [
+                {
+                  "exerciseId": "ex-seated-db-press",
+                  "sets": 3,
+                  "repsPerSet": [
+                    10,
+                    8,
+                    8
+                  ],
+                  "restSeconds": 120
+                },
+                {
+                  "exerciseId": "ex-incline-bench-press",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-machine-chest-press",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 75
+                },
+                {
+                  "exerciseId": "ex-cable-lateral-raise",
+                  "sets": 3,
+                  "reps": 15,
+                  "restSeconds": 45
+                },
+                {
+                  "exerciseId": "ex-chest-dip",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-overhead-triceps-ext",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                }
+              ]
+            },
+            {
+              "name": "Pull B",
+              "focus": "Back width, rear delts, biceps",
+              "exercises": [
+                {
+                  "exerciseId": "ex-rack-pull",
+                  "sets": 4,
+                  "repsPerSet": [
+                    6,
+                    6,
+                    5,
+                    5
+                  ],
+                  "restSeconds": 150
+                },
+                {
+                  "exerciseId": "ex-lat-pulldown",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-t-bar-row",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-single-arm-db-row",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 75
+                },
+                {
+                  "exerciseId": "ex-rear-delt-fly",
+                  "sets": 3,
+                  "reps": 15,
+                  "restSeconds": 45
+                },
+                {
+                  "exerciseId": "ex-hammer-curl",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "level": "intermediate"
+    },
+    {
+      "type": "upper-lower",
+      "name": "Upper / Lower",
+      "description": "A balanced 4-day split alternating upper and lower body sessions — enough frequency to drive progress without the daily commitment of PPL or a bro split.",
+      "recommendedDaysPerWeek": [
+        4
+      ],
+      "variants": [
+        {
+          "daysPerWeek": 4,
+          "notes": "Run Upper A, Lower A, Upper B, Lower B across the week with rest days spaced between, e.g. Mon/Tue/Thu/Fri. The 'A' days lean toward heavier, lower-rep strength work; the 'B' days add volume with moderate reps.",
+          "days": [
+            {
+              "name": "Upper A",
+              "focus": "Chest, back, shoulders — strength focus",
+              "exercises": [
+                {
+                  "exerciseId": "ex-bench-press",
+                  "sets": 4,
+                  "repsPerSet": [
+                    8,
+                    6,
+                    6,
+                    4
+                  ],
+                  "restSeconds": 150
+                },
+                {
+                  "exerciseId": "ex-barbell-row",
+                  "sets": 4,
+                  "reps": 8,
+                  "restSeconds": 120
+                },
+                {
+                  "exerciseId": "ex-seated-db-press",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-lat-pulldown",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-lateral-raise",
+                  "sets": 3,
+                  "reps": 15,
+                  "restSeconds": 45
+                },
+                {
+                  "exerciseId": "ex-barbell-curl",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-triceps-pushdown",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                }
+              ]
+            },
+            {
+              "name": "Lower A",
+              "focus": "Quads, hamstrings, calves — strength focus",
+              "exercises": [
+                {
+                  "exerciseId": "ex-back-squat",
+                  "sets": 4,
+                  "repsPerSet": [
+                    8,
+                    6,
+                    6,
+                    4
+                  ],
+                  "restSeconds": 180
+                },
+                {
+                  "exerciseId": "ex-romanian-deadlift",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-leg-press",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-lying-leg-curl",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-standing-calf-raise",
+                  "sets": 4,
+                  "reps": 15,
+                  "restSeconds": 45
+                },
+                {
+                  "exerciseId": "ex-cable-crunch",
+                  "sets": 3,
+                  "reps": 15,
+                  "restSeconds": 45
+                }
+              ]
+            },
+            {
+              "name": "Upper B",
+              "focus": "Chest, back, shoulders — volume focus",
+              "exercises": [
+                {
+                  "exerciseId": "ex-incline-db-press",
+                  "sets": 3,
+                  "repsPerSet": [
+                    12,
+                    10,
+                    10
+                  ],
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-seated-cable-row",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-overhead-press",
+                  "sets": 3,
+                  "reps": 8,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-chin-up",
+                  "sets": 3,
+                  "reps": 8,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-cable-lateral-raise",
+                  "sets": 3,
+                  "reps": 15,
+                  "restSeconds": 45
+                },
+                {
+                  "exerciseId": "ex-hammer-curl",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-skull-crusher",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                }
+              ]
+            },
+            {
+              "name": "Lower B",
+              "focus": "Hips, hamstrings — volume focus",
+              "exercises": [
+                {
+                  "exerciseId": "ex-front-squat",
+                  "sets": 3,
+                  "repsPerSet": [
+                    10,
+                    10,
+                    8
+                  ],
+                  "restSeconds": 150
+                },
+                {
+                  "exerciseId": "ex-hip-thrust",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-bulgarian-split-squat",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 75
+                },
+                {
+                  "exerciseId": "ex-seated-leg-curl",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-seated-calf-raise",
+                  "sets": 4,
+                  "reps": 15,
+                  "restSeconds": 45
+                },
+                {
+                  "exerciseId": "ex-hanging-knee-raise",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 45
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "level": "intermediate"
+    },
+    {
+      "type": "bro",
+      "name": "Bro Split",
+      "description": "One muscle group per day for maximum focused volume and pump — a classic bodybuilding-style split for lifters training 5 days a week who enjoy specializing session to session.",
+      "recommendedDaysPerWeek": [
+        5
+      ],
+      "variants": [
+        {
+          "daysPerWeek": 5,
+          "notes": "Run Chest, Back, Shoulders, Arms, Legs in order across the week, e.g. Mon-Fri with the weekend off. Each muscle group is trained once weekly, so push volume and intensity hard within each session.",
+          "days": [
+            {
+              "name": "Chest Day",
+              "focus": "Chest, front delts",
+              "exercises": [
+                {
+                  "exerciseId": "ex-bench-press",
+                  "sets": 4,
+                  "repsPerSet": [
+                    10,
+                    8,
+                    6,
+                    6
+                  ],
+                  "restSeconds": 150
+                },
+                {
+                  "exerciseId": "ex-incline-db-press",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-machine-chest-press",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 75
+                },
+                {
+                  "exerciseId": "ex-cable-fly",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-chest-dip",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-push-up",
+                  "sets": 2,
+                  "reps": "failure",
+                  "restSeconds": 60
+                }
+              ]
+            },
+            {
+              "name": "Back Day",
+              "focus": "Lats, mid-back, erectors",
+              "exercises": [
+                {
+                  "exerciseId": "ex-deadlift",
+                  "sets": 4,
+                  "repsPerSet": [
+                    6,
+                    5,
+                    4,
+                    4
+                  ],
+                  "restSeconds": 180
+                },
+                {
+                  "exerciseId": "ex-pull-up",
+                  "sets": 4,
+                  "reps": 8,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-barbell-row",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-lat-pulldown",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-seated-cable-row",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 75
+                },
+                {
+                  "exerciseId": "ex-back-extension",
+                  "sets": 3,
+                  "reps": 15,
+                  "restSeconds": 60
+                }
+              ]
+            },
+            {
+              "name": "Shoulder Day",
+              "focus": "All three delt heads, traps",
+              "exercises": [
+                {
+                  "exerciseId": "ex-overhead-press",
+                  "sets": 4,
+                  "repsPerSet": [
+                    10,
+                    8,
+                    6,
+                    6
+                  ],
+                  "restSeconds": 150
+                },
+                {
+                  "exerciseId": "ex-seated-db-press",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-lateral-raise",
+                  "sets": 4,
+                  "reps": 15,
+                  "restSeconds": 45
+                },
+                {
+                  "exerciseId": "ex-front-raise",
+                  "sets": 3,
+                  "reps": 15,
+                  "restSeconds": 45
+                },
+                {
+                  "exerciseId": "ex-rear-delt-fly",
+                  "sets": 3,
+                  "reps": 15,
+                  "restSeconds": 45
+                },
+                {
+                  "exerciseId": "ex-barbell-shrug",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                }
+              ]
+            },
+            {
+              "name": "Arm Day",
+              "focus": "Biceps, triceps",
+              "exercises": [
+                {
+                  "exerciseId": "ex-barbell-curl",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 75
+                },
+                {
+                  "exerciseId": "ex-close-grip-bench",
+                  "sets": 4,
+                  "reps": 8,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-ez-bar-curl",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-triceps-pushdown",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-hammer-curl",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-skull-crusher",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                }
+              ]
+            },
+            {
+              "name": "Leg Day",
+              "focus": "Quads, hamstrings, glutes, calves",
+              "exercises": [
+                {
+                  "exerciseId": "ex-back-squat",
+                  "sets": 4,
+                  "repsPerSet": [
+                    10,
+                    8,
+                    6,
+                    6
+                  ],
+                  "restSeconds": 180
+                },
+                {
+                  "exerciseId": "ex-romanian-deadlift",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-leg-press",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-leg-extension",
+                  "sets": 3,
+                  "reps": 15,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-lying-leg-curl",
+                  "sets": 3,
+                  "reps": 15,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-standing-calf-raise",
+                  "sets": 4,
+                  "reps": 15,
+                  "restSeconds": 45
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "level": "intermediate"
+    },
+    {
+      "type": "full-body",
+      "name": "Full Body",
+      "description": "Every major movement pattern trained each session — ideal for beginners building a base, or anyone who can only commit to 2-3 sessions a week and wants full-body coverage every time.",
+      "recommendedDaysPerWeek": [
+        2,
+        3
+      ],
+      "variants": [
+        {
+          "daysPerWeek": 3,
+          "notes": "Run A, B, C in order with a rest day between each session, e.g. Mon/Wed/Fri. Each day covers a squat or hinge pattern, a push, a pull, and core work, so no single day is a 'leg day' or 'chest day' — the whole body is hit every time.",
+          "days": [
+            {
+              "name": "Full Body A",
+              "focus": "Squat pattern, horizontal push/pull",
+              "exercises": [
+                {
+                  "exerciseId": "ex-back-squat",
+                  "sets": 3,
+                  "repsPerSet": [
+                    10,
+                    8,
+                    8
+                  ],
+                  "restSeconds": 150
+                },
+                {
+                  "exerciseId": "ex-bench-press",
+                  "sets": 3,
+                  "reps": 8,
+                  "restSeconds": 120
+                },
+                {
+                  "exerciseId": "ex-barbell-row",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-lateral-raise",
+                  "sets": 3,
+                  "reps": 15,
+                  "restSeconds": 45
+                },
+                {
+                  "exerciseId": "ex-plank",
+                  "sets": 3,
+                  "restSeconds": 45,
+                  "durationSeconds": 45
+                }
+              ]
+            },
+            {
+              "name": "Full Body B",
+              "focus": "Hinge pattern, vertical push/pull",
+              "exercises": [
+                {
+                  "exerciseId": "ex-romanian-deadlift",
+                  "sets": 3,
+                  "repsPerSet": [
+                    10,
+                    10,
+                    8
+                  ],
+                  "restSeconds": 150
+                },
+                {
+                  "exerciseId": "ex-seated-db-press",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-lat-pulldown",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-barbell-curl",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-russian-twist",
+                  "sets": 3,
+                  "reps": 20,
+                  "restSeconds": 45
+                }
+              ]
+            },
+            {
+              "name": "Full Body C",
+              "focus": "Leg press pattern, incline push, row",
+              "exercises": [
+                {
+                  "exerciseId": "ex-leg-press",
+                  "sets": 3,
+                  "repsPerSet": [
+                    12,
+                    12,
+                    10
+                  ],
+                  "restSeconds": 120
+                },
+                {
+                  "exerciseId": "ex-incline-db-press",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-seated-cable-row",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 75
+                },
+                {
+                  "exerciseId": "ex-triceps-pushdown",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-hanging-knee-raise",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 45
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "daysPerWeek": 2,
+          "notes": "For a 2-day-per-week schedule, alternate just A and B week to week (skip C) so each session still covers a full-body pattern. Best suited to maintenance or a very time-constrained schedule rather than active muscle building.",
+          "days": [
+            {
+              "name": "Full Body A",
+              "focus": "Squat pattern, horizontal push/pull",
+              "exercises": [
+                {
+                  "exerciseId": "ex-back-squat",
+                  "sets": 3,
+                  "repsPerSet": [
+                    10,
+                    8,
+                    8
+                  ],
+                  "restSeconds": 150
+                },
+                {
+                  "exerciseId": "ex-bench-press",
+                  "sets": 3,
+                  "reps": 8,
+                  "restSeconds": 120
+                },
+                {
+                  "exerciseId": "ex-barbell-row",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-lateral-raise",
+                  "sets": 3,
+                  "reps": 15,
+                  "restSeconds": 45
+                },
+                {
+                  "exerciseId": "ex-plank",
+                  "sets": 3,
+                  "restSeconds": 45,
+                  "durationSeconds": 45
+                }
+              ]
+            },
+            {
+              "name": "Full Body B",
+              "focus": "Hinge pattern, vertical push/pull",
+              "exercises": [
+                {
+                  "exerciseId": "ex-romanian-deadlift",
+                  "sets": 3,
+                  "repsPerSet": [
+                    10,
+                    10,
+                    8
+                  ],
+                  "restSeconds": 150
+                },
+                {
+                  "exerciseId": "ex-seated-db-press",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-lat-pulldown",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-barbell-curl",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-russian-twist",
+                  "sets": 3,
+                  "reps": 20,
+                  "restSeconds": 45
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "level": "beginner"
+    },
+    {
+      "type": "body-part",
+      "name": "Body Part Split",
+      "level": "intermediate",
+      "description": "Four focused days — each muscle pair gets a full session of volume with machine and cable work for clean isolation. The 4-day cousin of the Bro Split: one less gym day, shoulders get their own session, and legs are never squeezed out.",
+      "recommendedDaysPerWeek": [
+        4
+      ],
+      "variants": [
+        {
+          "daysPerWeek": 4,
+          "notes": "Spread the four days across the week with rest wherever life needs it — e.g. Mon/Tue/Thu/Sat. Rep numbers are targets, not caps: taking the last set of any isolation past the target to failure is exactly how this split is meant to be run.",
+          "days": [
+            {
+              "name": "Chest & Triceps",
+              "focus": "Pressing volume, then triceps to finish",
+              "exercises": [
+                {
+                  "exerciseId": "ex-bench-press",
+                  "sets": 4,
+                  "repsPerSet": [
+                    10,
+                    8,
+                    8,
+                    6
+                  ],
+                  "restSeconds": 120
+                },
+                {
+                  "exerciseId": "ex-incline-db-press",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-pec-deck",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-low-high-cable-fly",
+                  "sets": 3,
+                  "reps": 15,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-triceps-pushdown",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-cable-overhead-triceps-ext",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-bench-dip",
+                  "sets": 2,
+                  "reps": "failure",
+                  "restSeconds": 60
+                }
+              ]
+            },
+            {
+              "name": "Back & Biceps",
+              "focus": "Width, then thickness, then arms",
+              "exercises": [
+                {
+                  "exerciseId": "ex-lat-pulldown",
+                  "sets": 4,
+                  "repsPerSet": [
+                    12,
+                    10,
+                    10,
+                    8
+                  ],
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-machine-row",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-seated-cable-row",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 75
+                },
+                {
+                  "exerciseId": "ex-straight-arm-pulldown",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-preacher-curl",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-cable-curl",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-hammer-curl",
+                  "sets": 2,
+                  "reps": "failure",
+                  "restSeconds": 60
+                }
+              ]
+            },
+            {
+              "name": "Legs",
+              "focus": "Quads, hamstrings, glutes, calves",
+              "exercises": [
+                {
+                  "exerciseId": "ex-hack-squat",
+                  "sets": 4,
+                  "repsPerSet": [
+                    12,
+                    10,
+                    10,
+                    8
+                  ],
+                  "restSeconds": 120
+                },
+                {
+                  "exerciseId": "ex-leg-press",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-romanian-deadlift",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-leg-extension",
+                  "sets": 3,
+                  "reps": 15,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-seated-leg-curl",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-standing-calf-raise",
+                  "sets": 4,
+                  "reps": 15,
+                  "restSeconds": 45
+                }
+              ]
+            },
+            {
+              "name": "Shoulders",
+              "focus": "All three delt heads, traps, core to close",
+              "exercises": [
+                {
+                  "exerciseId": "ex-machine-shoulder-press",
+                  "sets": 4,
+                  "repsPerSet": [
+                    12,
+                    10,
+                    10,
+                    8
+                  ],
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-cable-lateral-raise",
+                  "sets": 4,
+                  "reps": 15,
+                  "restSeconds": 45
+                },
+                {
+                  "exerciseId": "ex-reverse-pec-deck",
+                  "sets": 3,
+                  "reps": 15,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-front-raise",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 45
+                },
+                {
+                  "exerciseId": "ex-barbell-shrug",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-cable-crunch",
+                  "sets": 3,
+                  "reps": 15,
+                  "restSeconds": 45
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "fat-loss",
+      "name": "Fat Loss Focus",
+      "level": "beginner",
+      "description": "Strength and conditioning woven together: lifting preserves muscle while the engine days drive the calorie burn. Built for weight loss and general fitness — high energy, never boring.",
+      "recommendedDaysPerWeek": [
+        4,
+        5
+      ],
+      "variants": [
+        {
+          "daysPerWeek": 5,
+          "notes": "Alternate lifting and conditioning: strength Mon, engine Tue, upper Wed, engine Thu, lower Fri. Conditioning days run circuit-style — the listed rest is between exercises; keep moving inside each round. Pair with a modest calorie deficit; the training protects the muscle.",
+          "days": [
+            {
+              "name": "Full Body Strength",
+              "focus": "Big patterns, moderate loads — muscle is what keeps the burn",
+              "exercises": [
+                {
+                  "exerciseId": "ex-goblet-squat",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-db-bench-press",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-single-arm-db-row",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 75
+                },
+                {
+                  "exerciseId": "ex-romanian-deadlift",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-plank",
+                  "sets": 3,
+                  "durationSeconds": 40,
+                  "restSeconds": 45
+                }
+              ]
+            },
+            {
+              "name": "Conditioning A",
+              "focus": "Circuit style — move briskly, rest fully only between rounds",
+              "exercises": [
+                {
+                  "exerciseId": "ex-kettlebell-swing",
+                  "sets": 4,
+                  "reps": 15,
+                  "restSeconds": 30
+                },
+                {
+                  "exerciseId": "ex-jump-rope",
+                  "sets": 4,
+                  "durationSeconds": 60,
+                  "restSeconds": 45
+                },
+                {
+                  "exerciseId": "ex-mountain-climber",
+                  "sets": 4,
+                  "durationSeconds": 30,
+                  "restSeconds": 30
+                },
+                {
+                  "exerciseId": "ex-sled-push",
+                  "sets": 4,
+                  "durationSeconds": 20,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-farmers-carry",
+                  "sets": 3,
+                  "durationSeconds": 40,
+                  "restSeconds": 60
+                }
+              ]
+            },
+            {
+              "name": "Upper Body",
+              "focus": "Push-pull pairs, finishers to failure",
+              "exercises": [
+                {
+                  "exerciseId": "ex-incline-db-press",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 75
+                },
+                {
+                  "exerciseId": "ex-lat-pulldown",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 75
+                },
+                {
+                  "exerciseId": "ex-seated-db-press",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 75
+                },
+                {
+                  "exerciseId": "ex-seated-cable-row",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 75
+                },
+                {
+                  "exerciseId": "ex-triceps-pushdown",
+                  "sets": 2,
+                  "reps": "failure",
+                  "restSeconds": 45
+                },
+                {
+                  "exerciseId": "ex-db-curl",
+                  "sets": 2,
+                  "reps": "failure",
+                  "restSeconds": 45
+                }
+              ]
+            },
+            {
+              "name": "Conditioning B",
+              "focus": "Intervals — hard minute, easy recovery, repeat",
+              "exercises": [
+                {
+                  "exerciseId": "ex-rowing-machine",
+                  "sets": 5,
+                  "durationSeconds": 60,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-thruster",
+                  "sets": 4,
+                  "reps": 12,
+                  "restSeconds": 45
+                },
+                {
+                  "exerciseId": "ex-jump-rope",
+                  "sets": 4,
+                  "durationSeconds": 60,
+                  "restSeconds": 45
+                },
+                {
+                  "exerciseId": "ex-hollow-body-hold",
+                  "sets": 3,
+                  "durationSeconds": 30,
+                  "restSeconds": 45
+                }
+              ]
+            },
+            {
+              "name": "Lower Body",
+              "focus": "Legs and glutes with short rests",
+              "exercises": [
+                {
+                  "exerciseId": "ex-leg-press",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 75
+                },
+                {
+                  "exerciseId": "ex-walking-lunge",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-lying-leg-curl",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-glute-bridge",
+                  "sets": 3,
+                  "reps": 15,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-standing-calf-raise",
+                  "sets": 3,
+                  "reps": 15,
+                  "restSeconds": 45
+                },
+                {
+                  "exerciseId": "ex-v-up",
+                  "sets": 3,
+                  "reps": "failure",
+                  "restSeconds": 45
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "daysPerWeek": 4,
+          "notes": "The time-constrained version: one conditioning day instead of two. Keep walks or easy cardio on off days if fat loss is the priority.",
+          "days": [
+            {
+              "name": "Full Body Strength",
+              "focus": "Big patterns, moderate loads — muscle is what keeps the burn",
+              "exercises": [
+                {
+                  "exerciseId": "ex-goblet-squat",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-db-bench-press",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-single-arm-db-row",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 75
+                },
+                {
+                  "exerciseId": "ex-romanian-deadlift",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-plank",
+                  "sets": 3,
+                  "durationSeconds": 40,
+                  "restSeconds": 45
+                }
+              ]
+            },
+            {
+              "name": "Conditioning A",
+              "focus": "Circuit style — move briskly, rest fully only between rounds",
+              "exercises": [
+                {
+                  "exerciseId": "ex-kettlebell-swing",
+                  "sets": 4,
+                  "reps": 15,
+                  "restSeconds": 30
+                },
+                {
+                  "exerciseId": "ex-jump-rope",
+                  "sets": 4,
+                  "durationSeconds": 60,
+                  "restSeconds": 45
+                },
+                {
+                  "exerciseId": "ex-mountain-climber",
+                  "sets": 4,
+                  "durationSeconds": 30,
+                  "restSeconds": 30
+                },
+                {
+                  "exerciseId": "ex-sled-push",
+                  "sets": 4,
+                  "durationSeconds": 20,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-farmers-carry",
+                  "sets": 3,
+                  "durationSeconds": 40,
+                  "restSeconds": 60
+                }
+              ]
+            },
+            {
+              "name": "Upper Body",
+              "focus": "Push-pull pairs, finishers to failure",
+              "exercises": [
+                {
+                  "exerciseId": "ex-incline-db-press",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 75
+                },
+                {
+                  "exerciseId": "ex-lat-pulldown",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 75
+                },
+                {
+                  "exerciseId": "ex-seated-db-press",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 75
+                },
+                {
+                  "exerciseId": "ex-seated-cable-row",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 75
+                },
+                {
+                  "exerciseId": "ex-triceps-pushdown",
+                  "sets": 2,
+                  "reps": "failure",
+                  "restSeconds": 45
+                },
+                {
+                  "exerciseId": "ex-db-curl",
+                  "sets": 2,
+                  "reps": "failure",
+                  "restSeconds": 45
+                }
+              ]
+            },
+            {
+              "name": "Lower Body",
+              "focus": "Legs and glutes with short rests",
+              "exercises": [
+                {
+                  "exerciseId": "ex-leg-press",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 75
+                },
+                {
+                  "exerciseId": "ex-walking-lunge",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-lying-leg-curl",
+                  "sets": 3,
+                  "reps": 12,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-glute-bridge",
+                  "sets": 3,
+                  "reps": 15,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-standing-calf-raise",
+                  "sets": 3,
+                  "reps": 15,
+                  "restSeconds": 45
+                },
+                {
+                  "exerciseId": "ex-v-up",
+                  "sets": 3,
+                  "reps": "failure",
+                  "restSeconds": 45
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "arnold",
+      "name": "Arnold Split",
+      "level": "advanced",
+      "description": "The six-day split from Arnold's competition years: chest with back, shoulders with arms, legs with lower back — each pairing hit twice a week at heroic volume. For experienced lifters with recovery to spare.",
+      "recommendedDaysPerWeek": [
+        6
+      ],
+      "variants": [
+        {
+          "daysPerWeek": 6,
+          "notes": "Every rep count is an 'up to' target in Arnold's own style — the last set of anything can go to failure. The split is famously flexible: swap movements for your equipment and joints (chin-ups → lat pulldown, barbell press → dumbbell press) as long as the pattern stays. Sunday off.",
+          "days": [
+            {
+              "name": "Chest & Back A",
+              "focus": "Antagonist pairing — press and pull in one session",
+              "exercises": [
+                {
+                  "exerciseId": "ex-bench-press",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 120
+                },
+                {
+                  "exerciseId": "ex-incline-bench-press",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 120
+                },
+                {
+                  "exerciseId": "ex-db-pullover",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-chin-up",
+                  "sets": 4,
+                  "reps": "failure",
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-barbell-row",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-deadlift",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 180
+                },
+                {
+                  "exerciseId": "ex-crunch",
+                  "sets": 5,
+                  "reps": 25,
+                  "restSeconds": 30
+                }
+              ]
+            },
+            {
+              "name": "Shoulders & Arms A",
+              "focus": "Delts, then biceps-triceps supersets Arnold-style",
+              "exercises": [
+                {
+                  "exerciseId": "ex-db-clean-and-press",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 120
+                },
+                {
+                  "exerciseId": "ex-lateral-raise",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-upright-row",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 75
+                },
+                {
+                  "exerciseId": "ex-overhead-press",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-barbell-curl",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-db-curl",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-close-grip-bench",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-overhead-triceps-ext",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-wrist-curl",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 45
+                },
+                {
+                  "exerciseId": "ex-reverse-curl",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 45
+                },
+                {
+                  "exerciseId": "ex-reverse-crunch",
+                  "sets": 5,
+                  "reps": 25,
+                  "restSeconds": 30
+                }
+              ]
+            },
+            {
+              "name": "Legs & Lower Back A",
+              "focus": "Squat, hinge, and the posterior chain",
+              "exercises": [
+                {
+                  "exerciseId": "ex-back-squat",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 150
+                },
+                {
+                  "exerciseId": "ex-walking-lunge",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-lying-leg-curl",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-stiff-leg-deadlift",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 120
+                },
+                {
+                  "exerciseId": "ex-good-morning",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-standing-calf-raise",
+                  "sets": 4,
+                  "reps": 15,
+                  "restSeconds": 45
+                },
+                {
+                  "exerciseId": "ex-crunch",
+                  "sets": 5,
+                  "reps": 25,
+                  "restSeconds": 30
+                }
+              ]
+            },
+            {
+              "name": "Chest & Back B",
+              "focus": "Antagonist pairing — press and pull in one session",
+              "exercises": [
+                {
+                  "exerciseId": "ex-bench-press",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 120
+                },
+                {
+                  "exerciseId": "ex-incline-bench-press",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 120
+                },
+                {
+                  "exerciseId": "ex-db-pullover",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-chin-up",
+                  "sets": 4,
+                  "reps": "failure",
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-barbell-row",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-deadlift",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 180
+                },
+                {
+                  "exerciseId": "ex-crunch",
+                  "sets": 5,
+                  "reps": 25,
+                  "restSeconds": 30
+                }
+              ]
+            },
+            {
+              "name": "Shoulders & Arms B",
+              "focus": "Delts, then biceps-triceps supersets Arnold-style",
+              "exercises": [
+                {
+                  "exerciseId": "ex-db-clean-and-press",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 120
+                },
+                {
+                  "exerciseId": "ex-lateral-raise",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-upright-row",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 75
+                },
+                {
+                  "exerciseId": "ex-overhead-press",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-barbell-curl",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-db-curl",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-close-grip-bench",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-overhead-triceps-ext",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-wrist-curl",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 45
+                },
+                {
+                  "exerciseId": "ex-reverse-curl",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 45
+                },
+                {
+                  "exerciseId": "ex-reverse-crunch",
+                  "sets": 5,
+                  "reps": 25,
+                  "restSeconds": 30
+                }
+              ]
+            },
+            {
+              "name": "Legs & Lower Back B",
+              "focus": "Squat, hinge, and the posterior chain",
+              "exercises": [
+                {
+                  "exerciseId": "ex-back-squat",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 150
+                },
+                {
+                  "exerciseId": "ex-walking-lunge",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-lying-leg-curl",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 60
+                },
+                {
+                  "exerciseId": "ex-stiff-leg-deadlift",
+                  "sets": 4,
+                  "reps": 10,
+                  "restSeconds": 120
+                },
+                {
+                  "exerciseId": "ex-good-morning",
+                  "sets": 3,
+                  "reps": 10,
+                  "restSeconds": 90
+                },
+                {
+                  "exerciseId": "ex-standing-calf-raise",
+                  "sets": 4,
+                  "reps": 15,
+                  "restSeconds": 45
+                },
+                {
+                  "exerciseId": "ex-crunch",
+                  "sets": 5,
+                  "reps": 25,
+                  "restSeconds": 30
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "_substitutions": [
+    "Arnold: Barbell Clean & Press -> ex-db-clean-and-press (no barbell clean-and-press in catalog; ex-clean-and-jerk is the Olympic lift, too technical for this slot).",
+    "Arnold: Seated Dumbbell Curl -> ex-db-curl (standing; closest catalog curl — ex-incline-db-curl also acceptable).",
+    "Arnold: Standing Barbell Triceps Extension -> ex-overhead-triceps-ext (dumbbell overhead extension, same overhead-triceps pattern).",
+    "Arnold: Reverse Wrist Curl -> ex-reverse-curl (reverse-grip curl loads the same wrist extensors; a dedicated ex-reverse-wrist-curl would be the ideal future catalog addition).",
+    "Fat Loss: 'burpee' has no catalog entry — conditioning circuits use mountain climbers / jump rope / thrusters instead; ex-burpee is a suggested future catalog addition."
+  ]
+}
