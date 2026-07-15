@@ -37,9 +37,13 @@ export function Switch({ checked, onChange, label, disabled }: SwitchProps) {
           checked ? "border-brand bg-brand" : "border-border bg-surface-elevated",
         )}
       >
+        {/* Explicit left/top anchor + single-axis translate: stacking
+            translate-x with -translate-y-1/2 mis-composed and pushed the
+            thumb outside the track (verified in screenshots). Track 48x28,
+            thumb 20: rests at x=4, travels to x=22 (4px inset each end). */}
         <span
           className={cn(
-            "absolute top-1/2 size-5 -translate-y-1/2 rounded-full bg-white shadow-sm transition-transform duration-150",
+            "absolute left-0 top-[3px] size-5 rounded-full bg-white shadow-sm transition-transform duration-150",
             checked ? "translate-x-[22px]" : "translate-x-1",
           )}
         />
