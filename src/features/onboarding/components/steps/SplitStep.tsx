@@ -13,6 +13,9 @@ const splitDescription: Record<ProgramType, string> = {
   "upper-lower": "Alternate upper and lower body days",
   bro: "One muscle group per session",
   "full-body": "Everything, every session",
+  "body-part": "Four focused days, one muscle pair each",
+  "fat-loss": "Lifting plus conditioning circuits",
+  arnold: "The six-day classic — advanced volume",
 };
 
 export function SplitStep({ value, onChange }: SplitStepProps) {

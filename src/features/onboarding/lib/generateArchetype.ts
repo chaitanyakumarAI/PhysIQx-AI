@@ -14,6 +14,9 @@ const splitNoun: Record<ProgramType, string> = {
   "upper-lower": "hybrid athlete",
   bro: "bodybuilding athlete",
   "full-body": "well-rounded athlete",
+  "body-part": "physique athlete",
+  "fat-loss": "conditioning athlete",
+  arnold: "golden-era athlete",
 };
 
 /**

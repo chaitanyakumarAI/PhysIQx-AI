@@ -16,6 +16,7 @@ import { useEntranceOnce } from "@/lib/useEntranceOnce";
 import { FilterChipRow, type FilterChipOption } from "@/components/ui/FilterChipRow";
 import { ExerciseListItem } from "@/features/train/components/ExerciseListItem";
 import { MyPlansSection } from "@/features/train/components/MyPlansSection";
+import { ProgramSchedule } from "@/features/train/components/ProgramSchedule";
 import { WorkoutHeroCard } from "@/features/train/components/WorkoutHeroCard";
 import {
   muscleFilterOptions,
@@ -60,6 +61,7 @@ export function TrainScreen({
       })),
     [programs],
   );
+  const selectedProgram = programs.find((program) => program.id === programId);
 
   return (
     <PageContainer>
@@ -101,6 +103,13 @@ export function TrainScreen({
               selectedId={programId}
               onSelect={setProgramId}
             />
+            {selectedProgram && (
+              // Keyed so switching chips resets variant/expanded/adopted state.
+              <ProgramSchedule
+                key={selectedProgram.type}
+                programType={selectedProgram.type}
+              />
+            )}
           </Section>
         </m.div>
 

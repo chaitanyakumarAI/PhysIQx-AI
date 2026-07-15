@@ -25,6 +25,14 @@ const programs: Program[] = [
     type: "full-body",
     source: "preset",
   },
+  {
+    id: "program-body-part",
+    name: "Body Part",
+    type: "body-part",
+    source: "preset",
+  },
+  { id: "program-fat-loss", name: "Fat Loss", type: "fat-loss", source: "preset" },
+  { id: "program-arnold", name: "Arnold", type: "arnold", source: "preset" },
 ];
 
 export const mockTrainData: TrainData = {

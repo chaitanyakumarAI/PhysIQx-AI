@@ -61,11 +61,25 @@ export function SetRow({
       </span>
 
       <label className="flex-1">
-        <span className="sr-only">Reps, target {set.targetReps}</span>
+        <span className="sr-only">
+          {set.toFailure
+            ? "Reps — this set goes to failure, log what you got"
+            : set.durationSeconds
+              ? `Seconds, target ${set.durationSeconds}`
+              : `Reps, target ${set.targetReps} — a target, not a cap`}
+        </span>
         <input
           type="number"
           inputMode="numeric"
-          placeholder={String(set.targetReps)}
+          // Targets, never caps: "max" invites emptying the tank; timed
+          // sets log seconds in the same field.
+          placeholder={
+            set.toFailure
+              ? "max"
+              : set.durationSeconds
+                ? `${set.durationSeconds}s`
+                : String(set.targetReps)
+          }
           value={set.reps ?? ""}
           onChange={(event) => onChangeReps(parseNumberInput(event.target.value))}
           className="w-full rounded-field border border-border bg-surface px-3 py-2 text-center text-base tabular-nums focus-visible:outline-none focus-visible:border-brand/50 focus-visible:ring-2 focus-visible:ring-brand/40"

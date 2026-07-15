@@ -29,10 +29,10 @@
       "variants": [
         {
           "daysPerWeek": 6,
-          "notes": "Each muscle group is trained twice per week. Run Push A/Pull A/Legs A one cycle, then Push B/Pull B/Legs B the next, back to back with one rest day per week wherever it fits your schedule.",
+          "notes": "Each muscle group is trained twice per week. Run Heavy Push / Heavy Pull / Power Legs one cycle, then Shoulder Push / Width Pull / Hip Power the next, back to back with one rest day per week wherever it fits your schedule.",
           "days": [
             {
-              "name": "Push A",
+              "name": "Heavy Push",
               "focus": "Chest, shoulders, triceps",
               "exercises": [
                 {
@@ -79,7 +79,7 @@
               ]
             },
             {
-              "name": "Pull A",
+              "name": "Heavy Pull",
               "focus": "Back, biceps",
               "exercises": [
                 {
@@ -126,7 +126,7 @@
               ]
             },
             {
-              "name": "Legs A",
+              "name": "Power Legs",
               "focus": "Quads, hamstrings, glutes, calves",
               "exercises": [
                 {
@@ -173,7 +173,7 @@
               ]
             },
             {
-              "name": "Push B",
+              "name": "Shoulder Push",
               "focus": "Shoulders, chest, triceps",
               "exercises": [
                 {
@@ -219,7 +219,7 @@
               ]
             },
             {
-              "name": "Pull B",
+              "name": "Width Pull",
               "focus": "Back width, rear delts, biceps",
               "exercises": [
                 {
@@ -266,7 +266,7 @@
               ]
             },
             {
-              "name": "Legs B",
+              "name": "Hip Power",
               "focus": "Hips, hamstrings, quads",
               "exercises": [
                 {
@@ -316,10 +316,10 @@
         },
         {
           "daysPerWeek": 5,
-          "notes": "A single weekly leg session with two push and two pull sessions. Good for lifters who want most of the PPL benefit without training 6 days a week — rotate which leg day (A or B) you use week to week.",
+          "notes": "A single weekly leg session with two push and two pull sessions. Good for lifters who want most of the PPL benefit without training 6 days a week — rotate which leg day (Power Legs or Hip Power) you use week to week.",
           "days": [
             {
-              "name": "Push A",
+              "name": "Heavy Push",
               "focus": "Chest, shoulders, triceps",
               "exercises": [
                 {
@@ -366,7 +366,7 @@
               ]
             },
             {
-              "name": "Pull A",
+              "name": "Heavy Pull",
               "focus": "Back, biceps",
               "exercises": [
                 {
@@ -413,7 +413,7 @@
               ]
             },
             {
-              "name": "Legs A",
+              "name": "Power Legs",
               "focus": "Quads, hamstrings, glutes, calves",
               "exercises": [
                 {
@@ -460,7 +460,7 @@
               ]
             },
             {
-              "name": "Push B",
+              "name": "Shoulder Push",
               "focus": "Shoulders, chest, triceps",
               "exercises": [
                 {
@@ -506,7 +506,7 @@
               ]
             },
             {
-              "name": "Pull B",
+              "name": "Width Pull",
               "focus": "Back width, rear delts, biceps",
               "exercises": [
                 {
@@ -567,10 +567,10 @@
       "variants": [
         {
           "daysPerWeek": 4,
-          "notes": "Run Upper A, Lower A, Upper B, Lower B across the week with rest days spaced between, e.g. Mon/Tue/Thu/Fri. The 'A' days lean toward heavier, lower-rep strength work; the 'B' days add volume with moderate reps.",
+          "notes": "Run Upper Strength, Lower Strength, Upper Volume, Lower Volume across the week with rest days spaced between, e.g. Mon/Tue/Thu/Fri. Strength days lean heavier and lower-rep; Volume days add sets at moderate reps.",
           "days": [
             {
-              "name": "Upper A",
+              "name": "Upper Strength",
               "focus": "Chest, back, shoulders — strength focus",
               "exercises": [
                 {
@@ -623,7 +623,7 @@
               ]
             },
             {
-              "name": "Lower A",
+              "name": "Lower Strength",
               "focus": "Quads, hamstrings, calves — strength focus",
               "exercises": [
                 {
@@ -670,7 +670,7 @@
               ]
             },
             {
-              "name": "Upper B",
+              "name": "Upper Volume",
               "focus": "Chest, back, shoulders — volume focus",
               "exercises": [
                 {
@@ -722,7 +722,7 @@
               ]
             },
             {
-              "name": "Lower B",
+              "name": "Lower Volume",
               "focus": "Hips, hamstrings — volume focus",
               "exercises": [
                 {
@@ -1030,10 +1030,10 @@
       "variants": [
         {
           "daysPerWeek": 3,
-          "notes": "Run A, B, C in order with a rest day between each session, e.g. Mon/Wed/Fri. Each day covers a squat or hinge pattern, a push, a pull, and core work, so no single day is a 'leg day' or 'chest day' — the whole body is hit every time.",
+          "notes": "Run Squat & Press, Hinge & Pull, Press & Row in order with a rest day between each session, e.g. Mon/Wed/Fri. Each day covers a squat or hinge pattern, a push, a pull, and core work, so no single day is a 'leg day' or 'chest day' — the whole body is hit every time.",
           "days": [
             {
-              "name": "Full Body A",
+              "name": "Squat & Press",
               "focus": "Squat pattern, horizontal push/pull",
               "exercises": [
                 {
@@ -1073,7 +1073,7 @@
               ]
             },
             {
-              "name": "Full Body B",
+              "name": "Hinge & Pull",
               "focus": "Hinge pattern, vertical push/pull",
               "exercises": [
                 {
@@ -1113,7 +1113,7 @@
               ]
             },
             {
-              "name": "Full Body C",
+              "name": "Press & Row",
               "focus": "Leg press pattern, incline push, row",
               "exercises": [
                 {
@@ -1156,10 +1156,10 @@
         },
         {
           "daysPerWeek": 2,
-          "notes": "For a 2-day-per-week schedule, alternate just A and B week to week (skip C) so each session still covers a full-body pattern. Best suited to maintenance or a very time-constrained schedule rather than active muscle building.",
+          "notes": "For a 2-day-per-week schedule, alternate Squat & Press and Hinge & Pull week to week so each session still covers a full-body pattern. Best suited to maintenance or a very time-constrained schedule rather than active muscle building.",
           "days": [
             {
-              "name": "Full Body A",
+              "name": "Squat & Press",
               "focus": "Squat pattern, horizontal push/pull",
               "exercises": [
                 {
@@ -1199,7 +1199,7 @@
               ]
             },
             {
-              "name": "Full Body B",
+              "name": "Hinge & Pull",
               "focus": "Hinge pattern, vertical push/pull",
               "exercises": [
                 {
@@ -1511,7 +1511,7 @@
               ]
             },
             {
-              "name": "Conditioning A",
+              "name": "Circuit Burner",
               "focus": "Circuit style — move briskly, rest fully only between rounds",
               "exercises": [
                 {
@@ -1589,7 +1589,7 @@
               ]
             },
             {
-              "name": "Conditioning B",
+              "name": "Interval Engine",
               "focus": "Intervals — hard minute, easy recovery, repeat",
               "exercises": [
                 {
@@ -1703,7 +1703,7 @@
               ]
             },
             {
-              "name": "Conditioning A",
+              "name": "Circuit Burner",
               "focus": "Circuit style — move briskly, rest fully only between rounds",
               "exercises": [
                 {
@@ -1840,7 +1840,7 @@
           "notes": "Every rep count is an 'up to' target in Arnold's own style — the last set of anything can go to failure. The split is famously flexible: swap movements for your equipment and joints (chin-ups → lat pulldown, barbell press → dumbbell press) as long as the pattern stays. Sunday off.",
           "days": [
             {
-              "name": "Chest & Back A",
+              "name": "Chest & Back",
               "focus": "Antagonist pairing — press and pull in one session",
               "exercises": [
                 {
@@ -1888,7 +1888,7 @@
               ]
             },
             {
-              "name": "Shoulders & Arms A",
+              "name": "Shoulders & Arms",
               "focus": "Delts, then biceps-triceps supersets Arnold-style",
               "exercises": [
                 {
@@ -1960,7 +1960,7 @@
               ]
             },
             {
-              "name": "Legs & Lower Back A",
+              "name": "Legs & Lower Back",
               "focus": "Squat, hinge, and the posterior chain",
               "exercises": [
                 {
@@ -2008,7 +2008,7 @@
               ]
             },
             {
-              "name": "Chest & Back B",
+              "name": "Chest & Back",
               "focus": "Antagonist pairing — press and pull in one session",
               "exercises": [
                 {
@@ -2056,7 +2056,7 @@
               ]
             },
             {
-              "name": "Shoulders & Arms B",
+              "name": "Shoulders & Arms",
               "focus": "Delts, then biceps-triceps supersets Arnold-style",
               "exercises": [
                 {
@@ -2128,7 +2128,7 @@
               ]
             },
             {
-              "name": "Legs & Lower Back B",
+              "name": "Legs & Lower Back",
               "focus": "Squat, hinge, and the posterior chain",
               "exercises": [
                 {

@@ -7,7 +7,8 @@ import type { Mission } from "@/types/training";
  */
 export const mockTodayMission: Mission = {
   id: "mission-push-a",
-  title: "Push Day A",
+  // Descriptive day naming (user direction): what the day IS, not an index.
+  title: "Heavy Push",
   muscleGroups: ["Chest", "Shoulders", "Triceps"],
   durationMinutes: 52,
   liftCount: 6,

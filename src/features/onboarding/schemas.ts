@@ -10,7 +10,18 @@ import { z } from "zod";
 export const onboardingSchema = z.object({
   goal: z.enum(["cut", "bulk", "maintain", "endurance"]).optional(),
   experienceLevel: z.enum(["beginner", "intermediate", "advanced"]).optional(),
-  activeSplit: z.enum(["ai", "ppl", "upper-lower", "bro", "full-body"]).optional(),
+  activeSplit: z
+    .enum([
+      "ai",
+      "ppl",
+      "upper-lower",
+      "bro",
+      "full-body",
+      "body-part",
+      "fat-loss",
+      "arnold",
+    ])
+    .optional(),
   sessionFrequency: z.enum(["once", "twice", "flexible"]).optional(),
   goalBodyShape: z.enum(["lean", "athletic", "muscular", "powerful"]).optional(),
   trainingDaysPerWeek: z.number().min(3).max(6),

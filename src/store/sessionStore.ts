@@ -126,6 +126,8 @@ function buildSessionExercises(
       id: `${templateExercise.exerciseId}-set-${index + 1}`,
       setNumber: index + 1,
       targetReps: templateSet.targetReps,
+      toFailure: templateSet.toFailure,
+      durationSeconds: templateSet.durationSeconds,
       weight: null,
       reps: null,
       completed: false,

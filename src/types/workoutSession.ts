@@ -13,7 +13,12 @@ export type SessionStatus = "active" | "completed" | "abandoned";
 export interface ExerciseSet {
   id: string;
   setNumber: number;
+  /** A target, never a cap — logging more reps is always valid. */
   targetReps: number;
+  /** AMRAP set: the UI shows "To failure" instead of the rep target. */
+  toFailure?: boolean;
+  /** Timed set (holds/carries/intervals): the UI shows seconds. */
+  durationSeconds?: number;
   weight: number | null;
   reps: number | null;
   completed: boolean;

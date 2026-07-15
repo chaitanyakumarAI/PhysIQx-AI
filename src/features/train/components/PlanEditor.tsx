@@ -175,29 +175,40 @@ export function PlanEditor({ planId }: PlanEditorProps) {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2">
-                  {exercise.sets.map((set, setIndex) => (
-                    <label key={setIndex} className="flex items-center gap-1">
-                      <span className="sr-only">
-                        Set {setIndex + 1} target reps
+                  {exercise.sets.map((set, setIndex) =>
+                    set.toFailure || set.durationSeconds ? (
+                      // Adopted-program AMRAP/timed sets: shown, not edited —
+                      // rep steppers don't apply to "empty the tank" or 40s.
+                      <span
+                        key={setIndex}
+                        className="rounded-field bg-surface-elevated px-2 py-2 text-xs font-semibold text-foreground-secondary"
+                      >
+                        {set.toFailure ? "Failure" : `${set.durationSeconds}s`}
                       </span>
-                      <input
-                        type="number"
-                        inputMode="numeric"
-                        min={1}
-                        value={set.targetReps}
-                        onChange={(event) => {
-                          const reps = Math.max(1, Number(event.target.value) || 1);
-                          patchExercise(day.id, index, (ex) => ({
-                            ...ex,
-                            sets: ex.sets.map((s, si) =>
-                              si === setIndex ? { targetReps: reps } : s,
-                            ),
-                          }));
-                        }}
-                        className="w-14 rounded-field border border-border bg-surface px-2 py-2 text-center text-sm tabular-nums focus-visible:border-brand/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
-                      />
-                    </label>
-                  ))}
+                    ) : (
+                      <label key={setIndex} className="flex items-center gap-1">
+                        <span className="sr-only">
+                          Set {setIndex + 1} target reps
+                        </span>
+                        <input
+                          type="number"
+                          inputMode="numeric"
+                          min={1}
+                          value={set.targetReps}
+                          onChange={(event) => {
+                            const reps = Math.max(1, Number(event.target.value) || 1);
+                            patchExercise(day.id, index, (ex) => ({
+                              ...ex,
+                              sets: ex.sets.map((s, si) =>
+                                si === setIndex ? { targetReps: reps } : s,
+                              ),
+                            }));
+                          }}
+                          className="w-14 rounded-field border border-border bg-surface px-2 py-2 text-center text-sm tabular-nums focus-visible:border-brand/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+                        />
+                      </label>
+                    ),
+                  )}
                   <Button
                     variant="ghost"
                     size="sm"

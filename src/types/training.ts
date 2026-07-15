@@ -3,15 +3,26 @@
  * (derived series)", "Streak".
  */
 
-export type ProgramType = "ai" | "ppl" | "upper-lower" | "bro" | "full-body";
+export type ProgramType =
+  | "ai"
+  | "ppl"
+  | "upper-lower"
+  | "bro"
+  | "full-body"
+  | "body-part"
+  | "fat-loss"
+  | "arnold";
 
 /** Shared display labels — used by Train's program chips and Profile's SPLIT stat. */
 export const programTypeLabels: Record<ProgramType, string> = {
-  ai: "AI",
+  ai: "Coach",
   ppl: "PPL",
   "upper-lower": "Upper/Lower",
   bro: "Bro",
   "full-body": "Full Body",
+  "body-part": "Body Part",
+  "fat-loss": "Fat Loss",
+  arnold: "Arnold",
 };
 
 /**
