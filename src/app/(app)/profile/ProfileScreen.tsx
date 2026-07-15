@@ -7,7 +7,6 @@ import { ScreenHeader } from "@/components/navigation/ScreenHeader";
 import { fadeInUp, staggerChildren } from "@/lib/motion";
 import { useEntranceOnce } from "@/lib/useEntranceOnce";
 import { CollectionShowcase } from "@/features/profile/components/CollectionShowcase";
-import { DNABanner } from "@/features/profile/components/DNABanner";
 import { ProfileHeaderCard } from "@/features/profile/components/ProfileHeaderCard";
 import { SettingsRow } from "@/features/profile/components/SettingsRow";
 import { StatChipRow } from "@/features/shared/components/StatChipRow";
@@ -55,8 +54,10 @@ export function ProfileScreen({
             level={level.level}
             score={score.score}
           />
+          {/* DNABanner removed: the header card already carries the
+              archetype — saying it twice in one screenful read as filler
+              (visual-audit finding). */}
           <StatChipRow stats={buildIdentityStats(profile)} />
-          <DNABanner archetype={profile.dnaArchetype} />
           <StatChipRow stats={buildProgressStats(stats, streak)} />
         </m.div>
 

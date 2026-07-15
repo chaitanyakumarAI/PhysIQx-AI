@@ -26,6 +26,11 @@ export function RestTimer({ seconds, onComplete, className }: RestTimerProps) {
     setRemaining(seconds);
     const interval = setInterval(() => {
       setRemaining((current) => {
+        // Already 0 = the Skip button finished us — don't fire twice.
+        if (current <= 0) {
+          clearInterval(interval);
+          return 0;
+        }
         if (current <= 1) {
           clearInterval(interval);
           onCompleteRef.current?.();
@@ -53,6 +58,19 @@ export function RestTimer({ seconds, onComplete, className }: RestTimerProps) {
         className="w-full"
         aria-label={`Rest timer, ${remaining} seconds remaining`}
       />
+      {/* Ready early is a good sign, not a rule violation — skip is always
+          one tap (user: a locked countdown is irritating). Same code path
+          as natural completion. */}
+      <button
+        type="button"
+        onClick={() => {
+          setRemaining(0);
+          onCompleteRef.current?.();
+        }}
+        className="min-h-11 rounded-full px-4 text-sm font-semibold text-info transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-info/60"
+      >
+        Skip rest
+      </button>
     </div>
   );
 }

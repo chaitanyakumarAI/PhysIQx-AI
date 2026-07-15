@@ -31,8 +31,10 @@ const stats: ProfileData["stats"] = {
 const achievements: ProfileAchievement[] = [
   { id: "first-rep", name: "First Rep", rarity: "common", iconId: "trophy", state: "unlocked", progress: 1 },
   { id: "week-warrior", name: "Week Warrior", rarity: "common", iconId: "flame", state: "unlocked", progress: 1 },
-  { id: "iron-month", name: "Iron Month", rarity: "rare", iconId: "dumbbell", state: "in-progress", progress: 0.65 },
-  { id: "hydration-master", name: "Hydration Master", rarity: "rare", iconId: "droplet", state: "unlocked", progress: 1 },
+  // Iron Month unlocked instead of Hydration Master: the default showcase
+  // trio should lead with training wins now that hydration isn't a pillar.
+  { id: "iron-month", name: "Iron Month", rarity: "rare", iconId: "dumbbell", state: "unlocked", progress: 1 },
+  { id: "hydration-master", name: "Hydration Master", rarity: "rare", iconId: "droplet", state: "in-progress", progress: 0.7 },
   { id: "pr-hunter", name: "PR Hunter", rarity: "epic", iconId: "trophy", state: "in-progress", progress: 0.4 },
   { id: "gym-warrior", name: "Gym Warrior", rarity: "epic", iconId: "dumbbell", state: "in-progress", progress: 0.55 },
   { id: "consistency-king", name: "Consistency King", rarity: "legendary", iconId: "crown", state: "in-progress", progress: 0.25 },

@@ -4,6 +4,7 @@ import type { CardioSession } from "@/store/cardioStore";
 import type { WeightEntry } from "@/store/profileStore";
 import { cardioActivityLabels } from "@/store/cardioStore";
 import type { Insight } from "@/types/insight";
+import type { DayStatus } from "@/types/training";
 
 /**
  * Live progress derivations — the coach speaks from the ledgers (completed
@@ -21,10 +22,85 @@ export interface ProgressLedgers {
 
 const WEEKLY_CARDIO_TARGET_MIN = 150;
 
+function localIso(date: Date): string {
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${date.getFullYear()}-${month}-${day}`;
+}
+
 function isoDaysAgo(days: number): string {
   const date = new Date();
   date.setDate(date.getDate() - days);
-  return date.toISOString().slice(0, 10);
+  return localIso(date);
+}
+
+interface WeekView {
+  completionPercent: number;
+  days: DayStatus[];
+}
+
+/**
+ * The REAL current week (Mon–Sun) from the session ledger: trained days
+ * glow, today is actually today, and everything unproven stays neutral —
+ * no schedule exists yet to call a day "missed" or "rest honored", so we
+ * don't pretend. Fixture week only before any workout is logged (which
+ * also keeps SSR and the first client render identical).
+ */
+export function deriveWeek(
+  fallback: WeekView,
+  history: CompletedSessionSummary[],
+  trainingDaysPerWeek: number,
+): WeekView {
+  if (history.length === 0) return fallback;
+
+  const trained = new Set(history.map((session) => session.date));
+  const today = new Date();
+  const monday = new Date(today);
+  const weekday = today.getDay() === 0 ? 7 : today.getDay();
+  monday.setDate(today.getDate() - (weekday - 1));
+  const todayIso = localIso(today);
+
+  const days: DayStatus[] = Array.from({ length: 7 }, (_, index) => {
+    const date = new Date(monday);
+    date.setDate(monday.getDate() + index);
+    const iso = localIso(date);
+    return {
+      date: iso,
+      weekdayLabel: date.toLocaleDateString("en-US", { weekday: "narrow" }),
+      status: trained.has(iso) ? "trained" : "unplanned",
+      isToday: iso === todayIso,
+    };
+  });
+
+  const trainedCount = days.filter((day) => day.status === "trained").length;
+  return {
+    completionPercent: Math.min(
+      100,
+      Math.round((trainedCount / Math.max(1, trainingDaysPerWeek)) * 100),
+    ),
+    days,
+  };
+}
+
+/**
+ * Real streak from the ledger: consecutive trained days ending today or
+ * yesterday (today not trained YET shouldn't zero the streak at breakfast).
+ * Fixture value only before any workout exists.
+ */
+export function deriveStreakDays(
+  fallback: number,
+  history: CompletedSessionSummary[],
+): number {
+  if (history.length === 0) return fallback;
+  const trained = new Set(history.map((session) => session.date));
+  let streak = 0;
+  const cursor = new Date();
+  if (!trained.has(localIso(cursor))) cursor.setDate(cursor.getDate() - 1);
+  while (trained.has(localIso(cursor))) {
+    streak += 1;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  return streak;
 }
 
 /** The freshest real win, or the authored fixture when nothing is logged. */

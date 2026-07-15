@@ -9,7 +9,11 @@ import { fadeInUp, staggerChildren } from "@/lib/motion";
 import { useEntranceOnce } from "@/lib/useEntranceOnce";
 import { getGreeting } from "@/features/home/lib/greeting";
 import { deriveRecoveryStatus } from "@/features/home/lib/derive";
-import { deriveSpotlight } from "@/features/shared/lib/liveProgress";
+import {
+  deriveSpotlight,
+  deriveStreakDays,
+  deriveWeek,
+} from "@/features/shared/lib/liveProgress";
 import { useCardioStore } from "@/store/cardioStore";
 import { useProfileStore } from "@/store/profileStore";
 import { useSessionStore } from "@/store/sessionStore";
@@ -53,15 +57,18 @@ export function HomeScreen({
   // timezone. useState pins it for the session; WelcomeHeader suppresses the
   // expected SSG-vs-client hydration text difference.
   const [greeting] = useState(() => getGreeting(new Date().getHours()));
-  const recovery = deriveRecoveryStatus(week.days);
 
-  // Live spotlight: the user's freshest REAL win outranks the fixture.
-  // Stores are empty during SSR and the first client render (skipHydration),
-  // so both sides agree on the fixture until rehydration swaps in the truth.
+  // Live truth over fixtures: spotlight, week strip, and streak all derive
+  // from the real ledgers once anything is logged. Stores are empty during
+  // SSR and the first client render (skipHydration), so both sides agree
+  // on the fixtures until rehydration swaps in the truth.
   const history = useSessionStore((state) => state.history);
   const cardio = useCardioStore((state) => state.sessions);
   const weights = useProfileStore((state) => state.weightEntries);
   const liveSpotlight = deriveSpotlight(spotlight, { history, cardio, weights });
+  const liveWeek = deriveWeek(week, history, profile.trainingDaysPerWeek);
+  const liveStreakDays = deriveStreakDays(streak.currentStreakDays, history);
+  const recovery = deriveRecoveryStatus(liveWeek.days);
 
   return (
     <PageContainer>
@@ -78,7 +85,7 @@ export function HomeScreen({
           <WelcomeHeader
             greeting={greeting}
             name={profile.displayName}
-            streakDays={streak.currentStreakDays}
+            streakDays={liveStreakDays}
             archetype={profile.dnaArchetype}
             className="pt-0"
           />
@@ -118,8 +125,8 @@ export function HomeScreen({
 
         <m.div variants={fadeInUp} data-tour="week">
           <WeeklyActivityCard
-            completionPercent={week.completionPercent}
-            days={week.days}
+            completionPercent={liveWeek.completionPercent}
+            days={liveWeek.days}
           />
         </m.div>
       </m.div>

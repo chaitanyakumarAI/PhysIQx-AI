@@ -52,7 +52,7 @@ export function SetRow({
           placeholder={unit}
           value={set.weight ?? ""}
           onChange={(event) => onChangeWeight(parseNumberInput(event.target.value))}
-          className="w-full rounded-field border border-border bg-surface px-3 py-2 text-center text-base tabular-nums focus-visible:outline-none focus-visible:border-brand/50 focus-visible:ring-2 focus-visible:ring-brand/40"
+          className="w-full rounded-field border border-border bg-surface px-3 py-2 text-center text-base tabular-nums placeholder:text-foreground/25 focus-visible:outline-none focus-visible:border-brand/50 focus-visible:ring-2 focus-visible:ring-brand/40"
         />
       </label>
 
@@ -82,7 +82,9 @@ export function SetRow({
           }
           value={set.reps ?? ""}
           onChange={(event) => onChangeReps(parseNumberInput(event.target.value))}
-          className="w-full rounded-field border border-border bg-surface px-3 py-2 text-center text-base tabular-nums focus-visible:outline-none focus-visible:border-brand/50 focus-visible:ring-2 focus-visible:ring-brand/40"
+          // placeholder:text-foreground/25 — the target must read as a ghost
+          // hint awaiting input, not an already-filled value (user finding).
+          className="w-full rounded-field border border-border bg-surface px-3 py-2 text-center text-base tabular-nums placeholder:text-foreground/25 focus-visible:outline-none focus-visible:border-brand/50 focus-visible:ring-2 focus-visible:ring-brand/40"
         />
       </label>
 
