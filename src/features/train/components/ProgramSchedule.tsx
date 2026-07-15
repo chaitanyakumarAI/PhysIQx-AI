@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2, ChevronDown, Plus } from "lucide-react";
+import Link from "next/link";
+import { CalendarDays, CheckCircle2, ChevronDown, Plus } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { FilterChipRow } from "@/components/ui/FilterChipRow";
@@ -104,6 +105,13 @@ export function ProgramSchedule({ programType, className }: ProgramScheduleProps
         <p className="text-sm leading-relaxed text-foreground-secondary">
           {program.description}
         </p>
+        <Link
+          href={`/train/calendar?program=${program.type}&variant=${variantIndex}`}
+          className="inline-flex min-h-11 w-fit items-center gap-1.5 rounded-full text-sm font-semibold text-brand transition-colors hover:text-brand-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/60"
+        >
+          <CalendarDays size={iconSize.xs} aria-hidden />
+          See it on a calendar
+        </Link>
       </div>
 
       {program.variants.length > 1 && (
