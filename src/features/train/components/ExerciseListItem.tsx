@@ -3,7 +3,6 @@ import { ChevronRight, Dumbbell } from "lucide-react";
 import { iconSize } from "@/constants/icons";
 import { cn } from "@/lib/utils";
 import {
-  equipmentLabels,
   exerciseTypeLabels,
   muscleGroupLabels,
   type Exercise,
@@ -56,9 +55,10 @@ export function ExerciseListItem({
       </span>
       <span className="flex min-w-0 flex-1 flex-col">
         <span className="truncate font-semibold">{exercise.name}</span>
+        {/* Muscle + type only — three facts truncated to "Compo…" at 390px;
+            equipment lives on the detail page (visual-audit finding). */}
         <span className="truncate text-sm text-foreground-secondary">
           {primaryMuscle ? muscleGroupLabels[primaryMuscle] : "—"} ·{" "}
-          {equipmentLabels[exercise.equipment]} ·{" "}
           {exerciseTypeLabels[exercise.type]}
         </span>
       </span>

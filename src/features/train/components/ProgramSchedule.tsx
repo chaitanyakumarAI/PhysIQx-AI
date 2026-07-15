@@ -20,6 +20,8 @@ import { describeSets } from "@/types/workoutTemplate";
 
 export interface ProgramScheduleProps {
   programType: ProgramType;
+  /** Skip the name row when a page heading already announces it. */
+  hideTitle?: boolean;
   className?: string;
 }
 
@@ -46,7 +48,11 @@ const levelTone: Record<string, string> = {
  * plans, where every day is startable and fully editable. All set language
  * comes from formatSetTarget/describeSets: targets, never caps.
  */
-export function ProgramSchedule({ programType, className }: ProgramScheduleProps) {
+export function ProgramSchedule({
+  programType,
+  hideTitle = false,
+  className,
+}: ProgramScheduleProps) {
   const savePlan = usePlansStore((state) => state.savePlan);
   const program = findProgram(programType);
   const [variantIndex, setVariantIndex] = useState(0);
@@ -92,7 +98,9 @@ export function ProgramSchedule({ programType, className }: ProgramScheduleProps
     <Card padding="md" className={cn("flex flex-col gap-4", className)}>
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between gap-3">
-          <h3 className="font-display text-lg font-bold">{program.name}</h3>
+          {!hideTitle && (
+            <h3 className="font-display text-lg font-bold">{program.name}</h3>
+          )}
           <span
             className={cn(
               "shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold uppercase tracking-[0.08em]",
@@ -164,12 +172,14 @@ export function ProgramSchedule({ programType, className }: ProgramScheduleProps
               </button>
               {open && (
                 <ul className="divide-y divide-border/40 border-t border-border/60 bg-surface px-3">
+                  {/* Stacked, not side-by-side: full names beat ellipses
+                      ("Barbell Overhead…" read as sloppy in the audit). */}
                   {day.exercises.map((exercise) => (
-                    <li key={exercise.exerciseId} className="flex items-baseline gap-2 py-2">
-                      <span className="min-w-0 flex-1 truncate text-sm">
+                    <li key={exercise.exerciseId} className="flex flex-col py-2">
+                      <span className="text-sm">
                         {exerciseName(exercise.exerciseId)}
                       </span>
-                      <span className="shrink-0 text-xs tabular-nums text-foreground-secondary">
+                      <span className="text-xs tabular-nums text-foreground-secondary">
                         {describeSets(exercise.sets)} · {formatRest(exercise.restSeconds)}
                       </span>
                     </li>
