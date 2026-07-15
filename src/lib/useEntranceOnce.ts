@@ -17,7 +17,16 @@ export function useEntranceOnce(screenKey: string): "hidden" | false {
   // Captured via the useState initializer so it's decided exactly once per
   // mount (Strict Mode double-invokes render — reading the Set inline would
   // see this mount's own mark and skip the very first animation).
-  const [firstVisit] = useState(() => !seenScreens.has(screenKey));
-  seenScreens.add(screenKey);
+  //
+  // Server renders ALWAYS say "hidden" and never touch the Set: server
+  // module state persists across requests, so marking there made request
+  // N+1's HTML render visible while the fresh browser rendered hidden — a
+  // hydration mismatch. The client's first (hydration) render also sees an
+  // empty Set on a hard load, so both sides agree on "hidden".
+  const [firstVisit] = useState(() => {
+    if (typeof window === "undefined") return true;
+    return !seenScreens.has(screenKey);
+  });
+  if (typeof window !== "undefined") seenScreens.add(screenKey);
   return firstVisit ? "hidden" : false;
 }
