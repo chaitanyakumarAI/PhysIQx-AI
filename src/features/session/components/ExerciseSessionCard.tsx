@@ -13,6 +13,8 @@ export interface ExerciseSessionCardProps {
   exercise: SessionExercise;
   restSeconds: number;
   unit: string;
+  /** Ghost of the previous performance, e.g. "Last time: 60 kg × 8". */
+  lastTime?: string;
   onLogSet: (setId: string, patch: { weight?: number | null; reps?: number | null }) => void;
   onToggleSetCompleted: (setId: string) => void;
   onAddSet?: () => void;
@@ -28,6 +30,7 @@ export function ExerciseSessionCard({
   exercise,
   restSeconds,
   unit,
+  lastTime,
   onLogSet,
   onToggleSetCompleted,
   onAddSet,
@@ -44,7 +47,12 @@ export function ExerciseSessionCard({
 
   return (
     <Card padding="lg" className="flex flex-col gap-3">
-      <h3 className="font-semibold">{exercise.exerciseName}</h3>
+      <div className="flex flex-col">
+        <h3 className="font-semibold">{exercise.exerciseName}</h3>
+        {lastTime && (
+          <p className="text-xs text-foreground-secondary">{lastTime}</p>
+        )}
+      </div>
       <div className="flex flex-col gap-2">
         {exercise.sets.map((set) => {
           const removable =

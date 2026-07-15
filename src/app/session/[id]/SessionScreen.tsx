@@ -39,6 +39,7 @@ export function SessionScreen({ missionId, setup }: SessionScreenProps) {
   const [hydrated, setHydrated] = useState(false);
   const {
     session,
+    history,
     startSession,
     logSet,
     toggleSetCompleted,
@@ -47,6 +48,19 @@ export function SessionScreen({ missionId, setup }: SessionScreenProps) {
     finishSession,
     clearSession,
   } = useSessionStore();
+
+  // Ghost of the previous performance per exercise — the newest history
+  // entry that has a top set for it ("beat this" is the whole game).
+  function lastTimeFor(exerciseId: string): string | undefined {
+    for (let index = history.length - 1; index >= 0; index--) {
+      if (history[index]!.id === session?.id) continue;
+      const top = history[index]!.topSets.find(
+        (topSet) => topSet.exerciseId === exerciseId,
+      );
+      if (top) return `Last time: ${top.weightKg} kg × ${top.reps}`;
+    }
+    return undefined;
+  }
 
   useEffect(() => {
     // Explicitly rehydrate before deciding whether to resume or start fresh
@@ -153,6 +167,9 @@ export function SessionScreen({ missionId, setup }: SessionScreenProps) {
           className="w-full"
           aria-label={`${progress.completedSets} of ${progress.totalSets} sets complete`}
         />
+        <p className="text-xs font-semibold tabular-nums text-foreground-secondary">
+          {progress.completedSets} of {progress.totalSets} sets
+        </p>
       </div>
 
       <div className="flex flex-col gap-4">
@@ -162,6 +179,7 @@ export function SessionScreen({ missionId, setup }: SessionScreenProps) {
             exercise={exercise}
             restSeconds={exercise.restSeconds}
             unit="kg"
+            lastTime={lastTimeFor(exercise.exerciseId)}
             onLogSet={(setId, patch) => logSet(exercise.exerciseId, setId, patch)}
             onToggleSetCompleted={(setId) => toggleSetCompleted(exercise.exerciseId, setId)}
             onAddSet={() => addSet(exercise.exerciseId)}
@@ -170,9 +188,24 @@ export function SessionScreen({ missionId, setup }: SessionScreenProps) {
         ))}
       </div>
 
-      <Button size="lg" fullWidth onClick={finishSession}>
-        Finish workout
-      </Button>
+      {/* Finish is earned, not ambient: enabled once a set is actually
+          logged — an all-zero "workout" would pollute the ledger the live
+          derivations read. Bailing out entirely is the Leave (X) button. */}
+      <div className="flex flex-col gap-2">
+        <Button
+          size="lg"
+          fullWidth
+          disabled={progress.completedSets === 0}
+          onClick={finishSession}
+        >
+          Finish workout
+        </Button>
+        {progress.completedSets === 0 && (
+          <p className="text-center text-xs text-foreground-secondary">
+            Complete a set to finish — or leave with ✕ and resume anytime.
+          </p>
+        )}
+      </div>
     </PageContainer>
   );
 }
