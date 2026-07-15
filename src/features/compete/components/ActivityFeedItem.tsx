@@ -18,10 +18,12 @@ const eventIcon: Record<ActivityEventType, LucideIcon> = {
   "challenge-join": Zap,
 };
 
+// One quiet tone for all feed icons — amber/red/blue per event type was
+// color noise with no grammar (visual-audit finding).
 const eventIconTone: Record<ActivityEventType, string> = {
-  "achievement-unlock": "text-warning",
-  "personal-record": "text-danger",
-  "challenge-join": "text-info",
+  "achievement-unlock": "text-foreground-secondary",
+  "personal-record": "text-foreground-secondary",
+  "challenge-join": "text-foreground-secondary",
 };
 
 /**
@@ -37,7 +39,7 @@ export function ActivityFeedItem({ event, className }: ActivityFeedItemProps) {
   return (
     <div className={className}>
       <div className="flex items-center gap-3 py-3">
-        <Avatar name={event.actorName} size="sm" />
+        <Avatar name={event.actorName} src={event.actorAvatarSrc} size="sm" />
         <p className="min-w-0 flex-1 text-sm">
           <span className="font-semibold">{event.actorName}</span>{" "}
           <span className="text-foreground-secondary">{event.description}</span>

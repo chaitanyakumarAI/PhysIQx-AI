@@ -47,8 +47,10 @@ export function WelcomeHeader({
           </span>
         </h1>
         <div className="flex items-center gap-2">
+          {/* Brand, not amber: a streak is an achievement — warm colors are
+              reserved for warnings/at-risk states (color-grammar rule). */}
           {streakDays > 0 && (
-            <Badge tone="warning">
+            <Badge tone="brand">
               <Flame size={iconSize.xs} aria-hidden />
               {streakDays} day streak
             </Badge>

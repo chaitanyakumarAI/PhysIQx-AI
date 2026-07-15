@@ -3,9 +3,10 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { ArrowLeft, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, CheckCircle2, ChevronLeft, ChevronRight } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { FilterChipRow } from "@/components/ui/FilterChipRow";
+import { IconButton } from "@/components/ui/IconButton";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { iconSize } from "@/constants/icons";
 import { cn } from "@/lib/utils";
@@ -53,7 +54,7 @@ function mondayWeekday(date: Date): number {
 function buildMonthCells(
   variant: ProgramVariant,
   trainedDates: Set<string>,
-  today: Date,
+  monthAnchor: Date,
 ): DayCell[] {
   const layout = WEEKDAY_LAYOUTS[variant.daysPerWeek] ?? WEEKDAY_LAYOUTS[3]!;
   const workoutByWeekday = new Map<number, string>(
@@ -63,10 +64,10 @@ function buildMonthCells(
     ]),
   );
 
-  const first = new Date(today.getFullYear(), today.getMonth(), 1);
+  const first = new Date(monthAnchor.getFullYear(), monthAnchor.getMonth(), 1);
   const start = new Date(first);
   start.setDate(first.getDate() - (mondayWeekday(first) - 1));
-  const todayIso = isoOf(today);
+  const todayIso = isoOf(new Date());
 
   return Array.from({ length: 42 }, (_, index) => {
     const date = new Date(start);
@@ -76,7 +77,7 @@ function buildMonthCells(
       date,
       iso,
       workoutName: workoutByWeekday.get(mondayWeekday(date)) ?? null,
-      inMonth: date.getMonth() === today.getMonth(),
+      inMonth: date.getMonth() === monthAnchor.getMonth(),
       isToday: iso === todayIso,
       trained: trainedDates.has(iso),
     };
@@ -101,6 +102,7 @@ export function CalendarContent() {
     return Number.isFinite(requested) ? requested : 0;
   });
   const [selectedIso, setSelectedIso] = useState<string | null>(null);
+  const [monthOffset, setMonthOffset] = useState(0);
 
   const variant =
     program?.variants[Math.min(variantIndex, (program?.variants.length ?? 1) - 1)];
@@ -109,12 +111,16 @@ export function CalendarContent() {
     () => new Set(history.map((session) => session.date)),
     [history],
   );
+  const monthAnchor = useMemo(() => {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth() + monthOffset, 1);
+  }, [monthOffset]);
   const cells = useMemo(
-    () => (variant ? buildMonthCells(variant, trainedDates, new Date()) : []),
-    [variant, trainedDates],
+    () => (variant ? buildMonthCells(variant, trainedDates, monthAnchor) : []),
+    [variant, trainedDates, monthAnchor],
   );
 
-  const monthLabel = new Date().toLocaleDateString("en-US", {
+  const monthLabel = monthAnchor.toLocaleDateString("en-US", {
     month: "long",
     year: "numeric",
   });
@@ -134,7 +140,9 @@ export function CalendarContent() {
           <h1 className="font-display text-2xl font-bold">
             {program ? program.name : "Program"} calendar
           </h1>
-          <p className="text-sm text-foreground-secondary">{monthLabel}</p>
+          <p className="text-sm text-foreground-secondary">
+            Planned days vs. real training
+          </p>
         </div>
       </div>
 
@@ -162,6 +170,29 @@ export function CalendarContent() {
           )}
 
           <Card padding="md" className="flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <IconButton
+                label="Previous month"
+                variant="ghost"
+                onClick={() => {
+                  setMonthOffset((offset) => offset - 1);
+                  setSelectedIso(null);
+                }}
+              >
+                <ChevronLeft size={iconSize.sm} aria-hidden />
+              </IconButton>
+              <span className="text-sm font-semibold">{monthLabel}</span>
+              <IconButton
+                label="Next month"
+                variant="ghost"
+                onClick={() => {
+                  setMonthOffset((offset) => offset + 1);
+                  setSelectedIso(null);
+                }}
+              >
+                <ChevronRight size={iconSize.sm} aria-hidden />
+              </IconButton>
+            </div>
             <div aria-hidden className="grid grid-cols-7 gap-1 text-center">
               {WEEKDAY_HEADERS.map((label, index) => (
                 <span

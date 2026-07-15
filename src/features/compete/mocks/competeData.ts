@@ -31,20 +31,24 @@ const participation: ChallengeParticipation = {
   percent: computePercent(24_800, challenge.target),
 };
 
+// Friends wear the bundled preset portraits (the app owns 16 of them —
+// initials circles were a self-own per the visual audit). Alex's avatar
+// comes from the profile store via variant="brand" instead.
 const weeklyEntries: LeaderboardEntry[] = [
-  { id: "user-sarah", name: "Sarah K.", xp: 18_420, rank: 1, previousRank: 1 },
-  { id: "user-marcus", name: "Marcus T.", xp: 17_110, rank: 2, previousRank: 3 },
+  { id: "user-sarah", name: "Sarah K.", avatarSrc: "/avatars/preset-4.png", xp: 18_420, rank: 1, previousRank: 1 },
+  { id: "user-marcus", name: "Marcus T.", avatarSrc: "/avatars/preset-3.png", xp: 17_110, rank: 2, previousRank: 3 },
   {
     id: CURRENT_USER_ID,
     name: "Alex",
+    avatarSrc: "/avatars/preset-7.png",
     xp: 15_980,
     rank: 3,
     previousRank: 5,
     isCurrentUser: true,
   },
-  { id: "user-priya", name: "Priya R.", xp: 14_200, rank: 4, previousRank: 3 },
-  { id: "user-diego", name: "Diego M.", xp: 13_640, rank: 5, previousRank: 5 },
-  { id: "user-yuki", name: "Yuki H.", xp: 12_010, rank: 6, previousRank: 4 },
+  { id: "user-priya", name: "Priya R.", avatarSrc: "/avatars/preset-2.png", xp: 14_200, rank: 4, previousRank: 3 },
+  { id: "user-diego", name: "Diego M.", avatarSrc: "/avatars/preset-16.png", xp: 13_640, rank: 5, previousRank: 5 },
+  { id: "user-yuki", name: "Yuki H.", avatarSrc: "/avatars/preset-9.png", xp: 12_010, rank: 6, previousRank: 4 },
 ];
 
 // Simplification: relative order and movement stay constant across scopes,
@@ -78,6 +82,7 @@ const activity: ActivityEvent[] = [
   {
     id: "activity-sarah-consistency",
     actorName: "Sarah K.",
+    actorAvatarSrc: "/avatars/preset-4.png",
     type: "achievement-unlock",
     description: "unlocked Consistency King",
     occurredAt: minutesAgo(12),
@@ -85,6 +90,7 @@ const activity: ActivityEvent[] = [
   {
     id: "activity-marcus-pr",
     actorName: "Marcus T.",
+    actorAvatarSrc: "/avatars/preset-3.png",
     type: "personal-record",
     description: "hit a new PR on Deadlift · 220 kg",
     occurredAt: minutesAgo(60),
@@ -92,6 +98,7 @@ const activity: ActivityEvent[] = [
   {
     id: "activity-priya-challenge",
     actorName: "Priya R.",
+    actorAvatarSrc: "/avatars/preset-2.png",
     type: "challenge-join",
     description: "started 30-day hydration challenge",
     occurredAt: minutesAgo(180),

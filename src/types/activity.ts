@@ -12,6 +12,8 @@ export type ActivityEventType =
 export interface ActivityEvent {
   id: string;
   actorName: string;
+  /** Preset portrait path under public/ — initials fallback when absent. */
+  actorAvatarSrc?: string;
   type: ActivityEventType;
   /** e.g. "unlocked Consistency King", "hit a new PR on Deadlift · 220 kg" */
   description: string;

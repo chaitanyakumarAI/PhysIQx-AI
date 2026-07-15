@@ -47,11 +47,13 @@ export function WeeklyChallengeCard({
       />
 
       <div className="mt-4 flex items-center justify-between rounded-field bg-foreground/5 px-3 py-2 text-sm">
+        {/* Legendary rewards wear the sanctioned violet tint, not amber —
+            warm colors are reserved for warnings (color-grammar rule). */}
         <span className="flex items-center gap-2 text-foreground-secondary">
-          <Trophy size={iconSize.xs} aria-hidden className="text-warning" />
+          <Trophy size={iconSize.xs} aria-hidden className="text-legendary" />
           {challenge.reward.tierLabel}
         </span>
-        <span className="font-semibold text-warning">{challenge.reward.badgeName}</span>
+        <span className="font-semibold text-legendary">{challenge.reward.badgeName}</span>
       </div>
     </Card>
   );

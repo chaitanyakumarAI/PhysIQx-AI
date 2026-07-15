@@ -168,7 +168,13 @@ export function OnboardingFlow() {
         initial="hidden"
         animate="visible"
         variants={fadeInUp}
-        className="flex-1"
+        // Welcome floats centered (it's a moment, not a form); question
+        // steps stay top-aligned where forms belong.
+        className={
+          current.id === "welcome"
+            ? "flex flex-1 flex-col justify-center"
+            : "flex-1"
+        }
       >
         {current.render(values, setValue)}
       </m.div>

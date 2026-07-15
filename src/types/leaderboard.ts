@@ -15,6 +15,8 @@ export const leaderboardScopeLabels: Record<LeaderboardScope, string> = {
 export interface LeaderboardEntry {
   id: string;
   name: string;
+  /** Preset portrait path under public/ — initials fallback when absent. */
+  avatarSrc?: string;
   xp: number;
   rank: number;
   previousRank: number;

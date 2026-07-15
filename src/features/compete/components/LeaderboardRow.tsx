@@ -25,7 +25,12 @@ export function LeaderboardRow({ entry, className }: LeaderboardRowProps) {
       <span className="w-5 shrink-0 text-sm font-semibold text-foreground-secondary">
         {entry.rank}
       </span>
-      <Avatar name={entry.name} size="sm" variant={entry.isCurrentUser ? "brand" : "default"} />
+      <Avatar
+        name={entry.name}
+        src={entry.avatarSrc}
+        size="sm"
+        variant={entry.isCurrentUser ? "brand" : "default"}
+      />
       <div className="min-w-0 flex-1">
         <p className={cn("truncate font-semibold", entry.isCurrentUser && "text-brand")}>
           {entry.name}
