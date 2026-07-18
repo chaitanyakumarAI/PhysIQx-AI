@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Compass } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/feedback/EmptyState";
 import { PageContainer } from "@/components/layout/PageContainer";
@@ -12,9 +11,9 @@ export default function NotFound() {
     <PageContainer withBottomNav={false}>
       <div className="flex flex-1 items-center">
         <EmptyState
-          icon={Compass}
+          mascot="kix-worried"
           title="Page not found"
-          description="That page doesn't exist — let's get you back on track."
+          description="Even Kix took a wrong turn once. Let's get you back on track."
           action={
             <Button asChild size="sm">
               <Link href="/home">Back to Home</Link>

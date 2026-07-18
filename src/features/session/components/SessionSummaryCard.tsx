@@ -1,7 +1,6 @@
-import { Trophy } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { CircularProgress } from "@/components/ui/CircularProgress";
-import { iconSize } from "@/constants/icons";
+import { Mascot } from "@/components/mascots/Mascot";
 import { StatChipRow, type StatEntry } from "@/features/shared/components/StatChipRow";
 import { formatElapsedTime } from "../lib/derive";
 
@@ -13,9 +12,9 @@ export interface SessionSummaryCardProps {
   className?: string;
 }
 
-/** The completed-session celebration. Reuses CircularProgress's glow —
- *  the same pattern as Onboarding's DNAResultStep — rather than inventing a
- *  new celebratory effect for this one moment. */
+/** The completed-session celebration — Kix's flagship surface: his
+ *  proud-of-you face inside the CircularProgress glow ring (the same
+ *  celebratory pattern as Onboarding's DNAResultStep). */
 export function SessionSummaryCard({
   durationSeconds,
   volume,
@@ -32,8 +31,8 @@ export function SessionSummaryCard({
   return (
     <div className={className}>
       <Card variant="accent" padding="lg" className="flex flex-col items-center gap-4 text-center">
-        <CircularProgress value={100} size={100} strokeWidth={8} glow>
-          <Trophy size={iconSize.lg} className="text-brand" aria-hidden />
+        <CircularProgress value={100} size={112} strokeWidth={6} glow>
+          <Mascot pose="kix-proud" size={92} shape="circle" />
         </CircularProgress>
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-foreground-secondary">

@@ -248,6 +248,24 @@ artist pass over the locked designs is the upgrade path.
   30-day streak, score band-up)
 - Nyra never shames. Kix never warns.
 
+## Shipped surfaces (Phase K1, 2026-07-18)
+
+Assets: `public/mascots/*.webp` — 13 expression crops cut from the
+grids (regenerate via the cut script described in the glow-recipe
+note). Component: `src/components/mascots/Mascot.tsx` (typed poses,
+explicit dimensions, lazy, circle/portrait shapes).
+
+| Surface | Pose |
+|---|---|
+| Workout Complete (SessionSummaryCard) | kix-proud in the glow ring |
+| Root 404 | kix-worried |
+| Session not-found | kix-sheepish |
+| "No active session" | kix-asleep |
+| Calendar rest-day detail | nyra-stare |
+
+Deliberately mascot-free: search misses and all input surfaces (the
+anti-Clippy law — mascots appear at moments of emotion, not feedback).
+
 ## Surface ownership
 
 | Surface | Owner |

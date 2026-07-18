@@ -1,4 +1,3 @@
-import { CalendarX } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/feedback/EmptyState";
@@ -12,7 +11,7 @@ export default function SessionNotFound() {
     <PageContainer withBottomNav={false}>
       <div className="flex flex-1 items-center">
         <EmptyState
-          icon={CalendarX}
+          mascot="kix-sheepish"
           title="No workout to start here"
           description="This mission doesn't exist or hasn't been assigned yet."
           action={

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ClipboardX, X } from "lucide-react";
+import { X } from "lucide-react";
 import { EmptyState } from "@/components/feedback/EmptyState";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { Button } from "@/components/ui/Button";
@@ -102,7 +102,7 @@ export function SessionScreen({ missionId, setup }: SessionScreenProps) {
       <PageContainer withBottomNav={false}>
         <div className="flex flex-1 flex-col justify-center">
           <EmptyState
-            icon={ClipboardX}
+            mascot="kix-asleep"
             title="No active session"
             description="This workout isn't running — start it from your plan on Train."
             action={

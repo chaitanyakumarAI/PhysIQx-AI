@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { ArrowLeft, CheckCircle2, ChevronLeft, ChevronRight } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { FilterChipRow } from "@/components/ui/FilterChipRow";
+import { Mascot } from "@/components/mascots/Mascot";
 import { IconButton } from "@/components/ui/IconButton";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { iconSize } from "@/constants/icons";
@@ -260,6 +261,11 @@ export function CalendarContent() {
               <div className="flex items-center gap-3">
                 {selected.trained && (
                   <CheckCircle2 size={iconSize.md} aria-hidden className="shrink-0 text-brand" />
+                )}
+                {/* Rest days are Nyra's surface (docs/MASCOTS.md): she
+                    enforces recovery — quiet presence, no message. */}
+                {!selected.trained && !selected.workoutName && (
+                  <Mascot pose="nyra-stare" size={44} shape="circle" className="shrink-0" />
                 )}
                 <div>
                   <p className="text-sm font-semibold">
