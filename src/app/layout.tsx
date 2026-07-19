@@ -15,6 +15,9 @@ const inter = Inter({
 // (score, PRs, timers) from prose, which Inter alone couldn't do.
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
+  // Only semibold and bold are used in the app (font-display class on score,
+  // PRs, timers, headings). Loading all weights is ~15–25 KB wasted.
+  weight: ["600", "700"],
   variable: "--font-space-grotesk",
   display: "swap",
 });
