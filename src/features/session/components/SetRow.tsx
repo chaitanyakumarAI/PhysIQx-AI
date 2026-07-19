@@ -6,6 +6,10 @@ import type { ExerciseSet } from "@/types/workoutSession";
 export interface SetRowProps {
   set: ExerciseSet;
   unit: string;
+  /** Progressive overload suggestion — displayed as ghost placeholders when the
+   *  set has no values yet. Lets the user see the target and either accept or
+   *  override it. Absent when the set already has data or no history exists. */
+  suggest?: { weightKg: number; reps: number } | null;
   onChangeWeight: (weight: number | null) => void;
   onChangeReps: (reps: number | null) => void;
   onChangeRPE?: (rpe: number | null) => void;
@@ -29,6 +33,7 @@ function parseNumberInput(raw: string): number | null {
 export function SetRow({
   set,
   unit,
+  suggest,
   onChangeWeight,
   onChangeReps,
   onChangeRPE,
@@ -51,7 +56,7 @@ export function SetRow({
         <input
           type="number"
           inputMode="decimal"
-          placeholder={unit}
+          placeholder={suggest ? `${suggest.weightKg}` : unit}
           value={set.weight ?? ""}
           onChange={(event) => onChangeWeight(parseNumberInput(event.target.value))}
           className="w-full rounded-field border border-border bg-surface px-2 sm:px-3 py-2 text-center text-sm sm:text-base tabular-nums placeholder:text-foreground/25 focus-visible:outline-none focus-visible:border-brand/50 focus-visible:ring-2 focus-visible:ring-brand/40"
@@ -76,11 +81,13 @@ export function SetRow({
           // Targets, never caps: "max" invites emptying the tank; timed
           // sets log seconds in the same field.
           placeholder={
-            set.toFailure
-              ? "max"
-              : set.durationSeconds
-                ? `${set.durationSeconds}s`
-                : String(set.targetReps)
+            suggest
+              ? `${suggest.reps}`
+              : set.toFailure
+                ? "max"
+                : set.durationSeconds
+                  ? `${set.durationSeconds}s`
+                  : String(set.targetReps)
           }
           value={set.reps ?? ""}
           onChange={(event) => onChangeReps(parseNumberInput(event.target.value))}

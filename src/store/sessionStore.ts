@@ -117,12 +117,35 @@ interface SessionStoreState {
   clearSession: () => void;
 }
 
+/**
+ * Small progression rule: +2.5 kg if the user hit all target reps last time,
+ * else suggest same weight. No suggestion if the exercise has never been logged.
+ */
+function computeSuggestion(
+  exerciseId: string,
+  history: CompletedSessionSummary[],
+  targetReps: number,
+): SessionExercise["suggest"] {
+  // Walk history newest-first to find the most recent top set for this exercise.
+  for (let i = history.length - 1; i >= 0; i--) {
+    const top = history[i]!.topSets.find((t) => t.exerciseId === exerciseId);
+    if (!top || top.weightKg === 0) continue;
+    // If they hit or exceeded the target reps last time, suggest a small step up.
+    const suggestedWeight =
+      top.reps >= targetReps ? top.weightKg + 2.5 : top.weightKg;
+    return { weightKg: suggestedWeight, reps: top.reps };
+  }
+  return null;
+}
+
 function buildSessionExercises(
   template: WorkoutTemplate,
   exercises: Exercise[],
+  history: CompletedSessionSummary[],
 ): SessionExercise[] {
   return template.exercises.map((templateExercise) => {
     const exercise = exercises.find((item) => item.id === templateExercise.exerciseId);
+    const firstTargetReps = templateExercise.sets[0]?.targetReps ?? 10;
     // One planned set per template entry — per-set reps, any count.
     const sets: ExerciseSet[] = templateExercise.sets.map((templateSet, index) => ({
       id: `${templateExercise.exerciseId}-set-${index + 1}`,
@@ -140,6 +163,7 @@ function buildSessionExercises(
       exerciseName: exercise?.name ?? "Exercise",
       restSeconds: templateExercise.restSeconds,
       sets,
+      suggest: computeSuggestion(templateExercise.exerciseId, history, firstTargetReps),
     };
   });
 }
@@ -202,7 +226,7 @@ export const useSessionStore = create<SessionStoreState>()(
             status: "active",
             startedAt: new Date().toISOString(),
             completedAt: null,
-            exercises: buildSessionExercises(template, exercises),
+            exercises: buildSessionExercises(template, exercises, get().history),
             xpReward,
           },
         });

@@ -30,14 +30,12 @@ Last audited: **2026-07-19**.
   Added optional `@RPE` input (1–10, ghost placeholder) alongside weight × reps.
   RPE is passed to session store set updates to track exercise intensity.
 
-- [ ] **Progressive overload — next-set suggestion**
-  When a user opens a session, ghost-fill weight/reps with last session's
-  best set + a small progression suggestion (e.g., +2.5 kg if they hit
-  all reps last time). Requires reading from the completed-session
-  summary ledger that already exists.
-  - Add `suggest: { weight: number; reps: number } | null` to
-    `SessionExercise`
-  - Drive it from the ledger in `api/getSessionSetup.ts`
+- [x] **Progressive overload — next-set suggestion** *(f2a8c3d)*
+  `computeSuggestion()` in `sessionStore.ts` walks history newest-first to find
+  the last best set per exercise. +2.5 kg step if they hit all target reps;
+  same weight otherwise. Ghost-fills weight × reps inputs via `suggest` prop
+  on `SessionExercise → ExerciseSessionCard → SetRow`. Clears once any value
+  is typed.
 
 - [x] **Multi-session store safety** *(b0545b6)*
   `sessionStore` handles starting a new mission when one is already active
@@ -101,11 +99,13 @@ Last audited: **2026-07-19**.
 
 - [ ] **Lazy-load Recharts on `/insights` only**
   Currently Recharts may be leaking into the shared 102 KB chunk.
-  Wrap chart imports in `next/dynamic` so the library only loads on
-  the Insights route.
-  ```ts
-  const TrendChart = dynamic(() => import("@/components/charts/TrendChart"), { ssr: false });
-  ```
+- [N/A] **Lazy-load Recharts on `/insights` only**
+  ~~Recharts was never added.~~ Both charts (`TrendChart`, `RadarChart`) are
+  custom pure-SVG components — zero third-party charting library. No action needed.
+
+- [N/A] **Verify `domAnimation` not `domMax` in `MotionProvider`**
+  `domMax` is intentional: the bottom-nav active pill uses `layoutId`
+  shared-layout animations which require it. Confirmed correct.
 
 - [ ] **Restrict `Space_Grotesk` font weights**
   Only weights 600 and 700 are used (`font-semibold`/`font-bold` on
@@ -114,18 +114,12 @@ Last audited: **2026-07-19**.
   Space_Grotesk({ subsets: ["latin"], weight: ["600", "700"], display: "swap" })
   ```
 
-- [ ] **Verify `domAnimation` not `domMax` in `MotionProvider`**
-  `domMax` includes drag/layout/scroll-linked features none of which
-  PhysIQx uses. If `domMax` is currently loaded, switching to
-  `domAnimation` saves ~9 KB gzipped with zero user-visible change.
-
 - [ ] **Run bundle analyser and fix any chunk leaks**
   ```bash
   npm install -D @next/bundle-analyzer
   ANALYZE=true npm run build
   ```
-  Look for: Recharts in shared chunk, any feature-specific imports
-  pulled into the 102 KB base, large polyfills.
+  Look for: any feature-specific imports pulled into the 102 KB base, large polyfills.
 
 ---
 

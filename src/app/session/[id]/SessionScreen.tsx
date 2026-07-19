@@ -180,6 +180,7 @@ export function SessionScreen({ missionId, setup }: SessionScreenProps) {
             restSeconds={exercise.restSeconds}
             unit="kg"
             lastTime={lastTimeFor(exercise.exerciseId)}
+            suggest={exercise.suggest}
             onLogSet={(setId, patch) => logSet(exercise.exerciseId, setId, patch)}
             onToggleSetCompleted={(setId) => toggleSetCompleted(exercise.exerciseId, setId)}
             onAddSet={() => addSet(exercise.exerciseId)}

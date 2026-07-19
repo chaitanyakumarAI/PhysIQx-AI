@@ -15,6 +15,8 @@ export interface ExerciseSessionCardProps {
   unit: string;
   /** Ghost of the previous performance, e.g. "Last time: 60 kg × 8". */
   lastTime?: string;
+  /** Progressive overload suggestion — ghost-fills weight/reps inputs. */
+  suggest?: { weightKg: number; reps: number } | null;
   onLogSet: (setId: string, patch: { weight?: number | null; reps?: number | null; rpe?: number | null }) => void;
   onToggleSetCompleted: (setId: string) => void;
   onAddSet?: () => void;
@@ -31,6 +33,7 @@ export function ExerciseSessionCard({
   restSeconds,
   unit,
   lastTime,
+  suggest,
   onLogSet,
   onToggleSetCompleted,
   onAddSet,
@@ -65,6 +68,7 @@ export function ExerciseSessionCard({
               <SetRow
                 set={set}
                 unit={unit}
+                suggest={set.weight === null && set.reps === null ? suggest : undefined}
                 onChangeWeight={(weight) => onLogSet(set.id, { weight })}
                 onChangeReps={(reps) => onLogSet(set.id, { reps })}
                 onChangeRPE={(rpe) => onLogSet(set.id, { rpe })}

@@ -37,6 +37,12 @@ export interface SessionExercise {
    *  the rest timer must not need a template lookup mid-workout. */
   restSeconds: number;
   sets: ExerciseSet[];
+  /**
+   * Progressive-overload suggestion derived from the last session's best set
+   * for this exercise. Shown as ghost placeholder values in weight/reps inputs.
+   * null = no history yet for this exercise.
+   */
+  suggest: { weightKg: number; reps: number } | null;
 }
 
 export interface WorkoutSession {
