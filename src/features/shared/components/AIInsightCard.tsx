@@ -2,7 +2,7 @@ import { Lightbulb } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { iconSize } from "@/constants/icons";
 import { cn } from "@/lib/utils";
-import type { Insight } from "@/types/insight";
+import { type Insight, enforceTwoSentences } from "@/types/insight";
 
 export interface AIInsightCardProps extends React.ComponentProps<"div"> {
   /** null renders the "still learning" fallback — never a blank card. */
@@ -41,7 +41,7 @@ export function AIInsightCard({
       </div>
       <p className="mt-3 text-sm text-foreground">
         {insight
-          ? insight.body
+          ? enforceTwoSentences(insight.body)
           : "Still learning your patterns — check back after a few more sessions."}
       </p>
     </Card>

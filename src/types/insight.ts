@@ -17,3 +17,19 @@ export interface Insight {
   actionLabel?: string;
   actionHref?: string;
 }
+
+/**
+ * Enforces the Insight body contract (≤ 2 sentences). Real LLMs regularly generate
+ * 4–5 sentence paragraphs when unconstrained; this guarantees the card layout
+ * never breaks regardless of output length.
+ */
+export function enforceTwoSentences(text: string): string {
+  if (!text) return "";
+  const trimmed = text.trim();
+  const sentences = trimmed.match(/[^.!?]+[.!?]+(?=\s|$)|[^.!?]+$/g);
+  if (!sentences || sentences.length <= 2) {
+    return trimmed;
+  }
+  return sentences.slice(0, 2).join("").trim();
+}
+

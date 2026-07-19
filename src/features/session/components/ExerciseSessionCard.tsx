@@ -15,7 +15,7 @@ export interface ExerciseSessionCardProps {
   unit: string;
   /** Ghost of the previous performance, e.g. "Last time: 60 kg × 8". */
   lastTime?: string;
-  onLogSet: (setId: string, patch: { weight?: number | null; reps?: number | null }) => void;
+  onLogSet: (setId: string, patch: { weight?: number | null; reps?: number | null; rpe?: number | null }) => void;
   onToggleSetCompleted: (setId: string) => void;
   onAddSet?: () => void;
   onRemoveSet?: (setId: string) => void;
@@ -67,6 +67,7 @@ export function ExerciseSessionCard({
                 unit={unit}
                 onChangeWeight={(weight) => onLogSet(set.id, { weight })}
                 onChangeReps={(reps) => onLogSet(set.id, { reps })}
+                onChangeRPE={(rpe) => onLogSet(set.id, { rpe })}
                 onToggleCompleted={() => handleToggle(set.id, set.completed)}
                 onRemove={removable ? () => onRemoveSet(set.id) : undefined}
               />

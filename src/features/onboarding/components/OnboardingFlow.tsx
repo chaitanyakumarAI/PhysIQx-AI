@@ -17,6 +17,7 @@ import {
   onboardingSchema,
   type OnboardingValues,
 } from "../schemas";
+import { useProfileStore } from "@/store/profileStore";
 import { BodyShapeStep } from "./steps/BodyShapeStep";
 import { DNAResultStep } from "./steps/DNAResultStep";
 import { ExperienceStep } from "./steps/ExperienceStep";
@@ -120,6 +121,7 @@ const steps: StepConfig[] = [
 export function OnboardingFlow() {
   const router = useRouter();
   const [step, setStep] = useState(0);
+  const setOnboardingProfile = useProfileStore((state) => state.setOnboardingProfile);
   const { watch, setValue } = useForm<OnboardingValues>({
     resolver: zodResolver(onboardingSchema),
     defaultValues: defaultOnboardingValues,
@@ -132,9 +134,7 @@ export function OnboardingFlow() {
 
   function handleContinue() {
     if (isLast) {
-      // No backend yet — nothing is persisted. This is the seam where a
-      // real profile-creation call would go before entering the app.
-      // ?tour=1 starts the guided walkthrough on arrival.
+      setOnboardingProfile(values);
       router.push("/home?tour=1");
       return;
     }

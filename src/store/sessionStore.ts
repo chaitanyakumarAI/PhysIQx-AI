@@ -25,6 +25,8 @@ interface StartSessionParams {
 interface SetPatch {
   weight?: number | null;
   reps?: number | null;
+  /** RPE 1–10 logged on the completed set. */
+  rpe?: number | null;
 }
 
 /** The best (heaviest) logged set of one exercise in one session. */
@@ -130,6 +132,7 @@ function buildSessionExercises(
       durationSeconds: templateSet.durationSeconds,
       weight: null,
       reps: null,
+      rpe: null,
       completed: false,
     }));
     return {
@@ -179,6 +182,18 @@ export const useSessionStore = create<SessionStoreState>()(
         if (current && current.missionId === missionId && current.status === "active") {
           return;
         }
+        // A *different* mission was started while one is active — abandon the
+        // current one so its data lands in history rather than being silently
+        // overwritten. DATA_MODELS.md: "abandoned work is saved, never discarded."
+        if (current && current.status === "active") {
+          const abandonedAt = new Date().toISOString();
+          set((state) => ({
+            history: [
+              ...state.history,
+              summarize(current, abandonedAt),
+            ].slice(-HISTORY_LIMIT),
+          }));
+        }
         set({
           session: {
             id: `session-${missionId}-${Date.now()}`,
@@ -209,6 +224,7 @@ export const useSessionStore = create<SessionStoreState>()(
                   targetReps: lastSet?.targetReps ?? 10,
                   weight: null,
                   reps: null,
+                  rpe: null,
                   completed: false,
                 };
                 return { ...sessionExercise, sets: [...sessionExercise.sets, nextSet] };

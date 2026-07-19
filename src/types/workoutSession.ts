@@ -21,6 +21,12 @@ export interface ExerciseSet {
   durationSeconds?: number;
   weight: number | null;
   reps: number | null;
+  /**
+   * Rate of Perceived Exertion (1–10). Optional — not every set needs it.
+   * 10 = maximum effort (failure), 7–8 = hard but more in the tank,
+   * 5–6 = moderate. Powers the Strength pillar's quality signal.
+   */
+  rpe: number | null;
   completed: boolean;
 }
 

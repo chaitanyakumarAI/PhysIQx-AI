@@ -15,6 +15,16 @@ export interface WeightEntry {
  * The mock Profile fixture stays the identity source of truth; this store
  * only overrides what the user has personally customized.
  */
+export interface OnboardingProfileData {
+  goal?: string;
+  experienceLevel?: string;
+  activeSplit?: string;
+  sessionFrequency?: string;
+  goalBodyShape?: string;
+  trainingDaysPerWeek?: number;
+  completedAt?: string;
+}
+
 interface ProfileStoreState {
   /** One of AVATAR_PRESETS' ids, or null when unset/uploaded. */
   avatarPresetId: string | null;
@@ -29,12 +39,15 @@ interface ProfileStoreState {
    * unlocked ones). Selecting a 4th replaces the oldest pick.
    */
   showcaseAchievementIds: string[];
+  /** Saved onboarding selections. */
+  onboardingProfile: OnboardingProfileData | null;
   setPresetAvatar: (presetId: string) => void;
   setUploadedAvatar: (dataUrl: string) => void;
   clearAvatar: () => void;
   setHeight: (heightCm: number) => void;
   logWeight: (weightKg: number, date: string) => void;
   toggleShowcaseAchievement: (id: string) => void;
+  setOnboardingProfile: (data: Partial<OnboardingProfileData>) => void;
 }
 
 const SHOWCASE_LIMIT = 3;
@@ -47,6 +60,7 @@ export const useProfileStore = create<ProfileStoreState>()(
       heightCm: null,
       weightEntries: [],
       showcaseAchievementIds: [],
+      onboardingProfile: null,
       setPresetAvatar: (presetId) =>
         set({ avatarPresetId: presetId, avatarDataUrl: null }),
       setUploadedAvatar: (dataUrl) =>
@@ -77,6 +91,14 @@ export const useProfileStore = create<ProfileStoreState>()(
             ].slice(-SHOWCASE_LIMIT),
           };
         }),
+      setOnboardingProfile: (data) =>
+        set((state) => ({
+          onboardingProfile: {
+            ...state.onboardingProfile,
+            ...data,
+            completedAt: new Date().toISOString(),
+          },
+        })),
     }),
     {
       name: "physiqx-profile",

@@ -7,27 +7,18 @@ Last audited: **2026-07-19**.
 
 ## 🔴 Do Now — Blockers & Quick Fixes
 
-- [ ] **Commit the design-folder reorganisation**
-  `design/` has 10 deleted reference PNGs and 3 untracked subdirs
-  (`kix_drafts/`, `past_UI/`, `favicons_generated/`) sitting unstaged.
-  Suggested message: `chore: reorganize design assets — mascot drafts, past UI, favicons`
+- [x] **Commit the design-folder reorganisation** *(67fde01)*
+  `design/` reorganised — past UI screenshots moved to `past_UI/`,
+  mascot drafts to `kix_drafts/`, favicons to `favicons_generated/`.
 
-- [ ] **Update `lucide-react` from 1.23.0 → 1.25.0**
-  Currently 2 patch versions behind latest. No breaking changes expected.
-  ```bash
-  npm install lucide-react@latest
-  ```
-  Then run `npm run build` to confirm nothing breaks.
+- [x] **Update `lucide-react` from 1.23.0 → 1.25.0** *(84a7650)*
 
-- [ ] **Write unit tests for `src/lib/score.ts`**
-  `computeWeightedScore` and `findWeakestPillar` are pure deterministic
-  functions. PHYSIQ_SCORE.md calls these "the most unit-tested code in
-  the app." They have zero tests. This must be fixed before the real
-  scoring engine ships (Phase 5).
-  - Install Vitest: `npm install -D vitest @vitejs/plugin-react`
-  - Test file: `src/lib/score.test.ts`
-  - Cover: weighted average, edge cases (empty pillars, single pillar,
-    all equal, one zero), `findWeakestPillar` tiebreaks.
+- [x] **Write unit tests for `src/lib/score.ts`** *(84a7650)*
+  23 tests passing. Covers `computeWeightedScore`, `findWeakestPillar`,
+  `scoreBand`, `orderPillarsByWeight`, and `pillarWeights` invariants.
+  Edge cases: empty arrays, single pillar, calibration (partial list),
+  tie-breaking, boundary values, float rounding, immutability.
+  Run with: `npm test` · Watch mode: `npm run test:watch`
 
 ---
 
