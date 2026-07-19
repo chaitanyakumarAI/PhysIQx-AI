@@ -19,7 +19,7 @@ export function PageContainer({
     <main
       className={cn(
         "mx-auto flex min-h-dvh w-full max-w-md flex-col gap-8 px-5 pt-4",
-        withBottomNav ? "pb-32" : "pb-10",
+        withBottomNav ? "pb-36" : "pb-10",
         className,
       )}
       {...props}

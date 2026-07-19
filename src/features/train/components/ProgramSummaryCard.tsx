@@ -40,9 +40,9 @@ export function ProgramSummaryCard({ programType, className }: ProgramSummaryCar
   if (!program) return null;
 
   return (
-    <Card padding="md" className={cn("flex flex-col gap-2", className)}>
+    <Card padding="md" className={cn("relative flex flex-col gap-2 transition-colors hover:border-brand/40 group", className)}>
       <div className="flex items-center justify-between gap-3">
-        <h3 className="font-display text-lg font-bold">{program.name}</h3>
+        <h3 className="font-display text-lg font-bold group-hover:text-brand transition-colors">{program.name}</h3>
         <span
           className={cn(
             "shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold uppercase tracking-[0.08em]",
@@ -57,7 +57,7 @@ export function ProgramSummaryCard({ programType, className }: ProgramSummaryCar
       </p>
       <Link
         href={`/train/programs/${program.type}`}
-        className="inline-flex min-h-11 w-fit items-center gap-1 text-sm font-semibold text-brand transition-colors hover:text-brand-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/60 rounded-full"
+        className="inline-flex min-h-11 w-fit items-center gap-1 text-sm font-semibold text-brand transition-colors hover:text-brand-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/60 rounded-full after:absolute after:inset-0"
       >
         View program
         <ChevronRight size={iconSize.xs} aria-hidden />

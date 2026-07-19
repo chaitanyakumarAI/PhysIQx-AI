@@ -9,6 +9,19 @@ export interface PersonalRecordCardProps {
 }
 
 export function PersonalRecordCard({ record, className }: PersonalRecordCardProps) {
+  if (!record || record.trend.length === 0) {
+    return (
+      <Card padding="lg" className={className}>
+        <div className="flex flex-col items-center justify-center py-6 text-center">
+          <p className="text-sm font-semibold">No PR data logged yet</p>
+          <p className="mt-1 text-xs text-foreground-secondary">
+            Complete a session for this lift to establish your progression trend.
+          </p>
+        </div>
+      </Card>
+    );
+  }
+
   return (
     <Card padding="lg" className={className}>
       <div className="flex items-start justify-between gap-4">

@@ -342,7 +342,14 @@ export function PlanEditor({ planId }: PlanEditorProps) {
         Add day
       </Button>
 
-      <div className="flex flex-col gap-3 pb-4">
+      <div className="flex flex-col gap-3 pb-8">
+        {!canSave && (
+          <p className="text-center text-xs font-medium text-amber-400/90">
+            {!draft.name.trim()
+              ? "Give your plan a name to save"
+              : "Add at least one exercise to each day to save"}
+          </p>
+        )}
         <Button
           size="lg"
           fullWidth
