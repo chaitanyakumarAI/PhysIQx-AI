@@ -63,11 +63,11 @@ The application is highly responsive, theme-consistent (sleek dark mode `#0a0d0b
 
 ---
 
-## 🛠️ High-Value Recommended Fixes
+## 🛠️ Applied High-Value UI Fixes
 
-| Priority | Feature / Area | Action Required |
-|---|---|---|
-| 🔴 High | **Layout Z-Index / Padding** | Add `pb-32` bottom padding to `/profile` and `/train/plans/new` so floating active session banner doesn't cover action buttons. |
-| 🟡 Medium | **Plan Builder Helper** | Add explicit helper text near "Save plan" when validation requirements aren't met. |
-| 🟡 Medium | **Full Card Tap Area** | Wrap Program Cards on `/train` in full clickable tap targets. |
-| 🟢 Low | **Empty PR State** | Add zero-state fallback illustration for exercises without logged PRs. |
+| Priority | Feature / Area | Action Taken | Status |
+|---|---|---|---|
+| 🔴 High | **Layout Z-Index / Padding** | Increased `PageContainer` bottom padding to `pb-36` so floating active session banners clear all bottom action buttons cleanly. | ✅ Applied *(6bda1d5)* |
+| 🟡 Medium | **Plan Builder Helper** | Added inline validation hint text near "Save plan" in `PlanEditor.tsx` explaining why it's disabled when fields are empty. | ✅ Applied *(6bda1d5)* |
+| 🟡 Medium | **Full Card Tap Area** | Expanded clickable area in `ProgramSummaryCard.tsx` so tapping anywhere on a program card opens the program details. | ✅ Applied *(6bda1d5)* |
+| 🟢 Low | **Empty PR State** | Added clean fallback state in `PersonalRecordCard.tsx` when no PR trend data is recorded yet. | ✅ Applied *(6bda1d5)* |
