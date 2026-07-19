@@ -1,4 +1,6 @@
-import { TrendingDown, TrendingUp } from "lucide-react";
+"use client";
+
+import { TrendingDown, TrendingUp, Zap } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
 import { Badge } from "@/components/ui/Badge";
 import { iconSize } from "@/constants/icons";
@@ -8,10 +10,12 @@ import type { LeaderboardEntry } from "@/types/leaderboard";
 
 export interface LeaderboardRowProps {
   entry: LeaderboardEntry;
+  /** If provided, renders a challenge CTA. Absent for the current user's own row. */
+  onChallenge?: () => void;
   className?: string;
 }
 
-export function LeaderboardRow({ entry, className }: LeaderboardRowProps) {
+export function LeaderboardRow({ entry, onChallenge, className }: LeaderboardRowProps) {
   const movement = getRankMovement(entry);
 
   return (
@@ -56,6 +60,17 @@ export function LeaderboardRow({ entry, className }: LeaderboardRowProps) {
           {movement.delta}
         </Badge>
       )}
+      {onChallenge && (
+        <button
+          type="button"
+          aria-label={`Challenge ${entry.name}`}
+          onClick={onChallenge}
+          className="ml-1 grid size-8 shrink-0 place-items-center rounded-full border border-brand/30 text-brand transition-colors hover:bg-brand/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/60"
+        >
+          <Zap size={iconSize.xs} aria-hidden />
+        </button>
+      )}
     </div>
   );
 }
+

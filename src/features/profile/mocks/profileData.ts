@@ -50,7 +50,7 @@ const settings: ProfileData["settings"] = [
   { id: "export-data", label: "Export data", iconId: "download", href: "/profile/settings/export" },
   // Routes to Home with the guided-walkthrough trigger — the tour teaches
   // on the live interface, there is no slides page anymore.
-  { id: "tour", label: "Replay app tour", iconId: "play", href: "/home?tour=1" },
+  { id: "tour", label: "Replay app tour", iconId: "play", href: "/home?tour=1", accent: true },
 ];
 
 export const mockProfileData: ProfileData = {

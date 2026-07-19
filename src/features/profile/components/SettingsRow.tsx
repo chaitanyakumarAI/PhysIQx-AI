@@ -43,13 +43,24 @@ export function SettingsRow({ item, className }: SettingsRowProps) {
       href={item.href}
       className={cn(
         "flex items-center gap-3 px-4 py-3 transition-colors hover:bg-surface-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/60",
+        item.accent && "text-brand",
         className,
       )}
     >
-      <Icon size={iconSize.sm} aria-hidden className="shrink-0 text-foreground-secondary" />
-      <span className="flex-1 font-medium">{item.label}</span>
+      <Icon
+        size={iconSize.sm}
+        aria-hidden
+        className={cn("shrink-0", item.accent ? "text-brand" : "text-foreground-secondary")}
+      />
+      <span className={cn("flex-1 font-medium", item.accent && "font-semibold")}>
+        {item.label}
+      </span>
       {item.value && <span className="text-sm text-foreground-secondary">{item.value}</span>}
-      <ChevronRight size={iconSize.sm} aria-hidden className="shrink-0 text-foreground-secondary" />
+      <ChevronRight
+        size={iconSize.sm}
+        aria-hidden
+        className={cn("shrink-0", item.accent ? "text-brand" : "text-foreground-secondary")}
+      />
     </Link>
   );
 }

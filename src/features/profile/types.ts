@@ -37,6 +37,8 @@ export interface SettingsItem {
   value?: string;
   iconId: SettingsIconId;
   href: string;
+  /** When true, renders with brand accent styling to draw attention (e.g. tour replay). */
+  accent?: boolean;
 }
 
 /** Aggregate returned by getProfileData() — the Profile screen's data contract. */

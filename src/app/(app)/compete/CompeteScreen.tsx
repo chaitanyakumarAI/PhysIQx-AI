@@ -9,10 +9,12 @@ import { FilterChipRow, type FilterChipOption } from "@/components/ui/FilterChip
 import { fadeInUp, staggerChildren } from "@/lib/motion";
 import { useEntranceOnce } from "@/lib/useEntranceOnce";
 import { ActivityFeedItem } from "@/features/compete/components/ActivityFeedItem";
+import { ChallengeModal } from "@/features/compete/components/ChallengeModal";
 import { ClimbingCard } from "@/features/compete/components/ClimbingCard";
 import { LeaderboardRow } from "@/features/compete/components/LeaderboardRow";
 import { WeeklyChallengeCard } from "@/features/compete/components/WeeklyChallengeCard";
 import type { CompeteData } from "@/features/compete/types";
+import type { LeaderboardEntry } from "@/types/leaderboard";
 import { leaderboardScopeLabels, type LeaderboardScope } from "@/types/leaderboard";
 
 export type CompeteScreenProps = CompeteData;
@@ -35,67 +37,78 @@ export function CompeteScreen({
   activity,
 }: CompeteScreenProps) {
   const [scope, setScope] = useState<LeaderboardScope>("weekly");
+  const [challengeTarget, setChallengeTarget] = useState<LeaderboardEntry | null>(null);
   const entries = scopes[scope];
 
   return (
-    <PageContainer>
-      {/* display:contents keeps PageContainer's flex/gap acting directly on
-          these items — this node exists only to orchestrate the stagger. */}
-      <m.div
-        variants={staggerChildren}
-        initial={useEntranceOnce("compete")}
-        animate="visible"
-        className="contents"
-      >
-        <m.div variants={fadeInUp}>
-          <ScreenHeader title="Compete" subtitle="Climb with your circle." />
-        </m.div>
-
+    <>
+      <PageContainer>
+        {/* display:contents keeps PageContainer's flex/gap acting directly on
+            these items — this node exists only to orchestrate the stagger. */}
         <m.div
-          variants={fadeInUp}
-          className="flex flex-col gap-4"
-          data-tour="compete-challenge"
+          variants={staggerChildren}
+          initial={useEntranceOnce("compete")}
+          animate="visible"
+          className="contents"
         >
-          <WeeklyChallengeCard challenge={challenge} participation={participation} />
-          <ClimbingCard entries={entries} currentUserId={currentUserId} />
-        </m.div>
+          <m.div variants={fadeInUp}>
+            <ScreenHeader title="Compete" subtitle="Climb with your circle." />
+          </m.div>
 
-        <m.div variants={fadeInUp} className="flex flex-col gap-4">
-          <FilterChipRow
-            label="Leaderboard scope"
-            options={scopeOptions}
-            selectedId={scope}
-            onSelect={(id) => setScope(id as LeaderboardScope)}
-          />
-          <Section title="XP Leaderboard">
-            <ul
-              aria-label="XP leaderboard"
-              className="divide-y divide-border/60 rounded-card border border-border/60"
-            >
-              {entries.map((entry) => (
-                <li key={entry.id}>
-                  <LeaderboardRow entry={entry} />
-                </li>
-              ))}
-            </ul>
-          </Section>
-        </m.div>
+          <m.div
+            variants={fadeInUp}
+            className="flex flex-col gap-4"
+            data-tour="compete-challenge"
+          >
+            <WeeklyChallengeCard challenge={challenge} participation={participation} />
+            <ClimbingCard entries={entries} currentUserId={currentUserId} />
+          </m.div>
 
-        <m.div variants={fadeInUp}>
-          <Section title="Live from your circle">
-            <ul
-              aria-label="Recent circle activity"
-              className="divide-y divide-border/60 rounded-card border border-border/60 px-4"
-            >
-              {activity.map((event) => (
-                <li key={event.id}>
-                  <ActivityFeedItem event={event} />
-                </li>
-              ))}
-            </ul>
-          </Section>
+          <m.div variants={fadeInUp} className="flex flex-col gap-4">
+            <FilterChipRow
+              label="Leaderboard scope"
+              options={scopeOptions}
+              selectedId={scope}
+              onSelect={(id) => setScope(id as LeaderboardScope)}
+            />
+            <Section title="XP Leaderboard">
+              <ul
+                aria-label="XP leaderboard"
+                className="divide-y divide-border/60 rounded-card border border-border/60"
+              >
+                {entries.map((entry) => (
+                  <li key={entry.id}>
+                    <LeaderboardRow
+                      entry={entry}
+                      onChallenge={entry.isCurrentUser ? undefined : () => setChallengeTarget(entry)}
+                    />
+                  </li>
+                ))}
+              </ul>
+            </Section>
+          </m.div>
+
+          <m.div variants={fadeInUp}>
+            <Section title="Live from your circle">
+              <ul
+                aria-label="Recent circle activity"
+                className="divide-y divide-border/60 rounded-card border border-border/60 px-4"
+              >
+                {activity.map((event) => (
+                  <li key={event.id}>
+                    <ActivityFeedItem event={event} />
+                  </li>
+                ))}
+              </ul>
+            </Section>
+          </m.div>
         </m.div>
-      </m.div>
-    </PageContainer>
+      </PageContainer>
+
+      <ChallengeModal
+        target={challengeTarget}
+        onClose={() => setChallengeTarget(null)}
+      />
+    </>
   );
 }
