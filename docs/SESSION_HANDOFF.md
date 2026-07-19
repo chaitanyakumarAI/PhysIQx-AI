@@ -60,6 +60,14 @@ Ran a full browser subagent audit of all 5 tabs. Applied all findings:
 - All exported to `public/mascots/*.webp` at 480×480, quality-88, bg composited to `#0a0d0b`
 - Commit: `2c57705`
 
+### App Icon Design & Generation (Nyra Mascot-Focused)
+- Conducted deep research on 2026 UI/UX fitness app icon trends (Tactile Maximalism, Glassmorphism, Multi-Material).
+- Iterated through four rounds of generation to find the perfect blend of 2026 aesthetics and PhysIQx mascot relevance.
+- Selected **Option 26 (The Lynx Gaze)**: A sleek, almond-shaped lynx eye made of brushed gunmetal, revealing a glowing neon green silicone pupil. Captures the sophisticated, AI-driven wisdom of Nyra.
+- Ran `scripts/generate_icons.py` to auto-resize the master 1024x1024 icon into all required formats.
+- Exported and wired all PWA/favicon sizes to `public/` (16, 32, 180, 192, 512, favicon.ico).
+- Added `public/manifest.json` for PWA support.
+
 ---
 
 ## 🏗️ Architecture Quick Reference
@@ -147,25 +155,7 @@ docs/
 
 ## 🚀 What To Do Next (Priority Order)
 
-### 1. App Icon (immediate)
-- Create a 1024×1024 PNG master icon
-- Options: Kix face, abstract mark with brand green, or "P" lettermark
-- Export sizes: 16, 32, 180 (apple-touch), 192, 512 (PWA)
-- Place in `public/` and wire into `src/app/layout.tsx` metadata
-
-### 2. Mascot Phase 2 Assets (optional before auth)
-From `docs/TODO.md` under Animations & Mascots:
-- Kix full-body: arms-raised, running, thumbs-up
-- Nyra: seated teaching, lying rest-day, prowling
-- Duo poster (for legendary moments)
-
-### 3. Phase 3 — Supabase Auth
-Files already scaffolded (login/signup forms exist as UI):
-- Install `@supabase/supabase-js`
-- Wire `LoginForm` → `supabase.auth.signInWithPassword`
-- Add Google OAuth via `SocialLoginButtons`
-- Add server middleware route guard (`middleware.ts`)
-- Persist onboarding to `profiles` table
+### 1. Phase 3 — Supabase Auth (Next Priority)
 
 ### 4. Phase 4 — Database
 - Design schema: `profiles`, `sessions`, `session_exercises`, `sets`, `cardio_logs`, `xp_transactions`
