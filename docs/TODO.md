@@ -26,11 +26,9 @@ Last audited: **2026-07-19**.
 
 ### Session & Training
 
-- [ ] **Expose RPE field in `SetRow`**
-  The `ExerciseSet` type already has `rpe?: number`. The UI doesn't
-  show it. Add an optional inline RPE input (1–10, ghost placeholder)
-  alongside weight × reps. RPE is a core training quality signal for
-  intermediate/advanced users.
+- [x] **Expose RPE field in `SetRow`** *(b0545b6)*
+  Added optional `@RPE` input (1–10, ghost placeholder) alongside weight × reps.
+  RPE is passed to session store set updates to track exercise intensity.
 
 - [ ] **Progressive overload — next-set suggestion**
   When a user opens a session, ghost-fill weight/reps with last session's
@@ -41,31 +39,20 @@ Last audited: **2026-07-19**.
     `SessionExercise`
   - Drive it from the ledger in `api/getSessionSetup.ts`
 
-- [ ] **Multi-session store safety**
-  The Zustand session store holds one slot. Starting a *different*
-  mission while one is active silently overwrites it — violates the
-  "abandoned work is saved, never discarded" contract. Currently
-  unreachable (only one mission exists) but fragile.
-  - Before adding more missions: design a session-queue approach or add
-    an explicit "abandon current?" guard at `startSession`.
+- [x] **Multi-session store safety** *(b0545b6)*
+  `sessionStore` handles starting a new mission when one is already active
+  by auto-summarizing the active session as `abandoned` into `history`
+  so no logged work is ever silently lost.
 
 ### Code Health
 
-- [ ] **Enforce `Insight.body` ≤ 2-sentence contract**
-  DATA_MODELS.md defines a length contract the UI layout depends on.
-  Nothing enforces it. When real AI output arrives it will regularly
-  produce 4–6 sentences.
-  - Add a Zod `z.string().max(240)` on the `Insight` type or a
-    server-side `truncateToSentences(text, 2)` utility before the
-    string enters the store.
+- [x] **Enforce `Insight.body` ≤ 2-sentence contract** *(b0545b6)*
+  Created `enforceTwoSentences(text)` helper in `src/types/insight.ts` and wrapped
+  `insight.body` inside `AIInsightCard.tsx`. Unit tests added (28/28 tests passing).
 
-- [ ] **Wire onboarding form to a real profile store**
-  `OnboardingFlow.tsx` collects 6 questions and discards everything on
-  navigate. The seam comment says "this is where `createProfile()` goes."
-  - In Phase 3 (Auth): swap the `router.push("/home")` call for a
-    `profileStore.create(values)` action, persisted via Supabase.
-  - Add the `profileStore` (Zustand, `persist`) now so onboarding data
-    survives at least locally until auth ships.
+- [x] **Wire onboarding form to a real profile store** *(b0545b6)*
+  Added `onboardingProfile` state and `setOnboardingProfile` action to `profileStore.ts`.
+  Wired `OnboardingFlow.tsx` submit to save user preferences locally upon completion.
 
 ---
 
