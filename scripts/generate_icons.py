@@ -9,7 +9,7 @@ ROOT = Path(__file__).parent.parent
 PUBLIC = ROOT / "public"
 
 # The path to the chosen generated icon
-SRC_ICON = Path(r"C:\Users\HP\.gemini\antigravity\brain\9a2ff838-642e-4b22-ad74-a02fe0ccac90\icon_26_lynxgaze_1784480129312.png")
+SRC_ICON = Path(r"C:\Users\HP\.gemini\antigravity\brain\9a2ff838-642e-4b22-ad74-a02fe0ccac90\icon_21_holographicglove_1784479502707.png")
 
 if not SRC_ICON.exists():
     print(f"Error: Source icon not found at {SRC_ICON}")
