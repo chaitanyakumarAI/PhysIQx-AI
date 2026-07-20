@@ -14,7 +14,7 @@
 | **Tests** | `npm test` → 28/28 passing (Vitest) |
 | **Lint** | `npm run lint` → 0 errors |
 | **Git branch** | `main` |
-| **Latest commit** | `2c57705` — mascot WebPs |
+| **Latest commit** | `c8a87e5` — Supabase Auth wiring |
 
 ---
 
@@ -22,8 +22,8 @@
 
 ```
 Phase 1 — UI Shell          ✅ COMPLETE
-Phase 2 — Polish & Logic    ✅ COMPLETE (as of this session)
-Phase 3 — Auth (Supabase)   ⬜ NOT STARTED
+Phase 2 — Polish & Logic    ✅ COMPLETE
+Phase 3 — Auth (Supabase)   🟡 IN PROGRESS (code wired, needs credentials)
 Phase 4 — Database          ⬜ NOT STARTED
 Phase 5 — Core Features     ⬜ NOT STARTED
 Phase 6 — AI Integration    ⬜ NOT STARTED
@@ -60,13 +60,24 @@ Ran a full browser subagent audit of all 5 tabs. Applied all findings:
 - All exported to `public/mascots/*.webp` at 480×480, quality-88, bg composited to `#0a0d0b`
 - Commit: `2c57705`
 
-### App Icon Design & Generation (Nyra Mascot-Focused)
-- Conducted deep research on 2026 UI/UX fitness app icon trends (Tactile Maximalism, Glassmorphism, Multi-Material).
+### App Icon Design & Generation (Kix Mascot-Focused)
 - Iterated through four rounds of generation to find the perfect blend of 2026 aesthetics and PhysIQx mascot relevance.
-- Selected **Option 26 (The Lynx Gaze)**: A sleek, almond-shaped lynx eye made of brushed gunmetal, revealing a glowing neon green silicone pupil. Captures the sophisticated, AI-driven wisdom of Nyra.
+- Selected **Option 21 (The Holographic Glove)**: A premium 3D boxing glove made of translucent holographic neon green mesh. Represents Kix's fighting spirit.
 - Ran `scripts/generate_icons.py` to auto-resize the master 1024x1024 icon into all required formats.
 - Exported and wired all PWA/favicon sizes to `public/` (16, 32, 180, 192, 512, favicon.ico).
 - Added `public/manifest.json` for PWA support.
+
+### Phase 3 — Supabase Auth Wiring
+- Installed `@supabase/supabase-js` + `@supabase/ssr`
+- Created Supabase client utilities: `src/lib/supabase/client.ts`, `server.ts`, `middleware.ts`
+- Wired all 4 auth forms (`LoginForm`, `SignupForm`, `SocialLoginButtons`, `ForgotPasswordForm`) to real Supabase API calls
+- Created `src/middleware.ts` with route protection (unauthenticated → `/login`)
+- Created `src/app/auth/callback/route.ts` for OAuth callback handling
+- Created `src/features/auth/actions/logout.ts` server action
+- Created `supabase/migrations/001_create_profiles.sql` (profiles table + RLS + auto-profile trigger)
+- Wired `OnboardingFlow.tsx` to persist onboarding data to the Supabase `profiles` table
+- Updated root redirect (`src/app/page.tsx`) from `/home` → `/login`
+- **Status:** Code is fully wired. Needs `.env.local` credentials from a real Supabase project + SQL migration run.
 
 ---
 
