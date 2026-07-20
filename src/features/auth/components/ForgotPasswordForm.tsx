@@ -5,10 +5,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { createClient } from "@/lib/supabase/client";
 import { forgotPasswordSchema, type ForgotPasswordFormValues } from "../schemas";
 
 export function ForgotPasswordForm() {
   const [sentTo, setSentTo] = useState<string | null>(null);
+  const [authError, setAuthError] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
@@ -16,10 +18,17 @@ export function ForgotPasswordForm() {
   } = useForm<ForgotPasswordFormValues>({ resolver: zodResolver(forgotPasswordSchema) });
 
   async function onSubmit(values: ForgotPasswordFormValues) {
-    // No backend yet — this is the seam where a real reset email would send.
-    // The delay is honest UX feedback (the loading state is otherwise
-    // imperceptible), not a simulation of real functionality.
-    await new Promise((resolve) => setTimeout(resolve, 400));
+    setAuthError(null);
+    const supabase = createClient();
+    const { error } = await supabase.auth.resetPasswordForEmail(values.email, {
+      redirectTo: `${window.location.origin}/auth/callback?next=/login`,
+    });
+
+    if (error) {
+      setAuthError(error.message);
+      return;
+    }
+
     setSentTo(values.email);
   }
 
@@ -37,6 +46,11 @@ export function ForgotPasswordForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-4">
+      {authError && (
+        <div className="rounded-lg bg-danger/10 px-4 py-3 text-sm text-danger" role="alert">
+          {authError}
+        </div>
+      )}
       <Input
         label="Email"
         type="email"

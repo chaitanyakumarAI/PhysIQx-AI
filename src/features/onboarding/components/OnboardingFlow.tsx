@@ -132,9 +132,30 @@ export function OnboardingFlow() {
   const isLast = step === steps.length - 1;
   const canContinue = current.canContinue?.(values) ?? true;
 
-  function handleContinue() {
+  async function handleContinue() {
     if (isLast) {
       setOnboardingProfile(values);
+
+      // Persist to Supabase profiles table
+      try {
+        const supabase = (await import("@/lib/supabase/client")).createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          await supabase.from("profiles").update({
+            goal: values.goal,
+            experience_level: values.experienceLevel,
+            active_split: values.activeSplit,
+            session_frequency: values.sessionFrequency,
+            goal_body_shape: values.goalBodyShape,
+            training_days_per_week: values.trainingDaysPerWeek,
+            onboarding_completed_at: new Date().toISOString(),
+          }).eq("id", user.id);
+        }
+      } catch {
+        // Silently fall back to local-only — the data is still in profileStore.
+        // Phase 4 adds proper offline-first sync.
+      }
+
       router.push("/home?tour=1");
       return;
     }
