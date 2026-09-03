@@ -29,11 +29,12 @@ export function LoginForm() {
     });
 
     if (error) {
-      // Make error messages friendlier
-      const msg =
-        error.message === "Invalid login credentials"
-          ? "Incorrect email or password. Please try again."
-          : error.message;
+      let msg = error.message;
+      if (error.message === "Invalid login credentials") {
+        msg = "Incorrect email or password. Please try again.";
+      } else if (error.message.includes("Email not confirmed")) {
+        msg = "Email not confirmed. Please check your email inbox to verify your account, or turn off 'Confirm Email' in your Supabase project settings.";
+      }
       setAuthError(msg);
       return;
     }

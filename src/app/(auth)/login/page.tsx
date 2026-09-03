@@ -17,12 +17,13 @@ export default function LoginPage() {
         <p className="auth-page-sub">Log in to keep your streak alive.</p>
       </div>
 
-      {/* Social first — most users prefer this */}
-      <SocialLoginButtons />
+      {/* Primary Email/password form */}
+      <LoginForm />
+
       <AuthDivider />
 
-      {/* Email/password form */}
-      <LoginForm />
+      {/* Social login options */}
+      <SocialLoginButtons />
 
       {/* Switch to signup */}
       <p className="auth-switch-text">

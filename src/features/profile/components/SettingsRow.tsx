@@ -1,9 +1,13 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Bell,
   ChevronRight,
   CircleUserRound,
   Download,
+  LogOut,
   Moon,
   Play,
   Ruler,
@@ -12,6 +16,7 @@ import {
 } from "lucide-react";
 import { iconSize } from "@/constants/icons";
 import { cn } from "@/lib/utils";
+import { createClient } from "@/lib/supabase/client";
 import type { SettingsIconId, SettingsItem } from "../types";
 
 export interface SettingsRowProps {
@@ -27,16 +32,36 @@ const settingsIcon: Record<SettingsIconId, LucideIcon> = {
   user: CircleUserRound,
   play: Play,
   ruler: Ruler,
+  "log-out": LogOut,
 };
 
-/**
- * One Settings list row. Deliberately not shared with Train's
- * ExerciseListItem despite the similar shape (icon + label + chevron) — no
- * subtitle line or badge here, and forcing a shared component now would mean
- * inventing optional-prop flags for a difference that's real, not premature.
- */
 export function SettingsRow({ item, className }: SettingsRowProps) {
+  const router = useRouter();
   const Icon = settingsIcon[item.iconId];
+
+  async function handleLogout(e: React.MouseEvent) {
+    e.preventDefault();
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/login");
+    router.refresh();
+  }
+
+  if (item.id === "logout") {
+    return (
+      <button
+        type="button"
+        onClick={handleLogout}
+        className={cn(
+          "flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-surface-elevated text-red-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60",
+          className,
+        )}
+      >
+        <Icon size={iconSize.sm} aria-hidden className="shrink-0 text-red-400" />
+        <span className="flex-1 font-semibold">{item.label}</span>
+      </button>
+    );
+  }
 
   return (
     <Link

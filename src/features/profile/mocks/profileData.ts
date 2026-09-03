@@ -51,6 +51,7 @@ const settings: ProfileData["settings"] = [
   // Routes to Home with the guided-walkthrough trigger — the tour teaches
   // on the live interface, there is no slides page anymore.
   { id: "tour", label: "Replay app tour", iconId: "play", href: "/home?tour=1", accent: true },
+  { id: "logout", label: "Log out", iconId: "log-out", href: "/login" },
 ];
 
 export const mockProfileData: ProfileData = {

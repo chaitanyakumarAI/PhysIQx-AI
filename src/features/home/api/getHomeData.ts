@@ -1,12 +1,19 @@
 import type { HomeData } from "../types";
 import { mockHomeData } from "../mocks/homeData";
+import { calculateUserPhysIQScore } from "@/lib/scoreEngine";
 
 /**
- * Home's data service seam. Today it resolves the mock fixture; when the
- * backend exists this becomes the real fetch — callers and the HomeData
- * shape do not change. Kept async now (rather than a plain import) so
- * consuming code already awaits it and Phase 2's swap is a body-only change.
+ * Home's data service seam. Dynamically computes the PhysIQ score from Supabase
+ * when available, falling back seamlessly to calibration defaults.
  */
 export async function getHomeData(): Promise<HomeData> {
-  return mockHomeData;
+  try {
+    const liveScore = await calculateUserPhysIQScore();
+    return {
+      ...mockHomeData,
+      score: liveScore,
+    };
+  } catch {
+    return mockHomeData;
+  }
 }

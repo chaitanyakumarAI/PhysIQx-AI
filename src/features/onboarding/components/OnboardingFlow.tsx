@@ -6,7 +6,7 @@ import { useForm, type UseFormSetValue } from "react-hook-form";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { m } from "framer-motion";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { IconButton } from "@/components/ui/IconButton";
 import { ProgressBar } from "@/components/ui/ProgressBar";
@@ -18,6 +18,7 @@ import {
   type OnboardingValues,
 } from "../schemas";
 import { useProfileStore } from "@/store/profileStore";
+import { saveOnboardingProfile } from "../actions/saveOnboardingProfile";
 import { BodyShapeStep } from "./steps/BodyShapeStep";
 import { DNAResultStep } from "./steps/DNAResultStep";
 import { ExperienceStep } from "./steps/ExperienceStep";
@@ -121,6 +122,8 @@ const steps: StepConfig[] = [
 export function OnboardingFlow() {
   const router = useRouter();
   const [step, setStep] = useState(0);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const setOnboardingProfile = useProfileStore((state) => state.setOnboardingProfile);
   const { watch, setValue } = useForm<OnboardingValues>({
     resolver: zodResolver(onboardingSchema),
@@ -134,26 +137,24 @@ export function OnboardingFlow() {
 
   async function handleContinue() {
     if (isLast) {
+      setIsSaving(true);
+      setSaveError(null);
+
+      // Save to local Zustand store immediately (works offline too)
       setOnboardingProfile(values);
 
-      // Persist to Supabase profiles table
-      try {
-        const supabase = (await import("@/lib/supabase/client")).createClient();
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          await supabase.from("profiles").update({
-            goal: values.goal,
-            experience_level: values.experienceLevel,
-            active_split: values.activeSplit,
-            session_frequency: values.sessionFrequency,
-            goal_body_shape: values.goalBodyShape,
-            training_days_per_week: values.trainingDaysPerWeek,
-            onboarding_completed_at: new Date().toISOString(),
-          }).eq("id", user.id);
-        }
-      } catch {
-        // Silently fall back to local-only — the data is still in profileStore.
-        // Phase 4 adds proper offline-first sync.
+      // Persist to Supabase via Server Action
+      const result = await saveOnboardingProfile(values);
+
+      setIsSaving(false);
+
+      if (!result.success) {
+        // Non-blocking: show error but still allow entering the app
+        // Local store already has the data — Supabase sync retried on next login
+        setSaveError(result.error ?? "Could not save your profile. You can update it later in Settings.");
+        // Proceed after a short delay so user sees the message
+        setTimeout(() => router.push("/home?tour=1"), 2500);
+        return;
       }
 
       router.push("/home?tour=1");
@@ -201,8 +202,20 @@ export function OnboardingFlow() {
       </m.div>
 
       <div className="flex flex-col gap-3">
-        <Button size="lg" fullWidth disabled={!canContinue} onClick={handleContinue}>
-          {isLast ? "Enter PhysIQx" : step === 0 ? "Get started" : "Continue"}
+        {/* Save error non-blocking banner */}
+        {saveError && (
+          <div className="flex items-start gap-2 rounded-lg bg-warning/10 px-3 py-2 text-xs text-warning" role="alert">
+            <AlertCircle size={iconSize.xs} className="mt-0.5 shrink-0" aria-hidden />
+            <span>{saveError}</span>
+          </div>
+        )}
+        <Button
+          size="lg"
+          fullWidth
+          disabled={!canContinue || isSaving}
+          onClick={handleContinue}
+        >
+          {isSaving ? "Saving your profile…" : isLast ? "Enter PhysIQx" : step === 0 ? "Get started" : "Continue"}
         </Button>
         {step === 0 && (
           <Link

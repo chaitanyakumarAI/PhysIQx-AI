@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { AlertCircle } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 
@@ -14,9 +15,11 @@ export interface SocialLoginButtonsProps {
  */
 export function SocialLoginButtons({ className }: SocialLoginButtonsProps) {
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [oauthError, setOauthError] = useState<string | null>(null);
 
   async function handleGoogleLogin() {
     setGoogleLoading(true);
+    setOauthError(null);
     try {
       const supabase = createClient();
       const { error } = await supabase.auth.signInWithOAuth({
@@ -30,17 +33,28 @@ export function SocialLoginButtons({ className }: SocialLoginButtonsProps) {
         },
       });
       if (error) {
-        console.error("Google OAuth error:", error.message);
+        const msg = error.message.includes("provider is not enabled")
+          ? "Google sign-in is not enabled in your Supabase project (Auth → Providers → Google). Please sign up using email & password below, or enable Google in Supabase."
+          : error.message;
+        setOauthError(msg);
         setGoogleLoading(false);
       }
       // If no error, browser is redirecting — keep spinner
-    } catch {
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : "OAuth request failed.";
+      setOauthError(message);
       setGoogleLoading(false);
     }
   }
 
   return (
     <div className={cn("flex flex-col gap-3", className)}>
+      {oauthError && (
+        <div className="social-error-banner" role="alert">
+          <AlertCircle size={15} className="flex-shrink-0" aria-hidden />
+          <span>{oauthError}</span>
+        </div>
+      )}
       <button
         type="button"
         onClick={handleGoogleLogin}
@@ -67,6 +81,12 @@ export function SocialLoginButtons({ className }: SocialLoginButtonsProps) {
       </button>
 
       <style>{`
+        .social-error-banner {
+          display: flex; align-items: center; gap: 0.5rem;
+          padding: 0.75rem 1rem; margin-bottom: 0.25rem;
+          background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2);
+          border-radius: 0.75rem; font-size: 0.8125rem; color: #f87171; line-height: 1.4;
+        }
         .social-btn {
           display: flex;
           align-items: center;

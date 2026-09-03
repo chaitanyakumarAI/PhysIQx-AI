@@ -1,5 +1,5 @@
 # Development Workflow
-
+✓ Compiled /home in 2.4s (1661 modules) GET /home 200 in 3432ms ○ Compiling /train ... ✓ Compiled /train in 1552ms (1723 modules) GET /train 200 in 2033ms,what is the time mentioned in the each line,check all the terminal:@contextScopeItemMention the app is taking too much time for GET operation,we also need to optimise it,add it to our phases of the plan
 ## Objective
 
 Build PhysIQx AI incrementally.

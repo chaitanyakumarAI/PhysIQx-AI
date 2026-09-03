@@ -29,7 +29,8 @@ export type SettingsIconId =
   | "download"
   | "user"
   | "play"
-  | "ruler";
+  | "ruler"
+  | "log-out";
 
 export interface SettingsItem {
   id: string;

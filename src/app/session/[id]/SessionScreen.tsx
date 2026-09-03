@@ -15,6 +15,7 @@ import { SessionTimer } from "@/features/session/components/SessionTimer";
 import { useElapsedSeconds } from "@/features/session/hooks/useElapsedSeconds";
 import { computeSessionProgress, computeSessionVolume } from "@/features/session/lib/derive";
 import type { SessionSetup } from "@/features/session/api/getSessionSetup";
+import { saveWorkoutSession } from "@/features/session/actions/saveWorkoutSession";
 import { useSessionStore } from "@/store/sessionStore";
 
 export interface SessionScreenProps {
@@ -37,6 +38,7 @@ export interface SessionScreenProps {
 export function SessionScreen({ missionId, setup }: SessionScreenProps) {
   const router = useRouter();
   const [hydrated, setHydrated] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const {
     session,
     history,
@@ -196,10 +198,25 @@ export function SessionScreen({ missionId, setup }: SessionScreenProps) {
         <Button
           size="lg"
           fullWidth
-          disabled={progress.completedSets === 0}
-          onClick={finishSession}
+          disabled={progress.completedSets === 0 || isSaving}
+          onClick={async () => {
+            // 1. Update local store first — works offline, no server needed
+            finishSession();
+
+            // 2. Sync to Supabase in the background (non-blocking)
+            //    We read the post-finish state from the store snapshot directly
+            const snap = useSessionStore.getState();
+            const completedSession = snap.session;
+            const latestSummary = snap.history.at(-1);
+
+            if (completedSession && latestSummary) {
+              setIsSaving(true);
+              await saveWorkoutSession(completedSession, latestSummary);
+              setIsSaving(false);
+            }
+          }}
         >
-          Finish workout
+          {isSaving ? "Saving…" : "Finish workout"}
         </Button>
         {progress.completedSets === 0 && (
           <p className="text-center text-xs text-foreground-secondary">

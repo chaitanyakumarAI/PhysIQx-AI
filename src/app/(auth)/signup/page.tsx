@@ -16,9 +16,9 @@ export default function SignupPage() {
         <p className="auth-page-sub">Start building your PhysIQ Score today.</p>
       </div>
 
-      <SocialLoginButtons />
-      <AuthDivider />
       <SignupForm />
+      <AuthDivider />
+      <SocialLoginButtons />
 
       <p className="auth-switch-text">
         Already have an account?{" "}

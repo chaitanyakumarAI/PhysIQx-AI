@@ -4,13 +4,14 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff, AlertCircle } from "lucide-react";
+import { Eye, EyeOff, AlertCircle, CheckCircle } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { signupSchema, type SignupFormValues } from "../schemas";
 
 export function SignupForm() {
   const router = useRouter();
   const [authError, setAuthError] = useState<string | null>(null);
+  const [authSuccess, setAuthSuccess] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -21,8 +22,9 @@ export function SignupForm() {
 
   async function onSubmit(data: SignupFormValues) {
     setAuthError(null);
+    setAuthSuccess(null);
     const supabase = createClient();
-    const { error } = await supabase.auth.signUp({
+    const { data: resData, error } = await supabase.auth.signUp({
       email: data.email,
       password: data.password,
       options: {
@@ -31,11 +33,20 @@ export function SignupForm() {
     });
 
     if (error) {
-      const msg =
-        error.message.includes("already registered")
-          ? "An account with this email already exists. Try logging in."
-          : error.message;
-      setAuthError(msg);
+      console.error("Signup error:", error);
+      let rawMsg = error.message || (typeof error === "string" ? error : JSON.stringify(error));
+      if (!rawMsg || rawMsg === "{}" || rawMsg === "[object Object]") {
+        rawMsg = "Failed to create account. Please check your Supabase credentials or network connection.";
+      } else if (rawMsg.includes("already registered") || rawMsg.includes("already exists")) {
+        rawMsg = "An account with this email already exists. Try logging in.";
+      }
+      setAuthError(rawMsg);
+      return;
+    }
+
+    // If email confirmation is enabled in Supabase, session will be null
+    if (!resData.session) {
+      setAuthSuccess("Account created! Please check your email inbox to verify your account before logging in, or disable 'Confirm Email' in your Supabase Auth settings for instant signup.");
       return;
     }
 
@@ -49,6 +60,13 @@ export function SignupForm() {
         <div className="auth-error-banner" role="alert">
           <AlertCircle size={15} aria-hidden />
           <span>{authError}</span>
+        </div>
+      )}
+
+      {authSuccess && (
+        <div className="auth-success-banner" role="alert">
+          <CheckCircle size={16} aria-hidden className="flex-shrink-0" />
+          <span>{authSuccess}</span>
         </div>
       )}
 
@@ -131,6 +149,12 @@ export function SignupForm() {
           padding: 0.75rem 1rem;
           background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2);
           border-radius: 0.75rem; font-size: 0.875rem; color: #f87171; line-height: 1.4;
+        }
+        .auth-success-banner {
+          display: flex; align-items: center; gap: 0.5rem;
+          padding: 0.75rem 1rem;
+          background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2);
+          border-radius: 0.75rem; font-size: 0.875rem; color: #4ade80; line-height: 1.4;
         }
         .auth-field { display: flex; flex-direction: column; gap: 0.375rem; }
         .auth-label { font-size: 0.875rem; font-weight: 500; color: #d4d4d8; }
