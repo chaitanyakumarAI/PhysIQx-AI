@@ -48,6 +48,18 @@ Phase 6 — AI Integration        ⬜ NOT STARTED
 - Updated `docs/BODY_SHAPE_EXPANSION_HANDBOOK.md` with complete 67-asset inventory.
 - Cleaned lint warnings in `scoreEngine.ts`, `bodyScanResolver.ts`, and `getProfileData.ts` (0 errors, 0 warnings).
 
+### Modular User Preferences & Optional Controls (RPE & Quiet Mode)
+- Created **Preferences & Logging** page (`/profile/settings/preferences`) with accessible `Switch.tsx` toggles.
+- Defined `UserPreferences` in `src/store/profileStore.ts` with SSR-safe hydration and local persistence:
+  - **`trackRpe: false`** (default off): Hides `@RPE` column in `SetRow.tsx` so standard set logging is fast and uncluttered (Weight × Reps only).
+  - **`showGhostSuggestions: true`**: Allows toggling progression ghost placeholder hints.
+  - **`autoRestTimer: true`**: Allows toggling automatic rest countdown on set completion.
+  - **`showMascots: true`**: Allows enabling a stoic "Quiet Mode" that hides Kix & Nyra commentary/mascot medallions across the app.
+  - **`showAiInsights: true`**: Allows suppressing unsolicited coach insight cards on Home and Insights.
+  - **`celebrationEffects: true`**: Allows toggling celebration fanfare/confetti.
+- Added comprehensive unit tests in `src/store/profileStore.test.ts` (31/31 Vitest tests passing).
+- Verified Next.js 15 build with clean static generation of all 229 routes.
+
 ---
 
 ## ✅ Previous Session Accomplishments

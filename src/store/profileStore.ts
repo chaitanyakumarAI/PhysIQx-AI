@@ -25,6 +25,30 @@ export interface OnboardingProfileData {
   completedAt?: string;
 }
 
+export interface UserPreferences {
+  /** Log Rate of Perceived Exertion (1–10) per set. Off by default for cleaner, faster set rows. */
+  trackRpe: boolean;
+  /** Ghost-fill suggested weight and reps from previous sessions as placeholder hints. */
+  showGhostSuggestions: boolean;
+  /** Automatically start the rest countdown timer when a set is marked complete. */
+  autoRestTimer: boolean;
+  /** Display Kix and Nyra mascot illustrations and coaching commentary across the app. */
+  showMascots: boolean;
+  /** Display AI-generated coach insight cards on Home and Insights. */
+  showAiInsights: boolean;
+  /** Particle confetti and celebration modal animations on achievements or finished workouts. */
+  celebrationEffects: boolean;
+}
+
+export const DEFAULT_USER_PREFERENCES: UserPreferences = {
+  trackRpe: false,
+  showGhostSuggestions: true,
+  autoRestTimer: true,
+  showMascots: true,
+  showAiInsights: true,
+  celebrationEffects: true,
+};
+
 interface ProfileStoreState {
   /** One of AVATAR_PRESETS' ids, or null when unset/uploaded. */
   avatarPresetId: string | null;
@@ -41,6 +65,8 @@ interface ProfileStoreState {
   showcaseAchievementIds: string[];
   /** Saved onboarding selections. */
   onboardingProfile: OnboardingProfileData | null;
+  /** User preferences for logging, commentary, and visual noise. */
+  preferences: UserPreferences;
   setPresetAvatar: (presetId: string) => void;
   setUploadedAvatar: (dataUrl: string) => void;
   clearAvatar: () => void;
@@ -48,6 +74,8 @@ interface ProfileStoreState {
   logWeight: (weightKg: number, date: string) => void;
   toggleShowcaseAchievement: (id: string) => void;
   setOnboardingProfile: (data: Partial<OnboardingProfileData>) => void;
+  updatePreferences: (patch: Partial<UserPreferences>) => void;
+  resetPreferences: () => void;
 }
 
 const SHOWCASE_LIMIT = 3;
@@ -61,6 +89,7 @@ export const useProfileStore = create<ProfileStoreState>()(
       weightEntries: [],
       showcaseAchievementIds: [],
       onboardingProfile: null,
+      preferences: DEFAULT_USER_PREFERENCES,
       setPresetAvatar: (presetId) =>
         set({ avatarPresetId: presetId, avatarDataUrl: null }),
       setUploadedAvatar: (dataUrl) =>
@@ -99,6 +128,14 @@ export const useProfileStore = create<ProfileStoreState>()(
             completedAt: new Date().toISOString(),
           },
         })),
+      updatePreferences: (patch) =>
+        set((state) => ({
+          preferences: {
+            ...(state.preferences ?? DEFAULT_USER_PREFERENCES),
+            ...patch,
+          },
+        })),
+      resetPreferences: () => set({ preferences: DEFAULT_USER_PREFERENCES }),
     }),
     {
       name: "physiqx-profile",

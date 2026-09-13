@@ -1,4 +1,7 @@
+"use client";
+
 import { cn } from "@/lib/utils";
+import { useProfileStore, DEFAULT_USER_PREFERENCES } from "@/store/profileStore";
 
 /**
  * The mascot expression crops cut from the locked canon grids
@@ -46,6 +49,13 @@ export function Mascot({
   className,
   alt = "",
 }: MascotProps) {
+  const showMascots = useProfileStore(
+    (state) =>
+      state.preferences?.showMascots ?? DEFAULT_USER_PREFERENCES.showMascots,
+  );
+
+  if (!showMascots) return null;
+
   const character = pose.startsWith("kix") ? "kix" : "nyra";
   const height = shape === "circle" ? size : Math.round(size * ASPECT[character]);
 

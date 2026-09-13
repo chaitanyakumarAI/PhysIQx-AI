@@ -5,6 +5,7 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { iconSize } from "@/constants/icons";
+import { useProfileStore, DEFAULT_USER_PREFERENCES } from "@/store/profileStore";
 import { RestTimer } from "./RestTimer";
 import { SetRow } from "./SetRow";
 import type { SessionExercise } from "@/types/workoutSession";
@@ -23,11 +24,11 @@ export interface ExerciseSessionCardProps {
   onRemoveSet?: (setId: string) => void;
 }
 
-/** One exercise's set list. Owns its own "which set just finished, show the
- *  rest timer beneath it" state — ephemeral UI state, not session data, so
- *  it doesn't belong in the persisted store. Set count is the athlete's
- *  call mid-workout: add freely; remove only the last, uncompleted set
- *  (completed sets are logged work, never silently deletable). */
+/**
+ * ExerciseSessionCard — holds the sets for one exercise. Sets can be added
+ * at any time; removing is restricted to the newest set while still uncompleted
+ * (completed sets are logged work, never silently deletable).
+ */
 export function ExerciseSessionCard({
   exercise,
   restSeconds,
@@ -39,13 +40,18 @@ export function ExerciseSessionCard({
   onAddSet,
   onRemoveSet,
 }: ExerciseSessionCardProps) {
+  const preferences = useProfileStore(
+    (state) => state.preferences ?? DEFAULT_USER_PREFERENCES,
+  );
   const [restingAfterSetId, setRestingAfterSetId] = useState<string | null>(null);
   const lastSet = exercise.sets.at(-1);
 
   function handleToggle(setId: string, wasCompleted: boolean) {
     onToggleSetCompleted(setId);
-    // Only start resting when completing a set, not un-completing one.
-    if (!wasCompleted) setRestingAfterSetId(setId);
+    // Only start resting when completing a set, not un-completing one, and if enabled in preferences.
+    if (!wasCompleted && preferences.autoRestTimer) {
+      setRestingAfterSetId(setId);
+    }
   }
 
   return (
@@ -68,10 +74,18 @@ export function ExerciseSessionCard({
               <SetRow
                 set={set}
                 unit={unit}
-                suggest={set.weight === null && set.reps === null ? suggest : undefined}
+                suggest={
+                  preferences.showGhostSuggestions && set.weight === null && set.reps === null
+                    ? suggest
+                    : undefined
+                }
                 onChangeWeight={(weight) => onLogSet(set.id, { weight })}
                 onChangeReps={(reps) => onLogSet(set.id, { reps })}
-                onChangeRPE={(rpe) => onLogSet(set.id, { rpe })}
+                onChangeRPE={
+                  preferences.trackRpe
+                    ? (rpe) => onLogSet(set.id, { rpe })
+                    : undefined
+                }
                 onToggleCompleted={() => handleToggle(set.id, set.completed)}
                 onRemove={removable ? () => onRemoveSet(set.id) : undefined}
               />

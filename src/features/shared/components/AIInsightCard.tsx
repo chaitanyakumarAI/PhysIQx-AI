@@ -1,8 +1,11 @@
+"use client";
+
 import { Lightbulb } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { iconSize } from "@/constants/icons";
 import { cn } from "@/lib/utils";
 import { type Insight, enforceTwoSentences } from "@/types/insight";
+import { useProfileStore, DEFAULT_USER_PREFERENCES } from "@/store/profileStore";
 
 export interface AIInsightCardProps extends React.ComponentProps<"div"> {
   /** null renders the "still learning" fallback — never a blank card. */
@@ -22,6 +25,14 @@ export function AIInsightCard({
   onAction,
   ...props
 }: AIInsightCardProps) {
+  const showAiInsights = useProfileStore(
+    (state) =>
+      state.preferences?.showAiInsights ??
+      DEFAULT_USER_PREFERENCES.showAiInsights,
+  );
+
+  if (!showAiInsights) return null;
+
   return (
     <Card variant="accent" className={cn(className)} {...props}>
       <div className="flex items-start justify-between gap-3">

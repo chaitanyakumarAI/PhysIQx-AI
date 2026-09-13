@@ -42,6 +42,11 @@ Last audited: **2026-07-19**.
   by auto-summarizing the active session as `abandoned` into `history`
   so no logged work is ever silently lost.
 
+- [x] **Modular User Preferences & Optional Controls (RPE & Quiet Mode)**
+  Added `/profile/settings/preferences` with switches for RPE tracking (default: off),
+  ghost progression hints, auto rest timer, mascot commentary, AI insights,
+  and celebration fanfare. Persisted to `profileStore` with 31/31 unit tests passing.
+
 ### Code Health
 
 - [x] **Enforce `Insight.body` ≤ 2-sentence contract** *(b0545b6)*
@@ -107,12 +112,9 @@ Last audited: **2026-07-19**.
   `domMax` is intentional: the bottom-nav active pill uses `layoutId`
   shared-layout animations which require it. Confirmed correct.
 
-- [ ] **Restrict `Space_Grotesk` font weights**
+- [x] **Restrict `Space_Grotesk` font weights**
   Only weights 600 and 700 are used (`font-semibold`/`font-bold` on
-  display text). Loading all weights wastes ~15–25 KB.
-  ```ts
-  Space_Grotesk({ subsets: ["latin"], weight: ["600", "700"], display: "swap" })
-  ```
+  display text). Confirmed restricted in `src/app/layout.tsx`.
 
 - [ ] **Run bundle analyser and fix any chunk leaks**
   ```bash
