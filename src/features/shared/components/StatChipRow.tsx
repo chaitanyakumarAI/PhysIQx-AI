@@ -1,9 +1,11 @@
+import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { cn } from "@/lib/utils";
 
 export interface StatEntry {
   label: string;
   value: string;
+  href?: string;
 }
 
 export interface StatChipRowProps {
@@ -29,18 +31,32 @@ export function StatChipRow({ stats, columns = 3, className }: StatChipRowProps)
         className,
       )}
     >
-      {stats.map((stat) => (
-        <Card
-          key={stat.label}
-          padding="sm"
-          className="flex flex-col items-center gap-1 text-center"
-        >
-          <span className="font-display text-lg font-bold">{stat.value}</span>
-          <span className="text-xs uppercase tracking-[0.1em] text-foreground-secondary">
-            {stat.label}
-          </span>
-        </Card>
-      ))}
+      {stats.map((stat) => {
+        const content = (
+          <Card
+            padding="sm"
+            className={cn(
+              "flex flex-col items-center gap-1 text-center transition-all",
+              stat.href && "hover:border-brand/40 hover:bg-surface-elevated cursor-pointer"
+            )}
+          >
+            <span className="font-display text-lg font-bold text-foreground">{stat.value}</span>
+            <span className="text-xs uppercase tracking-[0.1em] text-foreground-secondary">
+              {stat.label}
+            </span>
+          </Card>
+        );
+
+        if (stat.href) {
+          return (
+            <Link key={stat.label} href={stat.href} className="focus-visible:outline-none">
+              {content}
+            </Link>
+          );
+        }
+
+        return <div key={stat.label}>{content}</div>;
+      })}
     </div>
   );
 }

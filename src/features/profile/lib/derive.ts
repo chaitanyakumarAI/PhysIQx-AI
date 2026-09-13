@@ -28,8 +28,8 @@ export function buildProgressStats(
   streak: StreakSummary,
 ): StatEntry[] {
   return [
-    { label: "Sessions", value: stats.sessions.toLocaleString() },
-    { label: "Streak", value: `${streak.currentStreakDays}d` },
+    { label: "Sessions", value: stats.sessions.toLocaleString(), href: "/profile/history" },
+    { label: "Streak", value: `${streak.currentStreakDays}d`, href: "/insights" },
     { label: "Total XP", value: stats.totalXP.toLocaleString() },
   ];
 }

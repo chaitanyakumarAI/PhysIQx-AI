@@ -33,7 +33,7 @@ export async function getCompeteData(): Promise<CompeteData> {
       .eq("status", "completed");
 
     const totalVolumeLifted = (sessions ?? []).reduce(
-      (acc, s) => acc + (Number(s.total_volume_kg) || 0),
+      (acc: number, s: any) => acc + (Number(s.total_volume_kg) || 0),
       0
     );
 
@@ -44,7 +44,7 @@ export async function getCompeteData(): Promise<CompeteData> {
       .eq("user_id", user.id);
 
     const realLifetimeXP = (xpRows ?? []).reduce(
-      (acc, row) => acc + (Number(row.amount) || 0),
+      (acc: number, row: any) => acc + (Number(row.amount) || 0),
       0
     );
 
@@ -53,8 +53,8 @@ export async function getCompeteData(): Promise<CompeteData> {
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
     const realWeeklyXP = (xpRows ?? [])
-      .filter((row) => new Date(row.created_at) >= sevenDaysAgo)
-      .reduce((acc, row) => acc + (Number(row.amount) || 0), 0);
+      .filter((row: any) => new Date(row.created_at) >= sevenDaysAgo)
+      .reduce((acc: number, row: any) => acc + (Number(row.amount) || 0), 0);
 
     // Dynamic current user ID
     const currentUserId = user.id;

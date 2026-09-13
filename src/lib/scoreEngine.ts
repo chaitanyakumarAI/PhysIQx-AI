@@ -86,8 +86,8 @@ export async function calculateUserPhysIQScore(): Promise<PhysIQScoreSnapshot> {
       .eq("user_id", user.id)
       .gte("created_at", thirtyDaysAgo.toISOString());
 
-    const completedSessions = sessions?.filter(s => s.status === "completed") ?? [];
-    const totalVolume = completedSessions.reduce((acc, s) => acc + (Number(s.total_volume_kg) || 0), 0);
+    const completedSessions = sessions?.filter((s: any) => s.status === "completed") ?? [];
+    const totalVolume = completedSessions.reduce((acc: number, s: any) => acc + (Number(s.total_volume_kg) || 0), 0);
 
     const inputs: RawScoreInputs = {
       completedSessionsCount: completedSessions.length,

@@ -32,7 +32,7 @@ export async function getInsightsData(): Promise<InsightsData> {
       .eq("user_id", user.id)
       .order("completed_at", { ascending: true });
 
-    const history: CompletedSessionSummary[] = (dbSessions ?? []).map((row) => ({
+    const history: CompletedSessionSummary[] = (dbSessions ?? []).map((row: any) => ({
       id: row.client_ref || row.id,
       missionId: row.mission_id || "mission-custom",
       title: row.title || "Workout",

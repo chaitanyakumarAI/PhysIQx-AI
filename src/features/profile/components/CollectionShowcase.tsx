@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Section } from "@/components/layout/Section";
@@ -50,9 +51,12 @@ export function CollectionShowcase({ achievements }: CollectionShowcaseProps) {
     <Section
       title="Collection"
       action={
-        <span className="text-sm text-foreground-secondary">
-          {unlockedCount} / {achievements.length}
-        </span>
+        <Link
+          href="/profile/achievements"
+          className="text-xs font-semibold text-brand hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/60 rounded"
+        >
+          {unlockedCount} / {achievements.length} badges ↗
+        </Link>
       }
     >
       {!expanded && (
