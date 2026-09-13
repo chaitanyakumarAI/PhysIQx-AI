@@ -38,27 +38,47 @@ async function checkSupabaseAvailable(url: string): Promise<boolean> {
 
 export async function createServerSupabaseClient() {
   const cookieStore = await cookies();
+  const allCookies = cookieStore.getAll();
+  const hasAuthToken = allCookies.some(
+    (c) => c.name.startsWith("sb-") && (c.name.includes("auth-token") || c.name.endsWith("-token"))
+  );
+
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   const isOnline = supabaseUrl ? await checkSupabaseAvailable(supabaseUrl) : false;
 
-  return createServerClient(
-    supabaseUrl || "https://placeholder.supabase.co",
-    supabaseKey || "placeholder-key",
-    {
-      global: {
-        fetch: async (url, options) => {
-          if (!isOnline) {
-            // Fast failure for offline / unconfigured Supabase instances
-            return new Response(JSON.stringify({ error: "Supabase host unreachable" }), {
-              status: 503,
-              headers: { "Content-Type": "application/json" },
-            });
-          }
-          return fetch(url, options);
-        },
+  // Zero-latency fast path: If there are no Supabase auth cookies in the request
+  // OR the remote Supabase instance is offline/unreachable, return an instant offline client.
+  // This completely prevents @supabase/auth-js from making failing fetch calls and retrying for 26 seconds.
+  if (!hasAuthToken || !isOnline) {
+    return {
+      auth: {
+        getUser: async () => ({ data: { user: null }, error: null }),
+        getSession: async () => ({ data: { session: null }, error: null }),
+        signOut: async () => ({ error: null }),
       },
+      from: () => ({
+        select: () => ({
+          eq: () => ({
+            eq: () => ({
+              order: () => Promise.resolve({ data: [], error: null }),
+              maybeSingle: () => Promise.resolve({ data: null, error: null }),
+            }),
+            order: () => Promise.resolve({ data: [], error: null }),
+            maybeSingle: () => Promise.resolve({ data: null, error: null }),
+          }),
+          order: () => Promise.resolve({ data: [], error: null }),
+          maybeSingle: () => Promise.resolve({ data: null, error: null }),
+        }),
+      }),
+    } as unknown as ReturnType<typeof createServerClient>;
+  }
+
+  return createServerClient(
+    supabaseUrl!,
+    supabaseKey!,
+    {
       cookies: {
         getAll() {
           return cookieStore.getAll();
