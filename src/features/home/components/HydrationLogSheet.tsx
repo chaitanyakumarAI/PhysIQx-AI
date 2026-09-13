@@ -61,7 +61,7 @@ export function HydrationLogSheet({ isOpen, onClose }: HydrationLogSheetProps) {
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md rounded-t-3xl border-t border-border/80 bg-surface p-6 shadow-2xl transition-transform animate-in slide-in-from-bottom"
+        className="w-full max-w-md rounded-t-3xl border-t border-border/80 bg-surface p-6 pb-24 shadow-2xl transition-transform animate-in slide-in-from-bottom"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
