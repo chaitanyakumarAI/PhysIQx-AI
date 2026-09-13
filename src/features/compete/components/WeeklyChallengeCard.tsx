@@ -1,4 +1,5 @@
-import { Trophy, Zap } from "lucide-react";
+import Link from "next/link";
+import { ChevronRight, Trophy, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { ProgressBar } from "@/components/ui/ProgressBar";
@@ -55,6 +56,14 @@ export function WeeklyChallengeCard({
         </span>
         <span className="font-semibold text-legendary">{challenge.reward.badgeName}</span>
       </div>
+
+      <Link
+        href={`/compete/challenges/${challenge.id}`}
+        className="mt-3 flex items-center justify-between pt-1 text-xs font-semibold text-brand transition-colors hover:text-brand/80"
+      >
+        <span>View challenge standings & rules</span>
+        <ChevronRight size={14} />
+      </Link>
     </Card>
   );
 }

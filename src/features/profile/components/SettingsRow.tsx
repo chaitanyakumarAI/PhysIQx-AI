@@ -14,6 +14,7 @@ import {
   Shield,
   Sliders,
   Camera,
+  Activity,
   type LucideIcon,
 } from "lucide-react";
 import { iconSize } from "@/constants/icons";
@@ -36,6 +37,7 @@ const settingsIcon: Record<SettingsIconId, LucideIcon> = {
   ruler: Ruler,
   sliders: Sliders,
   camera: Camera,
+  activity: Activity,
   "log-out": LogOut,
 };
 

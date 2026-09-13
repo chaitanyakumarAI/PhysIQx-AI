@@ -95,6 +95,36 @@ export function playSetComplete() {
  * Major celebratory fanfare chord for workout completion or new PR.
  * Respects user preferences `celebrationEffects`.
  */
+/**
+ * Quick water droplet pitch bend for hydration logging.
+ */
+export function playWaterDrop() {
+  try {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(600, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(1400, ctx.currentTime + 0.08);
+
+    gain.gain.setValueAtTime(0.18, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start();
+    osc.stop(ctx.currentTime + 0.12);
+
+    triggerHaptic("light");
+  } catch {
+    // Fallback
+  }
+}
+
 export function playCelebrationFanfare() {
   try {
     if (typeof window !== "undefined") {

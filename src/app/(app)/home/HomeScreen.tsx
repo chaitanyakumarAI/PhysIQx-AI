@@ -1,6 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Droplets, Dumbbell, HeartPulse, Sparkles } from "lucide-react";
+import { QuickActionGrid } from "@/features/home/components/QuickActionGrid";
+import { HydrationLogSheet } from "@/features/home/components/HydrationLogSheet";
+import type { QuickAction } from "@/features/home/types";
 import { m } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { PageContainer } from "@/components/layout/PageContainer";
@@ -42,6 +46,13 @@ export type HomeScreenProps = Pick<
  * one tap away on Insights/Profile instead — progressive disclosure, per
  * the first-principles Home rethink.
  */
+const HOME_QUICK_ACTIONS: QuickAction[] = [
+  { id: "log-cardio", label: "Cardio", icon: HeartPulse, href: "/train/cardio" },
+  { id: "start-workout", label: "Train", icon: Dumbbell, href: "/train" },
+  { id: "log-water", label: "Hydrate", icon: Droplets, href: "/home?log=water" },
+  { id: "ai-coach", label: "AI Coach", icon: Sparkles, href: "/coach" },
+];
+
 export function HomeScreen({
   profile,
   streak,
@@ -57,6 +68,28 @@ export function HomeScreen({
   // timezone. useState pins it for the session; WelcomeHeader suppresses the
   // expected SSG-vs-client hydration text difference.
   const [greeting] = useState(() => getGreeting(new Date().getHours()));
+  const [waterSheetOpen, setWaterSheetOpen] = useState(false);
+
+  useEffect(() => {
+    const checkQuery = () => {
+      if (typeof window !== "undefined") {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get("log") === "water") {
+          setWaterSheetOpen(true);
+        }
+      }
+    };
+    checkQuery();
+    window.addEventListener("popstate", checkQuery);
+    return () => window.removeEventListener("popstate", checkQuery);
+  }, []);
+
+  const handleCloseWaterSheet = () => {
+    setWaterSheetOpen(false);
+    if (typeof window !== "undefined" && window.location.search.includes("log=water")) {
+      router.replace("/home", { scroll: false });
+    }
+  };
 
   // Live truth over fixtures: spotlight, week strip, and streak all derive
   // from the real ledgers once anything is logged. Stores are empty during
@@ -89,6 +122,7 @@ export function HomeScreen({
             archetype={profile.dnaArchetype}
             className="pt-0"
           />
+          <QuickActionGrid actions={HOME_QUICK_ACTIONS} />
         </m.div>
 
         <m.div variants={fadeInUp} data-tour="mission">
@@ -130,6 +164,7 @@ export function HomeScreen({
           />
         </m.div>
       </m.div>
+      <HydrationLogSheet isOpen={waterSheetOpen} onClose={handleCloseWaterSheet} />
     </PageContainer>
   );
 }
