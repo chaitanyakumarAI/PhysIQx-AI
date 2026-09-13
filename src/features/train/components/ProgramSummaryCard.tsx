@@ -24,18 +24,6 @@ const levelTone: Record<string, string> = {
  * scroll (visual-audit finding).
  */
 export function ProgramSummaryCard({ programType, className }: ProgramSummaryCardProps) {
-  if (programType === "ai") {
-    return (
-      <Card padding="md" className={className}>
-        <p className="text-sm leading-relaxed text-foreground-secondary">
-          The Coach program builds Today&apos;s Mission for you automatically —
-          nothing to browse. Pick any preset chip to see its full weekly
-          schedule.
-        </p>
-      </Card>
-    );
-  }
-
   const program = findProgram(programType);
   if (!program) return null;
 

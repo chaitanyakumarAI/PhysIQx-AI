@@ -75,4 +75,17 @@ describe("useProfileStore preferences", () => {
     expect(current.showMascots).toBe(true);
     expect(current.autoRestTimer).toBe(true);
   });
+
+  it("manages notificationPreferences updates independently", () => {
+    const { updateNotificationPreferences } = useProfileStore.getState();
+
+    expect(useProfileStore.getState().notificationPreferences["streak-risk"]).toBe(true);
+
+    updateNotificationPreferences({ "streak-risk": false, "circle-activity": true });
+
+    const updated = useProfileStore.getState().notificationPreferences;
+    expect(updated["streak-risk"]).toBe(false);
+    expect(updated["circle-activity"]).toBe(true);
+    expect(updated["mission-reminders"]).toBe(true);
+  });
 });

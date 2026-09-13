@@ -48,6 +48,8 @@ function timed(count: number, seconds: number): WorkoutTemplateExercise["sets"] 
   }));
 }
 
+import { aiCoachProgramDefinition } from "@/lib/aiProgramEngine";
+
 export const programLevelLabels: Record<ProgramLevel, string> = {
   beginner: "Beginner",
   intermediate: "Intermediate",
@@ -55,6 +57,7 @@ export const programLevelLabels: Record<ProgramLevel, string> = {
 };
 
 export const programLibrary: ProgramDefinition[] = [
+  aiCoachProgramDefinition,
   {
     type: "ppl",
     name: "Push Pull Legs",

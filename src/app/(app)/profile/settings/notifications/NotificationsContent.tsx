@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Switch } from "@/components/ui/Switch";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { SettingsPageHeader } from "@/features/profile/components/SettingsPageHeader";
+import { useProfileStore } from "@/store/profileStore";
+import { DEFAULT_NOTIFICATION_PREFERENCES } from "@/lib/notifications";
 
 interface NotificationPref {
   id: string;
@@ -40,16 +42,17 @@ const prefs: NotificationPref[] = [
   },
 ];
 
-const defaultEnabled: Record<string, boolean> = {
-  "mission-reminders": true,
-  "streak-risk": true,
-  "challenge-results": true,
-  "circle-activity": false,
-  "ai-coach": true,
-};
-
 export function NotificationsContent() {
-  const [enabled, setEnabled] = useState(defaultEnabled);
+  const storePrefs = useProfileStore((state) => state.notificationPreferences);
+  const updateStorePrefs = useProfileStore((state) => state.updateNotificationPreferences);
+
+  // SSR-safe state initialized from defaults, synced with store on hydration
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const activePrefs = mounted && storePrefs ? storePrefs : DEFAULT_NOTIFICATION_PREFERENCES;
 
   return (
     <PageContainer>
@@ -62,10 +65,8 @@ export function NotificationsContent() {
               <p className="text-sm text-foreground-secondary">{pref.description}</p>
             </div>
             <Switch
-              checked={enabled[pref.id] ?? false}
-              onChange={(checked) =>
-                setEnabled((current) => ({ ...current, [pref.id]: checked }))
-              }
+              checked={activePrefs[pref.id] ?? false}
+              onChange={(checked) => updateStorePrefs({ [pref.id]: checked })}
               label={pref.label}
             />
           </div>

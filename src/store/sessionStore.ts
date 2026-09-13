@@ -55,6 +55,9 @@ export interface CompletedSessionSummary {
   totalVolumeKg: number;
   xpEarned: number;
   topSets: TopSet[];
+  /** Average RPE across completed sets where RPE was logged. */
+  avgRpe?: number;
+  status?: "active" | "completed" | "abandoned";
 }
 
 /** Keep the ledger bounded — localStorage, not a database. */
@@ -63,6 +66,8 @@ const HISTORY_LIMIT = 60;
 function summarize(session: WorkoutSession, completedAt: string): CompletedSessionSummary {
   let setsCompleted = 0;
   let totalVolumeKg = 0;
+  let totalRpe = 0;
+  let rpeCount = 0;
   const topSets: TopSet[] = [];
   for (const exercise of session.exercises) {
     let best: TopSet | null = null;
@@ -72,6 +77,10 @@ function summarize(session: WorkoutSession, completedAt: string): CompletedSessi
       const weight = exerciseSet.weight ?? 0;
       const reps = exerciseSet.reps ?? 0;
       totalVolumeKg += weight * reps;
+      if (exerciseSet.rpe && exerciseSet.rpe > 0) {
+        totalRpe += exerciseSet.rpe;
+        rpeCount += 1;
+      }
       if (weight > 0 && reps > 0 && (!best || weight > best.weightKg)) {
         best = {
           exerciseId: exercise.exerciseId,
@@ -100,6 +109,8 @@ function summarize(session: WorkoutSession, completedAt: string): CompletedSessi
     totalVolumeKg: Math.round(totalVolumeKg),
     xpEarned: session.xpReward,
     topSets,
+    avgRpe: rpeCount > 0 ? Math.round((totalRpe / rpeCount) * 10) / 10 : undefined,
+    status: session.status,
   };
 }
 

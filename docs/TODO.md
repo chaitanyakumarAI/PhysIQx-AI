@@ -166,26 +166,31 @@ Last audited: **2026-07-19**.
 - [x] **Achievement unlock engine** — `lib/achievementEngine.ts`
   Evaluates all 8 achievements against real session history, streak days,
   and cumulative volume with 5 unit tests passing.
-- [ ] **Notification scaffolding** — streak-risk, challenge results,
-  mission reminders; deep-link targets per `ROUTES.md`
+- [x] **Notification scaffolding** — `lib/notifications.ts`
+  Deep-link targets per `ROUTES.md` (`/session/[id]`, `/home`, `/compete`, `/insights`),
+  streak-risk alerts, mission reminders, and active session resume safeguards.
+  Wired to `profileStore.notificationPreferences` and `/profile/settings/notifications`.
+  5 unit tests passing.
 - [x] **PWA service-worker** — `public/sw.js` & `ServiceWorkerRegister.tsx`
   Caches app shell, fonts, and static routes with Stale-While-Revalidate;
   enables offline workout sessions via Network-First with cache fallback.
 
 ---
 
-## ⚪ Phase 6 — AI (Future)
+## ⚪ Phase 6 — AI
 
-- [ ] **AI program generation pipeline** — design the LLM → structured
-  `WorkoutTemplate` schema pipeline. Inputs: profile goal + days/week +
-  session history. Output must conform to existing `Program` type with
-  no schema changes to existing screens.
+- [x] **AI program generation pipeline** — `lib/aiProgramEngine.ts`
+  Structured program generator outputs to canonical `ProgramDefinition` and `UserPlan`
+  with zero screen modifications. Tailors 2–6 day splits, volume sets, and rep targets
+  to profile goal, experience level, and body shape. Generates `/train/programs/ai` statically (230 routes).
 - [ ] **Conversational AI Coach** — if it outgrows inline cards,
   promote to a dedicated `/coach` route (reserved in ROUTES.md)
-- [ ] **Adaptive difficulty** — post-session RPE + volume trend feeds
-  the next session's target prescription
-- [ ] **ML score trajectory forecast** — renders as a distinct forecast
-  line on the Insights trend chart, clearly separated from history
+- [x] **Adaptive difficulty** — `lib/aiProgramEngine.ts`
+  Evaluates post-session RPE and volume trend to auto-regulate prescriptions
+  (deload on average RPE >= 9.0, progressive overload on average RPE <= 7.0).
+- [x] **ML score trajectory forecast** — `lib/aiProgramEngine.ts`
+  Projects multi-week PhysIQ score trajectory based on consistency factor and
+  diminishing returns curve with confidence intervals.
 
 ---
 

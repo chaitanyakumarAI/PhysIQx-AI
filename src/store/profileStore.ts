@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { DEFAULT_NOTIFICATION_PREFERENCES } from "@/lib/notifications";
 
 /** One dated weight entry — ISO date (yyyy-mm-dd), kg. */
 export interface WeightEntry {
@@ -67,6 +68,8 @@ interface ProfileStoreState {
   onboardingProfile: OnboardingProfileData | null;
   /** User preferences for logging, commentary, and visual noise. */
   preferences: UserPreferences;
+  /** User notification preferences (streak risk, mission reminders, challenge results, etc.). */
+  notificationPreferences: Record<string, boolean>;
   setPresetAvatar: (presetId: string) => void;
   setUploadedAvatar: (dataUrl: string) => void;
   clearAvatar: () => void;
@@ -75,6 +78,7 @@ interface ProfileStoreState {
   toggleShowcaseAchievement: (id: string) => void;
   setOnboardingProfile: (data: Partial<OnboardingProfileData>) => void;
   updatePreferences: (patch: Partial<UserPreferences>) => void;
+  updateNotificationPreferences: (patch: Record<string, boolean>) => void;
   resetPreferences: () => void;
 }
 
@@ -90,6 +94,7 @@ export const useProfileStore = create<ProfileStoreState>()(
       showcaseAchievementIds: [],
       onboardingProfile: null,
       preferences: DEFAULT_USER_PREFERENCES,
+      notificationPreferences: DEFAULT_NOTIFICATION_PREFERENCES,
       setPresetAvatar: (presetId) =>
         set({ avatarPresetId: presetId, avatarDataUrl: null }),
       setUploadedAvatar: (dataUrl) =>
@@ -132,6 +137,13 @@ export const useProfileStore = create<ProfileStoreState>()(
         set((state) => ({
           preferences: {
             ...(state.preferences ?? DEFAULT_USER_PREFERENCES),
+            ...patch,
+          },
+        })),
+      updateNotificationPreferences: (patch) =>
+        set((state) => ({
+          notificationPreferences: {
+            ...(state.notificationPreferences ?? DEFAULT_NOTIFICATION_PREFERENCES),
             ...patch,
           },
         })),

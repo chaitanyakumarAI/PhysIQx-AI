@@ -11,8 +11,8 @@
 | **Workspace path** | `e:\physQIx AI` |
 | **Stack** | Next.js 15 (App Router), TypeScript, Zustand, Framer Motion, Tailwind |
 | **Dev server** | `npm run dev` → `http://localhost:3000` |
-| **Production build**| `npm run build` → 25/25 routes static/dynamic compiled clean |
-| **Tests** | `npm test` → 28/28 passing (Vitest) |
+| **Production build**| `npm run build` → 230/230 routes static/dynamic compiled clean |
+| **Tests** | `npm test` → 68/68 passing (Vitest) |
 | **Lint** | `npm run lint` → 0 errors, 0 warnings |
 | **Git branch** | `main` |
 | **Body Scan Assets**| 67 Certified high-fidelity assets in `public/body-shapes/` |
@@ -27,7 +27,7 @@ Phase 2 — Polish & Logic        ✅ COMPLETE
 Phase 3 — Auth (Supabase)       ✅ COMPLETE (wired to real project)
 Phase 4 — Database & Persistence✅ COMPLETE (Supabase tables + Score Engine)
 Phase 5 — Hologram Body Suite   ✅ COMPLETE (67 assets + 3D UI controls)
-Phase 6 — AI Integration        ⬜ NOT STARTED
+Phase 6 — AI Core Engines       ✅ COMPLETE (Progression, Insights, Adaptive Program)
 ```
 
 ---
@@ -82,6 +82,30 @@ Phase 6 — AI Integration        ⬜ NOT STARTED
   - Implements Stale-While-Revalidate for Next.js chunks and fonts.
   - Implements Network-First with cache fallback for offline workout logging in concrete gym environments.
   - Added `<ServiceWorkerRegister />` in root layout (`src/app/layout.tsx`).
+
+### Notification Scaffolding & Deep-Link System
+- **Notification Evaluation Engine (`src/lib/notifications.ts`)**:
+  - Implements `evaluatePendingNotifications(context)` adhering strictly to `docs/ROUTES.md`.
+  - Generates `session_resume` (`/session/[id]`) with highest priority when an in-flight workout is detected.
+  - Generates `streak_risk` (`/home`) in the evening when active streak is endangered by an unlogged day.
+  - Generates `mission_reminder` (`/home`) and `challenge_update` (`/compete`).
+  - Respects notification toggles from `profileStore.notificationPreferences`.
+  - Wired into `src/app/(app)/profile/settings/notifications/NotificationsContent.tsx`.
+  - Built 5 unit tests in `src/lib/notifications.test.ts`.
+
+### Adaptive AI Program Generation Pipeline
+- **AI Program Generation Engine (`src/lib/aiProgramEngine.ts`)**:
+  - `generateAdaptiveProgram(params)`: Generates structured `ProgramDefinition` and `UserPlan` objects conforming to existing UI schemas with zero screen breakages.
+  - Frequency scaling: Automatically generates 2, 3, 4, 5, and 6-day splits (Full Body, Upper/Lower, PPL, etc.) matching `goal` and `experienceLevel`.
+  - Goal-tailored set prescriptions: Adjusts mechanical tension, volume sets, rep targets, and rest intervals (bulk vs cut vs endurance vs maintain).
+  - Enforces $\le 2$ sentence coaching rationale contract (`enforceTwoSentences`).
+  - `adaptProgramDifficulty(program, history)`: Post-session auto-regulation (deload on RPE $\ge 9.0$, progressive volume on RPE $\le 7.0$).
+  - `forecastScoreTrajectory(currentScore, history, goal, weeksAhead)`: Projects multi-week PhysIQ score trajectory based on consistency factors and diminishing returns.
+  - Built 7 unit tests in `src/lib/aiProgramEngine.test.ts`.
+- **Integrated into Train & Route Generation**:
+  - Embedded `aiCoachProgramDefinition` into `programLibrary` in `src/data/programs.ts`.
+  - Statically generates `/train/programs/ai` route (230 routes total).
+  - Updated `ProgramSummaryCard.tsx` so selecting the "Coach" chip allows athletes to preview the full AI schedule across 3, 4, 5, and 6-day variants and adopt it directly into `plansStore`.
 
 ---
 
