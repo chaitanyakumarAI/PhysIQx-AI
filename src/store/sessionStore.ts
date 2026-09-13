@@ -3,6 +3,7 @@ import { persist } from "zustand/middleware";
 import type { Exercise } from "@/types/exercise";
 import type { WorkoutTemplate } from "@/types/workoutTemplate";
 import type { ExerciseSet, SessionExercise, WorkoutSession } from "@/types/workoutSession";
+import { computeOverloadSuggestion } from "@/lib/progression";
 
 /**
  * The one piece of genuine offline-durability this mock phase actually
@@ -118,24 +119,24 @@ interface SessionStoreState {
 }
 
 /**
- * Small progression rule: +2.5 kg if the user hit all target reps last time,
- * else suggest same weight. No suggestion if the exercise has never been logged.
+ * Computes progressive overload suggestion using equipment-aware double progression.
  */
 function computeSuggestion(
   exerciseId: string,
   history: CompletedSessionSummary[],
   targetReps: number,
+  exercise?: Exercise,
 ): SessionExercise["suggest"] {
-  // Walk history newest-first to find the most recent top set for this exercise.
-  for (let i = history.length - 1; i >= 0; i--) {
-    const top = history[i]!.topSets.find((t) => t.exerciseId === exerciseId);
-    if (!top || top.weightKg === 0) continue;
-    // If they hit or exceeded the target reps last time, suggest a small step up.
-    const suggestedWeight =
-      top.reps >= targetReps ? top.weightKg + 2.5 : top.weightKg;
-    return { weightKg: suggestedWeight, reps: top.reps };
-  }
-  return null;
+  const suggestion = computeOverloadSuggestion({
+    exerciseId,
+    history,
+    targetReps,
+    equipment: exercise?.equipment,
+    exerciseType: exercise?.type,
+  });
+
+  if (!suggestion) return null;
+  return { weightKg: suggestion.weightKg, reps: suggestion.reps };
 }
 
 function buildSessionExercises(
@@ -163,7 +164,7 @@ function buildSessionExercises(
       exerciseName: exercise?.name ?? "Exercise",
       restSeconds: templateExercise.restSeconds,
       sets,
-      suggest: computeSuggestion(templateExercise.exerciseId, history, firstTargetReps),
+      suggest: computeSuggestion(templateExercise.exerciseId, history, firstTargetReps, exercise),
     };
   });
 }

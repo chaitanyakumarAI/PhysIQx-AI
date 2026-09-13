@@ -60,6 +60,17 @@ Phase 6 — AI Integration        ⬜ NOT STARTED
 - Added comprehensive unit tests in `src/store/profileStore.test.ts` (31/31 Vitest tests passing).
 - Verified Next.js 15 build with clean static generation of all 229 routes.
 
+### Phase 5 Core Engines: Progressive Overload & Achievement Unlock
+- **Progressive Overload Engine (`src/lib/progression.ts`)**:
+  - Equipment-aware double progression (barbell $+2.5\\text{ kg}$, dumbbell $+1.0\\text{ kg}$, machine $+2.5\\text{ kg}$, bodyweight reps).
+  - RPE auto-regulation rules (accelerated $+5\\text{ kg}$ on low exertion $\\le 6.5$, hold weight on high fatigue $\\ge 9.5$).
+  - Built 14 comprehensive Vitest unit tests in `src/lib/progression.test.ts`.
+  - Wired directly into `src/store/sessionStore.ts` to replace basic inline logic.
+- **Achievement Unlock Engine (`src/lib/achievementEngine.ts`)**:
+  - Evaluates all 8 achievements against session history, streaks, and cumulative volume.
+  - Detects newly unlocked achievements and calculates rarity-based XP awards.
+  - Built 5 unit tests in `src/lib/achievementEngine.test.ts` (all 50/50 tests passing across the app).
+
 ---
 
 ## ✅ Previous Session Accomplishments

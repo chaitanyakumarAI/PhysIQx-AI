@@ -153,16 +153,17 @@ Last audited: **2026-07-19**.
 
 ## 🟣 Phase 5 — Core Features
 
-- [ ] **Progressive overload engine** — `lib/progression.ts`
-  Given last session's sets, compute the next target weight/reps
-  per exercise using a simple linear progression rule.
+- [x] **Progressive overload engine** — `lib/progression.ts`
+  Equipment-aware double progression (barbell +2.5kg, dumbbell +1.0kg, bodyweight reps),
+  RPE auto-regulation rules, and comprehensive unit tests (14 tests passing).
+  Wired directly into `sessionStore.ts`.
 - [ ] **AI Coach insights** — generate `Insight` objects from real
   pillar deltas, PR trends, and fuel adherence; replace mock fixtures
-- [ ] **Deterministic `generateHeadline(pillars, delta)`** — build this
-  as a rules-based stub before Phase 6 so the AI replacement is a
-  clean swap, not a retrofit
-- [ ] **Achievement unlock engine** — evaluate `UserAchievement.progress`
-  against real ledger data; fire `XPTransaction` + celebration on unlock
+- [x] **Deterministic `generateHeadline(pillars, delta)`**
+  Rules-based headline generator implemented in `src/lib/scoreEngine.ts`.
+- [x] **Achievement unlock engine** — `lib/achievementEngine.ts`
+  Evaluates all 8 achievements against real session history, streak days,
+  and cumulative volume with 5 unit tests passing.
 - [ ] **Notification scaffolding** — streak-risk, challenge results,
   mission reminders; deep-link targets per `ROUTES.md`
 - [ ] **PWA service-worker** — cache app shell (layouts, fonts, static
