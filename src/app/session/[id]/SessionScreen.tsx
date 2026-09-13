@@ -16,6 +16,7 @@ import { useElapsedSeconds } from "@/features/session/hooks/useElapsedSeconds";
 import { computeSessionProgress, computeSessionVolume } from "@/features/session/lib/derive";
 import type { SessionSetup } from "@/features/session/api/getSessionSetup";
 import { saveWorkoutSession } from "@/features/session/actions/saveWorkoutSession";
+import { enqueuePendingSession } from "@/lib/syncEngine";
 import { useSessionStore } from "@/store/sessionStore";
 
 export interface SessionScreenProps {
@@ -211,8 +212,18 @@ export function SessionScreen({ missionId, setup }: SessionScreenProps) {
 
             if (completedSession && latestSummary) {
               setIsSaving(true);
-              await saveWorkoutSession(completedSession, latestSummary);
-              setIsSaving(false);
+              try {
+                const result = await saveWorkoutSession(completedSession, latestSummary);
+                if (!result.success) {
+                  // Offline or unauthenticated -> Enqueue for background sync
+                  enqueuePendingSession(completedSession, latestSummary);
+                }
+              } catch {
+                // Network error -> Enqueue for background sync
+                enqueuePendingSession(completedSession, latestSummary);
+              } finally {
+                setIsSaving(false);
+              }
             }
           }}
         >

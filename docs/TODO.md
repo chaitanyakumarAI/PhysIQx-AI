@@ -144,10 +144,14 @@ Last audited: **2026-07-19**.
   `sets`, `cardio_logs`, `hydration_logs`, `xp_transactions`
 - [ ] Replace `src/data/` fixtures with real `supabase.from()` calls
   behind the existing `api/get*Data.ts` seams (no screen changes needed)
-- [ ] Offline-first session logging — write to local store first,
-  sync on reconnect (critical: session must survive airplane mode)
-- [ ] Real PhysIQ Score computation from live ledger data
-- [ ] Real streak and DayStatus derivation from session history
+- [x] **Offline-first session logging** — `lib/syncEngine.ts`
+  Local store-first writes with persistent background sync queue (`physiqx-sync-queue`).
+  Auto-retries on browser `online` event and app rehydration. Survives airplane mode.
+- [x] **Real PhysIQ Score computation from live ledger data** — `lib/scoreEngine.ts`
+  Computes 4-pillar dynamic scores from Supabase user sessions, volume, and profile goals.
+- [x] **Real streak and DayStatus derivation from session history** — `lib/streakEngine.ts` & `lib/prEngine.ts`
+  Single source of truth for 12-week heatmap (`generateHeatmapWeeks`), forgiving streaks,
+  and Epley 1RM Personal Record trend curves. Wired into `getInsightsData.ts`.
 
 ---
 

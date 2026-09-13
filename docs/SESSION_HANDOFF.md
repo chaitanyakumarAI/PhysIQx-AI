@@ -12,7 +12,7 @@
 | **Stack** | Next.js 15 (App Router), TypeScript, Zustand, Framer Motion, Tailwind |
 | **Dev server** | `npm run dev` → `http://localhost:3000` |
 | **Production build**| `npm run build` → 230/230 routes static/dynamic compiled clean |
-| **Tests** | `npm test` → 68/68 passing (Vitest) |
+| **Tests** | `npm test` → 87/87 passing (Vitest) |
 | **Lint** | `npm run lint` → 0 errors, 0 warnings |
 | **Git branch** | `main` |
 | **Body Scan Assets**| 67 Certified high-fidelity assets in `public/body-shapes/` |
@@ -106,6 +106,29 @@ Phase 6 — AI Core Engines       ✅ COMPLETE (Progression, Insights, Adaptive 
   - Embedded `aiCoachProgramDefinition` into `programLibrary` in `src/data/programs.ts`.
   - Statically generates `/train/programs/ai` route (230 routes total).
   - Updated `ProgramSummaryCard.tsx` so selecting the "Coach" chip allows athletes to preview the full AI schedule across 3, 4, 5, and 6-day variants and adopt it directly into `plansStore`.
+
+### Streak & DayStatus Derivation Engine
+- **Streak Evaluation Engine (`src/lib/streakEngine.ts`)**:
+  - `deriveDayStatusSeries(params)`: Canonical mapper resolving each date to `trained | rest-honored | missed | unplanned`.
+  - Encodes the **forgiveness principle**: planned rest days and the ongoing current day never break streaks.
+  - `computeStreakSummary(history, cardio, trainingDaysPerWeek)`: Derives `currentStreakDays`, `longestStreakDays`, and weekly `completionPercent`.
+  - `generateHeatmapWeeks(history, cardio, weekCount)`: Generates the real 12-week activity heatmap for `/insights` directly from user ledgers with graceful fallback.
+  - Built 8 unit tests in `src/lib/streakEngine.test.ts`.
+
+### Personal Record (PR) Derivation Engine
+- **PR Engine (`src/lib/prEngine.ts`)**:
+  - `derivePersonalRecords(history, unit)`: Walks all historical top sets, calculates raw peak weight and Epley estimated 1RM ($w \cdot (1 + r / 30)$), 30-day delta, and chronological progression trend lines.
+  - `deriveLatestPR(records)`: Prioritizes significant recent milestones for Home spotlight cards.
+  - Wired into `src/features/insights/api/getInsightsData.ts` to power authentic PR cards from real session data.
+  - Built 7 unit tests in `src/lib/prEngine.test.ts`.
+
+### Offline-First Sync Queue
+- **Sync Queue Engine (`src/lib/syncEngine.ts`)**:
+  - `enqueuePendingSession(session, summary)`: Persists completed workouts to `physiqx-sync-queue` in localStorage when network is unavailable or Supabase save fails.
+  - `flushSyncQueue(syncAction)`: Drains the queue with idempotency guards and increments retry counters on failure.
+  - `initOnlineSync(syncAction)`: Registered in `ServiceWorkerRegister.tsx` to automatically trigger synchronization whenever the browser regains internet connectivity.
+  - Wired into `SessionScreen.tsx` so offline/airplane mode finishing is 100% resilient.
+  - Built 4 unit tests in `src/lib/syncEngine.test.ts`.
 
 ---
 
