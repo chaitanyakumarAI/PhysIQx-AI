@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import { MotionProvider } from "@/components/providers/MotionProvider";
 import { StoreHydrator } from "@/components/providers/StoreHydrator";
+import { ServiceWorkerRegister } from "@/components/providers/ServiceWorkerRegister";
 import "../styles/globals.css";
 
 const inter = Inter({
@@ -56,6 +57,7 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`}>
       <body>
         <StoreHydrator />
+        <ServiceWorkerRegister />
         <MotionProvider>{children}</MotionProvider>
       </body>
     </html>

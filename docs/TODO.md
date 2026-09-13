@@ -157,8 +157,10 @@ Last audited: **2026-07-19**.
   Equipment-aware double progression (barbell +2.5kg, dumbbell +1.0kg, bodyweight reps),
   RPE auto-regulation rules, and comprehensive unit tests (14 tests passing).
   Wired directly into `sessionStore.ts`.
-- [ ] **AI Coach insights** — generate `Insight` objects from real
-  pillar deltas, PR trends, and fuel adherence; replace mock fixtures
+- [x] **AI Coach insights** — `lib/coachInsights.ts`
+  Generates contextual `Insight` objects (volume progression, weakest pillar focus,
+  streak momentum) from live ledgers and score metrics with 5 unit tests passing.
+  Strictly enforces the <= 2 sentence contract. Wired into `getInsightsData.ts`.
 - [x] **Deterministic `generateHeadline(pillars, delta)`**
   Rules-based headline generator implemented in `src/lib/scoreEngine.ts`.
 - [x] **Achievement unlock engine** — `lib/achievementEngine.ts`
@@ -166,8 +168,9 @@ Last audited: **2026-07-19**.
   and cumulative volume with 5 unit tests passing.
 - [ ] **Notification scaffolding** — streak-risk, challenge results,
   mission reminders; deep-link targets per `ROUTES.md`
-- [ ] **PWA service-worker** — cache app shell (layouts, fonts, static
-  routes); `/session/[id]` must work fully offline
+- [x] **PWA service-worker** — `public/sw.js` & `ServiceWorkerRegister.tsx`
+  Caches app shell, fonts, and static routes with Stale-While-Revalidate;
+  enables offline workout sessions via Network-First with cache fallback.
 
 ---
 

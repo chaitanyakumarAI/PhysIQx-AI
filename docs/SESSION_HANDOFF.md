@@ -71,6 +71,18 @@ Phase 6 — AI Integration        ⬜ NOT STARTED
   - Detects newly unlocked achievements and calculates rarity-based XP awards.
   - Built 5 unit tests in `src/lib/achievementEngine.test.ts` (all 50/50 tests passing across the app).
 
+### AI Coach Insights Engine & PWA Offline Service Worker
+- **AI Coach Insights Engine (`src/lib/coachInsights.ts`)**:
+  - Generates contextual insights analyzing volume progression, weakest pillar focus (`cardio`, `strength`, `consistency`, `bodyShape`), and streak momentum.
+  - Strictly enforces the $\\le 2$ sentence contract (`enforceTwoSentences`).
+  - Wired into `src/features/insights/api/getInsightsData.ts` with graceful fallback.
+  - Built 5 unit tests in `src/lib/coachInsights.test.ts` (all 55/55 tests passing across the app).
+- **PWA Offline Service Worker (`public/sw.js`)**:
+  - Pre-caches critical app shell (`/`, `/manifest.json`, `/favicon.ico`, `/icon-192.png`, `/icon-512.png`).
+  - Implements Stale-While-Revalidate for Next.js chunks and fonts.
+  - Implements Network-First with cache fallback for offline workout logging in concrete gym environments.
+  - Added `<ServiceWorkerRegister />` in root layout (`src/app/layout.tsx`).
+
 ---
 
 ## ✅ Previous Session Accomplishments
