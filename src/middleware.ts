@@ -20,25 +20,14 @@ export async function middleware(request: NextRequest) {
 
   const isPublicRoute = PUBLIC_ROUTES.some((route) => pathname.startsWith(route));
 
-  // --- Unauthenticated user ---
-  if (!user) {
-    if (isPublicRoute || pathname === "/") {
-      return supabaseResponse;
-    }
-    // Trying to access a protected route → bounce to login
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    return Response.redirect(url);
-  }
-
   // --- Authenticated user visiting a public auth route ---
-  if (isPublicRoute) {
+  if (user && isPublicRoute && pathname !== "/auth/callback") {
     const url = request.nextUrl.clone();
     url.pathname = "/home";
     return Response.redirect(url);
   }
 
-  // --- Authenticated user — allow through ---
+  // Allow through (supports authenticated users and local/guest offline usage)
   return supabaseResponse;
 }
 

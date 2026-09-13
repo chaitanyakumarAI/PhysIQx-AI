@@ -26,12 +26,20 @@ export default function LoginPage() {
       <SocialLoginButtons />
 
       {/* Switch to signup */}
-      <p className="auth-switch-text">
-        Don&apos;t have an account?{" "}
-        <Link href="/signup" className="auth-switch-link">
-          Create one
+      <div className="flex flex-col items-center gap-2">
+        <p className="auth-switch-text">
+          Don&apos;t have an account?{" "}
+          <Link href="/signup" className="auth-switch-link">
+            Create one
+          </Link>
+        </p>
+        <Link
+          href="/home"
+          className="inline-flex items-center text-xs font-semibold text-foreground-secondary hover:text-brand transition-colors pt-1"
+        >
+          Explore as Guest (Skip Login) →
         </Link>
-      </p>
+      </div>
 
       <style>{`
         .auth-page-title {

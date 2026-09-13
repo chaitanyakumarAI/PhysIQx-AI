@@ -5,6 +5,6 @@ import { redirect } from "next/navigation";
 //   Session, no onboarding → /onboarding
 //   Session + onboarded → /home
 export default function RootPage() {
-  redirect("/login");
+  redirect("/home");
 }
 
