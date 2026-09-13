@@ -1,5 +1,8 @@
 import { Suspense } from "react";
+import { CommandPalette } from "@/components/ui/CommandPalette";
+import { NetworkStatusIndicator } from "@/components/ui/NetworkStatusIndicator";
 import { GuidedTour } from "@/features/home/components/GuidedTour";
+import { NotificationCenter } from "@/features/notifications/components/NotificationCenter";
 import { AppBottomNav } from "./AppBottomNav";
 
 // Tab shell per docs/ROUTES.md — owns the persistent bottom navigation so tab
@@ -14,7 +17,10 @@ export default function AppLayout({
   return (
     <>
       {children}
+      <NetworkStatusIndicator />
+      <NotificationCenter />
       <AppBottomNav />
+      <CommandPalette />
       {/* Suspense: useSearchParams inside must not block static prerender. */}
       <Suspense fallback={null}>
         <GuidedTour />

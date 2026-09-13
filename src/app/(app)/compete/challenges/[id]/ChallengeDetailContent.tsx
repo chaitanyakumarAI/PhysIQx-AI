@@ -24,6 +24,7 @@ import { cn } from "@/lib/utils";
 import { useSessionStore } from "@/store/sessionStore";
 import { mockHistoricalSessions } from "@/features/profile/mocks/historyData";
 import type { Challenge, ChallengeParticipation } from "@/types/challenge";
+import { ChallengeCheerWall } from "@/features/compete/components/ChallengeCheerWall";
 
 const CHALLENGE_REGISTRY: Record<string, Challenge> = {
   "challenge-volume-king": {
@@ -239,6 +240,9 @@ export function ChallengeDetailContent({ challengeId }: { challengeId: string })
           </div>
         </Card>
       </div>
+
+      {/* Community Cheer Wall & Live Social Reactions */}
+      <ChallengeCheerWall challengeName={challenge.name} />
 
       {/* Action Button */}
       <div className="pt-2 pb-8">

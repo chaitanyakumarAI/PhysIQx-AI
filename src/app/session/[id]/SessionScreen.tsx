@@ -141,6 +141,7 @@ export function SessionScreen({ missionId, setup }: SessionScreenProps) {
             volume={computeSessionVolume(session)}
             unit="kg"
             xpReward={session.xpReward}
+            workoutTitle={session.title}
           />
           <Button size="lg" fullWidth onClick={handleDone}>
             Done

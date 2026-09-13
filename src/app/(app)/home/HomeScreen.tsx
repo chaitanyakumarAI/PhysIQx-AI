@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Droplets, Dumbbell, HeartPulse, Sparkles } from "lucide-react";
+import { BookOpen, Dumbbell, HeartPulse, History, Trophy } from "lucide-react";
 import { QuickActionGrid } from "@/features/home/components/QuickActionGrid";
-import { HydrationLogSheet } from "@/features/home/components/HydrationLogSheet";
 import type { QuickAction } from "@/features/home/types";
 import { m } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -14,14 +13,10 @@ import { useEntranceOnce } from "@/lib/useEntranceOnce";
 import { getGreeting } from "@/features/home/lib/greeting";
 import { deriveRecoveryStatus } from "@/features/home/lib/derive";
 import {
-  deriveSpotlight,
   deriveStreakDays,
   deriveWeek,
 } from "@/features/shared/lib/liveProgress";
-import { useCardioStore } from "@/store/cardioStore";
-import { useProfileStore } from "@/store/profileStore";
 import { useSessionStore } from "@/store/sessionStore";
-import { AchievementSpotlight } from "@/features/home/components/AchievementSpotlight";
 import { DailyMissionCard } from "@/features/home/components/DailyMissionCard";
 import { PhysIQScoreCard } from "@/features/home/components/PhysIQScoreCard";
 import { StatusStrip } from "@/features/home/components/StatusStrip";
@@ -47,10 +42,11 @@ export type HomeScreenProps = Pick<
  * the first-principles Home rethink.
  */
 const HOME_QUICK_ACTIONS: QuickAction[] = [
-  { id: "log-cardio", label: "Cardio", icon: HeartPulse, href: "/train/cardio" },
   { id: "start-workout", label: "Train", icon: Dumbbell, href: "/train" },
-  { id: "log-water", label: "Hydrate", icon: Droplets, href: "/home?log=water" },
-  { id: "ai-coach", label: "AI Coach", icon: Sparkles, href: "/coach" },
+  { id: "log-cardio", label: "Cardio", icon: HeartPulse, href: "/train/cardio" },
+  { id: "browse-exercises", label: "Library", icon: BookOpen, href: "/train/exercises" },
+  { id: "history", label: "History", icon: History, href: "/profile/history" },
+  { id: "compete", label: "Compete", icon: Trophy, href: "/compete" },
 ];
 
 export function HomeScreen({
@@ -60,7 +56,6 @@ export function HomeScreen({
   mission,
   week,
   priorities,
-  spotlight,
 }: HomeScreenProps) {
   const router = useRouter();
   // Client-side on purpose: the route is statically prerendered, so a
@@ -68,37 +63,12 @@ export function HomeScreen({
   // timezone. useState pins it for the session; WelcomeHeader suppresses the
   // expected SSG-vs-client hydration text difference.
   const [greeting] = useState(() => getGreeting(new Date().getHours()));
-  const [waterSheetOpen, setWaterSheetOpen] = useState(false);
 
-  useEffect(() => {
-    const checkQuery = () => {
-      if (typeof window !== "undefined") {
-        const params = new URLSearchParams(window.location.search);
-        if (params.get("log") === "water") {
-          setWaterSheetOpen(true);
-        }
-      }
-    };
-    checkQuery();
-    window.addEventListener("popstate", checkQuery);
-    return () => window.removeEventListener("popstate", checkQuery);
-  }, []);
-
-  const handleCloseWaterSheet = () => {
-    setWaterSheetOpen(false);
-    if (typeof window !== "undefined" && window.location.search.includes("log=water")) {
-      router.replace("/home", { scroll: false });
-    }
-  };
-
-  // Live truth over fixtures: spotlight, week strip, and streak all derive
+  // Live truth over fixtures: week strip and streak all derive
   // from the real ledgers once anything is logged. Stores are empty during
   // SSR and the first client render (skipHydration), so both sides agree
   // on the fixtures until rehydration swaps in the truth.
   const history = useSessionStore((state) => state.history);
-  const cardio = useCardioStore((state) => state.sessions);
-  const weights = useProfileStore((state) => state.weightEntries);
-  const liveSpotlight = deriveSpotlight(spotlight, { history, cardio, weights });
   const liveWeek = deriveWeek(week, history, profile.trainingDaysPerWeek);
   const liveStreakDays = deriveStreakDays(streak.currentStreakDays, history);
   const recovery = deriveRecoveryStatus(liveWeek.days);
@@ -153,10 +123,6 @@ export function HomeScreen({
           />
         </m.div>
 
-        <m.div variants={fadeInUp}>
-          <AchievementSpotlight win={liveSpotlight} />
-        </m.div>
-
         <m.div variants={fadeInUp} data-tour="week">
           <WeeklyActivityCard
             completionPercent={liveWeek.completionPercent}
@@ -164,7 +130,6 @@ export function HomeScreen({
           />
         </m.div>
       </m.div>
-      <HydrationLogSheet isOpen={waterSheetOpen} onClose={handleCloseWaterSheet} />
     </PageContainer>
   );
 }

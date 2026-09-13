@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ChevronDown, HeartPulse, SearchX } from "lucide-react";
+import { ChevronDown, Dumbbell, HeartPulse, SearchX, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { m } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -61,10 +61,16 @@ export function TrainScreen({
       })),
     [programs],
   );
-  const selectedProgram = programs.find((program) => program.id === programId);
+
+  const selectedProgram = useMemo(
+    () => programs.find((program) => program.id === programId),
+    [programs, programId],
+  );
 
   return (
     <PageContainer>
+      <ScreenHeader title="Train" subtitle="Lift heavy, run far" />
+
       {/* display:contents keeps PageContainer's flex/gap acting directly on
           these items — this node exists only to orchestrate the stagger. */}
       <m.div
@@ -73,24 +79,26 @@ export function TrainScreen({
         animate="visible"
         className="contents"
       >
-        <m.div variants={fadeInUp}>
-          <ScreenHeader
-            title="Train"
-            subtitle="Every rep feeds your PhysIQ Score."
-          />
-        </m.div>
-
-        <m.div variants={fadeInUp} className="flex flex-col gap-3">
+        <m.div variants={fadeInUp} data-tour="train-hero">
           <WorkoutHeroCard
             mission={mission}
             onStart={
               mission ? () => router.push(`/session/${mission.id}`) : undefined
             }
           />
-          <Button variant="secondary" size="sm" fullWidth asChild>
-            <Link href="/train/cardio" data-tour="train-cardio">
-              <HeartPulse aria-hidden className="size-4" />
-              Log cardio
+        </m.div>
+
+        <m.div variants={fadeInUp} className="grid grid-cols-2 gap-2">
+          <Button variant="secondary" size="sm" asChild>
+            <Link href="/train/cardio" data-tour="train-cardio" className="flex items-center justify-center gap-1.5 text-xs">
+              <HeartPulse aria-hidden className="size-3.5 text-rose-400" />
+              Cardio
+            </Link>
+          </Button>
+          <Button variant="secondary" size="sm" asChild>
+            <Link href="/train/exercises" className="flex items-center justify-center gap-1.5 text-xs">
+              <Dumbbell aria-hidden className="size-3.5 text-brand" />
+              Exercise Library
             </Link>
           </Button>
         </m.div>

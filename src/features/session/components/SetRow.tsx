@@ -1,6 +1,7 @@
 import { Check, X } from "lucide-react";
 import { iconSize } from "@/constants/icons";
 import { cn } from "@/lib/utils";
+import { playSetComplete } from "@/lib/audioEngine";
 import type { ExerciseSet } from "@/types/workoutSession";
 
 export interface SetRowProps {
@@ -125,7 +126,12 @@ export function SetRow({
             ? `Set ${set.setNumber} completed`
             : `Mark set ${set.setNumber} complete`
         }
-        onClick={onToggleCompleted}
+        onClick={() => {
+          if (!set.completed) {
+            playSetComplete();
+          }
+          onToggleCompleted();
+        }}
         className={cn(
           // size-11 (44px): docs/UI_Guideliness.md's minimum touch target —
           // this is the actual tap area, not just the visual circle.

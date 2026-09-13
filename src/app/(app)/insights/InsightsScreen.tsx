@@ -17,6 +17,8 @@ import { BodyBalanceCard } from "@/features/insights/components/BodyBalanceCard"
 import { PersonalRecordCard } from "@/features/insights/components/PersonalRecordCard";
 import { ScoreTrendCard } from "@/features/insights/components/ScoreTrendCard";
 import { StreakHeatmapCard } from "@/features/insights/components/StreakHeatmapCard";
+import { StrengthStandardsCard } from "@/features/insights/components/StrengthStandardsCard";
+import { RecoveryReadinessCard } from "@/features/insights/components/RecoveryReadinessCard";
 import type { InsightsData } from "@/features/insights/types";
 import type { ScoreTrendRange } from "@/types/score";
 
@@ -84,6 +86,18 @@ export function InsightsScreen({
         <m.div variants={fadeInUp}>
           <Section title="Body balance">
             <BodyBalanceCard pillars={score.pillars} weakestPillarId={score.weakestPillarId} />
+          </Section>
+        </m.div>
+
+        <m.div variants={fadeInUp}>
+          <Section title="Recovery & readiness">
+            <RecoveryReadinessCard />
+          </Section>
+        </m.div>
+
+        <m.div variants={fadeInUp}>
+          <Section title="Strength standards">
+            <StrengthStandardsCard />
           </Section>
         </m.div>
 

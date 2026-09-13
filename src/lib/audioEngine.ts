@@ -183,3 +183,42 @@ export function triggerHaptic(type: "light" | "medium" | "heavy" | "success" = "
     // Vibrate may be restricted by iframe or permissions
   }
 }
+
+/**
+ * Optical barcode scanner recognition beep (sharp dual high-frequency pulse).
+ */
+export function playScanSuccess() {
+  try {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+
+    playTone(1320, 0.06, "sine", 0.18); // E6
+    setTimeout(() => {
+      playTone(1760, 0.1, "sine", 0.2); // A6
+    }, 65);
+
+    triggerHaptic("medium");
+  } catch {
+    // Fallback
+  }
+}
+
+/**
+ * Network / background sync completion harmonic chime.
+ */
+export function playSyncSuccess() {
+  try {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+
+    playTone(523.25, 0.12, "sine", 0.12); // C5
+    setTimeout(() => {
+      playTone(659.25, 0.18, "triangle", 0.14); // E5
+    }, 80);
+
+    triggerHaptic("light");
+  } catch {
+    // Fallback
+  }
+}
+

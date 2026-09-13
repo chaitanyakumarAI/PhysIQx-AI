@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useCardioStore } from "@/store/cardioStore";
 import { useHydrationStore } from "@/store/hydrationStore";
+import { useNutritionStore } from "@/store/nutritionStore";
 import { usePlansStore } from "@/store/plansStore";
 import { useProfileStore } from "@/store/profileStore";
 import { useSessionStore } from "@/store/sessionStore";
@@ -21,6 +22,7 @@ export function StoreHydrator() {
     usePlansStore.persist.rehydrate();
     useCardioStore.persist.rehydrate();
     useHydrationStore.persist.rehydrate();
+    useNutritionStore.persist.rehydrate();
   }, []);
 
   return null;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -148,6 +148,23 @@ export function ExerciseCatalogContent({ exercises }: ExerciseCatalogContentProp
     setVisibleLimit(PAGE_CHUNK);
   }
 
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        e.key === "/" &&
+        document.activeElement?.tagName !== "INPUT" &&
+        document.activeElement?.tagName !== "TEXTAREA"
+      ) {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   return (
     <PageContainer>
       {/* Header */}
@@ -176,6 +193,7 @@ export function ExerciseCatalogContent({ exercises }: ExerciseCatalogContentProp
             aria-hidden
           />
           <input
+            ref={searchInputRef}
             type="search"
             value={query}
             onChange={(e) => {
@@ -183,9 +201,9 @@ export function ExerciseCatalogContent({ exercises }: ExerciseCatalogContentProp
               setVisibleLimit(PAGE_CHUNK);
             }}
             placeholder="Search exercises by name, muscle, or equipment..."
-            className="h-12 w-full rounded-card border border-border/60 bg-surface pl-10 pr-10 text-sm placeholder:text-foreground-secondary/70 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+            className="h-12 w-full rounded-card border border-border/60 bg-surface pl-10 pr-16 text-sm placeholder:text-foreground-secondary/70 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
           />
-          {query && (
+          {query ? (
             <button
               onClick={() => setQuery("")}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground-secondary hover:text-foreground"
@@ -193,6 +211,13 @@ export function ExerciseCatalogContent({ exercises }: ExerciseCatalogContentProp
             >
               <X size={16} />
             </button>
+          ) : (
+            <kbd
+              aria-hidden
+              className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 rounded bg-surface-elevated px-2 py-0.5 text-xs text-foreground-secondary"
+            >
+              /
+            </kbd>
           )}
         </div>
       </div>

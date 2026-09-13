@@ -4,6 +4,9 @@ import {
   playRestComplete,
   playSetComplete,
   playCelebrationFanfare,
+  playWaterDrop,
+  playScanSuccess,
+  playSyncSuccess,
   triggerHaptic,
 } from "./audioEngine";
 
@@ -17,6 +20,9 @@ describe("audioEngine", () => {
     expect(() => playRestComplete()).not.toThrow();
     expect(() => playSetComplete()).not.toThrow();
     expect(() => playCelebrationFanfare()).not.toThrow();
+    expect(() => playWaterDrop()).not.toThrow();
+    expect(() => playScanSuccess()).not.toThrow();
+    expect(() => playSyncSuccess()).not.toThrow();
     expect(() => triggerHaptic("light")).not.toThrow();
   });
 

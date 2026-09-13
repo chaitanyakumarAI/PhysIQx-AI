@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import { Plus, Dumbbell } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { iconSize } from "@/constants/icons";
 import { useProfileStore, DEFAULT_USER_PREFERENCES } from "@/store/profileStore";
 import { RestTimer } from "./RestTimer";
 import { SetRow } from "./SetRow";
+import { ExercisePlateModal } from "./ExercisePlateModal";
 import type { SessionExercise } from "@/types/workoutSession";
 
 export interface ExerciseSessionCardProps {
@@ -44,7 +45,14 @@ export function ExerciseSessionCard({
     (state) => state.preferences ?? DEFAULT_USER_PREFERENCES,
   );
   const [restingAfterSetId, setRestingAfterSetId] = useState<string | null>(null);
+  const [isPlateModalOpen, setIsPlateModalOpen] = useState(false);
   const lastSet = exercise.sets.at(-1);
+  const activeUncompletedSet = exercise.sets.find((s) => !s.completed);
+  const defaultPlateWeight =
+    activeUncompletedSet?.weight ??
+    suggest?.weightKg ??
+    lastSet?.weight ??
+    60;
 
   function handleToggle(setId: string, wasCompleted: boolean) {
     onToggleSetCompleted(setId);
@@ -56,11 +64,22 @@ export function ExerciseSessionCard({
 
   return (
     <Card padding="lg" className="flex flex-col gap-3">
-      <div className="flex flex-col">
-        <h3 className="font-semibold">{exercise.exerciseName}</h3>
-        {lastTime && (
-          <p className="text-xs text-foreground-secondary">{lastTime}</p>
-        )}
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex flex-col min-w-0">
+          <h3 className="font-semibold truncate">{exercise.exerciseName}</h3>
+          {lastTime && (
+            <p className="text-xs text-foreground-secondary">{lastTime}</p>
+          )}
+        </div>
+        <button
+          type="button"
+          onClick={() => setIsPlateModalOpen(true)}
+          className="flex items-center gap-1 rounded-lg bg-surface-elevated/80 px-2 py-1 text-[11px] font-medium text-foreground-secondary hover:bg-brand/15 hover:text-brand transition-colors border border-border/60 shrink-0"
+          title="Open plate calculator and warmup ladder"
+        >
+          <Dumbbell size={12} aria-hidden />
+          <span>Plates</span>
+        </button>
       </div>
       <div className="flex flex-col gap-2">
         {exercise.sets.map((set) => {
@@ -102,6 +121,19 @@ export function ExerciseSessionCard({
           Add set
         </Button>
       )}
+
+      <ExercisePlateModal
+        isOpen={isPlateModalOpen}
+        onClose={() => setIsPlateModalOpen(false)}
+        exerciseName={exercise.exerciseName}
+        initialWeight={defaultPlateWeight}
+        onApplyWeight={(weight) => {
+          const targetSet = activeUncompletedSet ?? lastSet;
+          if (targetSet) {
+            onLogSet(targetSet.id, { weight });
+          }
+        }}
+      />
     </Card>
   );
 }

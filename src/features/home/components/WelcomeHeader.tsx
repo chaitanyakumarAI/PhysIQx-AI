@@ -1,9 +1,13 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Flame } from "lucide-react";
+import { Flame, Bell } from "lucide-react";
 import { UserAvatar } from "@/features/shared/components/UserAvatar";
 import { Badge } from "@/components/ui/Badge";
 import { iconSize } from "@/constants/icons";
 import { cn } from "@/lib/utils";
+import { useNotificationStore } from "@/store/notificationStore";
 
 export interface WelcomeHeaderProps extends React.ComponentProps<"header"> {
   /** Pre-resolved greeting (see lib/greeting) — kept out of the component so it stays pure. */
@@ -21,6 +25,19 @@ export function WelcomeHeader({
   archetype,
   ...props
 }: WelcomeHeaderProps) {
+  const openDrawer = useNotificationStore((state) => state.openDrawer);
+  const readIds = useNotificationStore((state) => state.readIds);
+  const getAllNotifications = useNotificationStore((state) => state.getAllNotifications);
+
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const unreadCount = mounted
+    ? getAllNotifications().filter((n) => !readIds.includes(n.id)).length
+    : 0;
+
   return (
     <header
       className={cn("flex items-start justify-between gap-4", className)}
@@ -60,14 +77,32 @@ export function WelcomeHeader({
           </span>
         </div>
       </div>
-      {/* The avatar is Home's door to Profile — a real link, not decoration. */}
-      <Link
-        href="/profile"
-        aria-label="Open profile"
-        className="shrink-0 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-      >
-        <UserAvatar name={name} size="md" />
-      </Link>
+
+      {/* Header Actions: Notification Bell + Avatar */}
+      <div className="flex items-center gap-2.5">
+        <button
+          type="button"
+          onClick={openDrawer}
+          aria-label={`Open notifications${unreadCount > 0 ? `, ${unreadCount} unread` : ""}`}
+          className="relative grid size-10 place-items-center rounded-full border border-border/80 bg-surface-elevated text-foreground-secondary transition-all hover:border-brand/50 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/60"
+        >
+          <Bell size={18} />
+          {unreadCount > 0 && (
+            <span className="absolute -top-1 -right-1 grid size-4 place-items-center rounded-full bg-brand text-[10px] font-bold text-background shadow-sm animate-pulse">
+              {unreadCount}
+            </span>
+          )}
+        </button>
+
+        {/* The avatar is Home's door to Profile — a real link, not decoration. */}
+        <Link
+          href="/profile"
+          aria-label="Open profile"
+          className="shrink-0 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        >
+          <UserAvatar name={name} size="md" />
+        </Link>
+      </div>
     </header>
   );
 }

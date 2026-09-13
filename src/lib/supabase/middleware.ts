@@ -30,11 +30,6 @@ async function checkSupabaseAvailable(url: string): Promise<boolean> {
 
     isSupabaseReachable = Boolean(res && res.status < 500);
     lastReachabilityCheck = now;
-    if (!isSupabaseReachable) {
-      console.warn(
-        `[Supabase] Host ${url} is unreachable. Operating in zero-latency offline / guest mode.`
-      );
-    }
   } catch {
     isSupabaseReachable = false;
     lastReachabilityCheck = now;
@@ -53,23 +48,21 @@ export async function updateSession(request: NextRequest) {
     return { user: null, supabaseResponse };
   }
 
-  // Fast path 1: Check if remote Supabase server is actually online.
-  // If the host is unresolvable/offline, bypass immediately to prevent
-  // multi-second DNS and fetch retry timeouts from freezing navigation.
-  const isOnline = await checkSupabaseAvailable(supabaseUrl);
-  if (!isOnline) {
-    return { user: null, supabaseResponse };
-  }
-
-  // Fast path 2: Check if any Supabase auth cookies exist.
+  // Fast path 1: Check if any Supabase auth cookies exist.
   // If the user has no session cookies (guest or local offline mode),
-  // skip external network calls completely so navigation is instant.
+  // skip external network calls completely so navigation is instant (0ms).
   const allCookies = request.cookies.getAll();
   const hasAuthToken = allCookies.some(
-    (c) => c.name.startsWith("sb-") && c.name.endsWith("-auth-token")
+    (c) => c.name.startsWith("sb-") && (c.name.includes("auth-token") || c.name.endsWith("-token"))
   );
 
   if (!hasAuthToken) {
+    return { user: null, supabaseResponse };
+  }
+
+  // Fast path 2: If cookies exist, verify remote host is reachable before attempting auth call.
+  const isOnline = await checkSupabaseAvailable(supabaseUrl);
+  if (!isOnline) {
     return { user: null, supabaseResponse };
   }
 

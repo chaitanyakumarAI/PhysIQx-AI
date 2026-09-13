@@ -1,0 +1,148 @@
+import type { FoodItem } from "@/types/nutrition";
+
+export interface FoodPreset {
+  id: string;
+  name: string;
+  brand?: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  fiber: number;
+  servingSize: number;
+  servingUnit: string;
+  category: "staple" | "supplement" | "snack";
+}
+
+export const FITNESS_STAPLES: FoodPreset[] = [
+  {
+    id: "staple-whey",
+    name: "Whey Protein Isolate",
+    brand: "Optimum Nutrition",
+    calories: 120,
+    protein: 24,
+    carbs: 3,
+    fat: 1,
+    fiber: 0,
+    servingSize: 30,
+    servingUnit: "g (1 scoop)",
+    category: "supplement",
+  },
+  {
+    id: "staple-chicken",
+    name: "Grilled Chicken Breast",
+    brand: "Fresh Poultry",
+    calories: 165,
+    protein: 31,
+    carbs: 0,
+    fat: 3.6,
+    fiber: 0,
+    servingSize: 100,
+    servingUnit: "g",
+    category: "staple",
+  },
+  {
+    id: "staple-rice",
+    name: "Steamed Jasmine Rice",
+    brand: "Grains",
+    calories: 130,
+    protein: 2.7,
+    carbs: 28,
+    fat: 0.3,
+    fiber: 0.5,
+    servingSize: 100,
+    servingUnit: "g (cooked)",
+    category: "staple",
+  },
+  {
+    id: "staple-eggs",
+    name: "Whole Large Eggs (2 eggs)",
+    brand: "Farm Fresh",
+    calories: 140,
+    protein: 12,
+    carbs: 1,
+    fat: 10,
+    fiber: 0,
+    servingSize: 100,
+    servingUnit: "g (2 eggs)",
+    category: "staple",
+  },
+  {
+    id: "staple-oats",
+    name: "Rolled Oats",
+    brand: "Quaker",
+    calories: 150,
+    protein: 5,
+    carbs: 27,
+    fat: 2.5,
+    fiber: 4,
+    servingSize: 40,
+    servingUnit: "g (1/2 cup)",
+    category: "staple",
+  },
+  {
+    id: "staple-yogurt",
+    name: "Greek Yogurt 0% Fat",
+    brand: "Chobani / Fage",
+    calories: 100,
+    protein: 18,
+    carbs: 6,
+    fat: 0,
+    fiber: 0,
+    servingSize: 170,
+    servingUnit: "g",
+    category: "staple",
+  },
+  {
+    id: "staple-salmon",
+    name: "Atlantic Salmon Fillet",
+    brand: "Seafood",
+    calories: 208,
+    protein: 20,
+    carbs: 0,
+    fat: 13,
+    fiber: 0,
+    servingSize: 100,
+    servingUnit: "g",
+    category: "staple",
+  },
+  {
+    id: "staple-peanut-butter",
+    name: "Natural Peanut Butter",
+    brand: "Organic",
+    calories: 190,
+    protein: 8,
+    carbs: 7,
+    fat: 16,
+    fiber: 2,
+    servingSize: 32,
+    servingUnit: "g (2 tbsp)",
+    category: "snack",
+  },
+  {
+    id: "staple-banana",
+    name: "Medium Banana",
+    brand: "Fresh Fruit",
+    calories: 105,
+    protein: 1.3,
+    carbs: 27,
+    fat: 0.3,
+    fiber: 3.1,
+    servingSize: 118,
+    servingUnit: "g (1 medium)",
+    category: "snack",
+  },
+  {
+    id: "staple-quest-bar",
+    name: "Quest Protein Bar (Cookie Dough)",
+    brand: "Quest Nutrition",
+    calories: 200,
+    protein: 21,
+    carbs: 21,
+    fat: 9,
+    fiber: 14,
+    servingSize: 60,
+    servingUnit: "bar",
+    category: "snack",
+  },
+];

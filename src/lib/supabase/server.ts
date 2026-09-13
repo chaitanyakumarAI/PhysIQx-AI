@@ -46,12 +46,35 @@ export async function createServerSupabaseClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  const isOnline = supabaseUrl ? await checkSupabaseAvailable(supabaseUrl) : false;
-
   // Zero-latency fast path: If there are no Supabase auth cookies in the request
-  // OR the remote Supabase instance is offline/unreachable, return an instant offline client.
-  // This completely prevents @supabase/auth-js from making failing fetch calls and retrying for 26 seconds.
-  if (!hasAuthToken || !isOnline) {
+  // (guest or local offline mode), return an instant offline client immediately
+  // without touching the network.
+  if (!hasAuthToken || !supabaseUrl || !supabaseKey) {
+    return {
+      auth: {
+        getUser: async () => ({ data: { user: null }, error: null }),
+        getSession: async () => ({ data: { session: null }, error: null }),
+        signOut: async () => ({ error: null }),
+      },
+      from: () => ({
+        select: () => ({
+          eq: () => ({
+            eq: () => ({
+              order: () => Promise.resolve({ data: [], error: null }),
+              maybeSingle: () => Promise.resolve({ data: null, error: null }),
+            }),
+            order: () => Promise.resolve({ data: [], error: null }),
+            maybeSingle: () => Promise.resolve({ data: null, error: null }),
+          }),
+          order: () => Promise.resolve({ data: [], error: null }),
+          maybeSingle: () => Promise.resolve({ data: null, error: null }),
+        }),
+      }),
+    } as unknown as ReturnType<typeof createServerClient>;
+  }
+
+  const isOnline = await checkSupabaseAvailable(supabaseUrl);
+  if (!isOnline) {
     return {
       auth: {
         getUser: async () => ({ data: { user: null }, error: null }),

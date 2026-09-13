@@ -1,8 +1,12 @@
 // PhysIQx AI Service Worker — PWA offline shell & active workout cache
-const CACHE_NAME = "physiqx-cache-v1";
+const CACHE_NAME = "physiqx-cache-v5";
 
 const PRECACHE_ASSETS = [
   "/",
+  "/home",
+  "/insights/strength",
+  "/insights/recovery",
+  "/compete/challenges/challenge-volume-king",
   "/manifest.json",
   "/favicon.ico",
   "/icon-192.png",

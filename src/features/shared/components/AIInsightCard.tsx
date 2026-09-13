@@ -41,7 +41,7 @@ export function AIInsightCard({
           <Lightbulb size={iconSize.sm} aria-hidden className="text-brand" />
           <span className="text-sm font-semibold text-brand">Coach</span>
         </div>
-        {insight?.actionLabel ? (
+        {insight?.actionLabel && (
           <button
             type="button"
             onClick={onAction}
@@ -49,13 +49,6 @@ export function AIInsightCard({
           >
             {insight.actionLabel} <span aria-hidden>↗</span>
           </button>
-        ) : (
-          <Link
-            href="/coach"
-            className="text-xs font-semibold text-brand/80 hover:text-brand hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/60 rounded flex items-center gap-1"
-          >
-            Chat <span aria-hidden>↗</span>
-          </Link>
         )}
       </div>
       <p className="mt-3 text-sm text-foreground">

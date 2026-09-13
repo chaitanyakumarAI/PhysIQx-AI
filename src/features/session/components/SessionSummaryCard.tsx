@@ -1,18 +1,23 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Share2 } from "lucide-react";
 import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
 import { CircularProgress } from "@/components/ui/CircularProgress";
 import { Mascot } from "@/components/mascots/Mascot";
 import { StatChipRow, type StatEntry } from "@/features/shared/components/StatChipRow";
 import { formatElapsedTime } from "../lib/derive";
 import { playCelebrationFanfare } from "@/lib/audioEngine";
+import { WorkoutShareModal } from "./WorkoutShareModal";
+import { iconSize } from "@/constants/icons";
 
 export interface SessionSummaryCardProps {
   durationSeconds: number;
   volume: number;
   unit: string;
   xpReward: number;
+  workoutTitle?: string;
   className?: string;
 }
 
@@ -24,11 +29,15 @@ export function SessionSummaryCard({
   volume,
   unit,
   xpReward,
+  workoutTitle = "Training Mission",
   className,
 }: SessionSummaryCardProps) {
+  const [isShareOpen, setIsShareOpen] = useState(false);
+
   useEffect(() => {
     playCelebrationFanfare();
   }, []);
+
   const stats: StatEntry[] = [
     { label: "Duration", value: formatElapsedTime(durationSeconds) },
     { label: "Volume", value: `${volume.toLocaleString()}${unit}` },
@@ -49,6 +58,28 @@ export function SessionSummaryCard({
         </div>
       </Card>
       <StatChipRow stats={stats} className="mt-4" />
+
+      <div className="mt-4">
+        <Button
+          size="md"
+          variant="secondary"
+          fullWidth
+          onClick={() => setIsShareOpen(true)}
+          className="border border-brand/30 hover:bg-brand/10 hover:text-brand"
+        >
+          <Share2 size={iconSize.xs} />
+          <span>Share Workout Victory</span>
+        </Button>
+      </div>
+
+      <WorkoutShareModal
+        isOpen={isShareOpen}
+        onClose={() => setIsShareOpen(false)}
+        workoutTitle={workoutTitle}
+        durationSeconds={durationSeconds}
+        volumeKg={volume}
+        xpReward={xpReward}
+      />
     </div>
   );
 }

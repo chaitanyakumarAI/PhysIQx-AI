@@ -1,6 +1,8 @@
 import { Trophy } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { DeltaBadge } from "@/components/ui/DeltaBadge";
+import { Mascot } from "@/components/mascots/Mascot";
+import { useProfileStore, DEFAULT_USER_PREFERENCES } from "@/store/profileStore";
 import { iconSize } from "@/constants/icons";
 import type { PersonalRecordBase } from "@/data/personalRecords";
 
@@ -26,15 +28,29 @@ export interface AchievementSpotlightProps {
  * use). Also the celebration surface for streak-psychology milestones.
  */
 export function AchievementSpotlight({ win, className }: AchievementSpotlightProps) {
+  const showMascots = useProfileStore(
+    (state) => state.preferences?.showMascots ?? DEFAULT_USER_PREFERENCES.showMascots,
+  );
+
   return (
     <Card padding="sm" className={className}>
       <div className="flex items-center gap-3">
-        <span
-          aria-hidden
-          className="grid size-11 shrink-0 place-items-center rounded-full bg-legendary/15 text-legendary"
-        >
-          <Trophy size={iconSize.md} />
-        </span>
+        {showMascots ? (
+          <div className="size-11 shrink-0 overflow-hidden rounded-full ring-2 ring-legendary/30 bg-surface-elevated">
+            <Mascot
+              pose={win.kind === "pr" ? "kix-proud" : "kix-joy"}
+              shape="circle"
+              size={44}
+            />
+          </div>
+        ) : (
+          <span
+            aria-hidden
+            className="grid size-11 shrink-0 place-items-center rounded-full bg-legendary/15 text-legendary"
+          >
+            <Trophy size={iconSize.md} />
+          </span>
+        )}
         <div className="min-w-0 flex-1">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-foreground-secondary">
             {win.kind === "pr" ? "New PR" : "Milestone"}

@@ -236,3 +236,6 @@ export const mockExercises: Exercise[] = [
   ex("ex-weighted-sit-up", "Weighted Sit-Up", { core: 100 }, "dumbbell", "isolation", "intermediate"),
   ex("ex-turkish-get-up", "Turkish Get-Up", { core: 40, shoulders: 25, legs: 25, arms: 10 }, "kettlebell", "compound", "advanced"),
 ];
+
+export const exercises: Exercise[] = mockExercises;
+
