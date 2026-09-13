@@ -88,7 +88,7 @@ export function CoachScreen() {
   }
 
   return (
-    <PageContainer className="flex flex-col h-[calc(100dvh-5rem)] pb-2">
+    <PageContainer withBottomNav={false} className="flex flex-col h-dvh pb-24">
       {/* Header */}
       <div className="flex flex-col gap-3 pt-4 shrink-0">
         <div className="flex items-center justify-between gap-3">
