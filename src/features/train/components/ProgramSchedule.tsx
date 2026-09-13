@@ -59,17 +59,6 @@ export function ProgramSchedule({
   const [openDay, setOpenDay] = useState<string | null>(null);
   const [adoptedName, setAdoptedName] = useState<string | null>(null);
 
-  if (programType === "ai") {
-    return (
-      <Card padding="md" className={className}>
-        <p className="text-sm leading-relaxed text-foreground-secondary">
-          The Coach program builds Today&apos;s Mission for you automatically —
-          nothing to adopt. Pick any preset chip to browse its full weekly
-          schedule.
-        </p>
-      </Card>
-    );
-  }
 
   if (!program) return null;
 
