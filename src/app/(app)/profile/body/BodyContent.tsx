@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { StatTile } from "@/components/ui/StatTile";
 import { TrendChart } from "@/components/charts/TrendChart";
+import { HologramBodyScan } from "@/components/ui/HologramBodyScan";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { Section } from "@/components/layout/Section";
 import { SettingsPageHeader } from "@/features/profile/components/SettingsPageHeader";
@@ -18,6 +19,7 @@ import {
   seedWeightEntries,
 } from "@/features/profile/lib/bodyStats";
 import { useProfileStore } from "@/store/profileStore";
+import type { BodyShapeCategory, HeightTier, ViewAngle } from "@/types/bodyScan";
 
 const WEIGHT_RANGE = { min: 30, max: 300 };
 const HEIGHT_RANGE = { min: 100, max: 250 };
@@ -41,8 +43,16 @@ export function BodyContent() {
   const loggedEntries = useProfileStore((state) => state.weightEntries);
   const setHeight = useProfileStore((state) => state.setHeight);
   const logWeight = useProfileStore((state) => state.logWeight);
+  const onboardingProfile = useProfileStore((state) => state.onboardingProfile);
+
+  const [scanAngle, setScanAngle] = useState<ViewAngle>("front");
+  const [scanGender, setScanGender] = useState<"male" | "female">("male");
 
   const heightCm = storedHeightCm ?? SEED_HEIGHT_CM;
+  const heightTier: HeightTier =
+    heightCm < 168 ? "short" : heightCm > 183 ? "tall" : "average";
+  const bodyShape =
+    (onboardingProfile?.goalBodyShape as BodyShapeCategory) || "athletic";
   const entries = useMemo(
     () => mergeWeightEntries(seedWeightEntries(), loggedEntries),
     [loggedEntries],
@@ -109,6 +119,62 @@ export function BodyContent() {
           tone="info"
         />
       </div>
+
+      <Section title="Digital Twin Hologram Scan">
+        <Card padding="md" className="flex flex-col items-center gap-4">
+          <div className="w-full max-w-[280px]">
+            <HologramBodyScan
+              heightTier={heightTier}
+              bodyShape={bodyShape}
+              gender={scanGender}
+              viewAngle={scanAngle}
+              showHudBrackets={true}
+              showStatureBadge={true}
+              aspectRatio={scanAngle === "icon" ? "1/1" : "3/4"}
+            />
+          </div>
+
+          {/* Scanner Controls */}
+          <div className="flex w-full max-w-[320px] items-center justify-between gap-2">
+            <div className="flex items-center rounded-lg bg-surface/80 p-0.5 border border-border/60">
+              {(["front", "side", "45deg", "icon"] as const).map((angle) => (
+                <button
+                  key={angle}
+                  type="button"
+                  onClick={() => setScanAngle(angle)}
+                  className={`rounded-md px-2 py-1 text-[11px] font-semibold uppercase tracking-wider transition-colors ${
+                    scanAngle === angle
+                      ? "bg-brand text-black font-bold shadow-sm"
+                      : "text-foreground-secondary hover:text-foreground"
+                  }`}
+                >
+                  {angle === "45deg" ? "45°" : angle}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex items-center rounded-lg bg-surface/80 p-0.5 border border-border/60">
+              {(["male", "female"] as const).map((g) => (
+                <button
+                  key={g}
+                  type="button"
+                  onClick={() => setScanGender(g)}
+                  className={`rounded-md px-2 py-1 text-[11px] font-semibold capitalize transition-colors ${
+                    scanGender === g
+                      ? "bg-brand text-black font-bold shadow-sm"
+                      : "text-foreground-secondary hover:text-foreground"
+                  }`}
+                >
+                  {g}
+                </button>
+              ))}
+            </div>
+          </div>
+          <p className="text-center text-xs text-foreground-secondary">
+            Calibrated for {heightTier} stature ({heightCm} cm) • {bodyShape} archetype
+          </p>
+        </Card>
+      </Section>
 
       <Section title="Log an update">
         <Card padding="md" className="flex flex-col gap-4">

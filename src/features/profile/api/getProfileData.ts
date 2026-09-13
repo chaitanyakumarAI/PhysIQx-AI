@@ -2,6 +2,7 @@ import type { ProfileData } from "../types";
 import { mockProfileData } from "../mocks/profileData";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { calculateUserPhysIQScore } from "@/lib/scoreEngine";
+import type { ExperienceLevel, ProfileGoal } from "@/types/profile";
 
 /**
  * Profile's data service seam — merges authenticated Supabase user profile
@@ -38,8 +39,8 @@ export async function getProfileData(): Promise<ProfileData> {
       profile: {
         ...mockProfileData.profile,
         displayName: profile?.name || user.email?.split("@")[0] || mockProfileData.profile.displayName,
-        goal: (profile?.goal as any) || mockProfileData.profile.goal,
-        experienceLevel: (profile?.experience_level as any) || mockProfileData.profile.experienceLevel,
+        goal: (profile?.goal as ProfileGoal) || mockProfileData.profile.goal,
+        experienceLevel: (profile?.experience_level as ExperienceLevel) || mockProfileData.profile.experienceLevel,
         trainingDaysPerWeek: profile?.training_days_per_week ?? mockProfileData.profile.trainingDaysPerWeek,
       },
       score: liveScore,

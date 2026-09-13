@@ -1,5 +1,5 @@
 # PhysIQx AI — Session Handoff Document
-*Last updated: 2026-07-19 · Use this file when switching accounts to resume work.*
+*Last updated: 2026-09-13 · Use this file when switching accounts to resume work.*
 
 ---
 
@@ -11,27 +11,46 @@
 | **Workspace path** | `e:\physQIx AI` |
 | **Stack** | Next.js 15 (App Router), TypeScript, Zustand, Framer Motion, Tailwind |
 | **Dev server** | `npm run dev` → `http://localhost:3000` |
+| **Production build**| `npm run build` → 25/25 routes static/dynamic compiled clean |
 | **Tests** | `npm test` → 28/28 passing (Vitest) |
-| **Lint** | `npm run lint` → 0 errors |
+| **Lint** | `npm run lint` → 0 errors, 0 warnings |
 | **Git branch** | `main` |
-| **Latest commit** | `c8a87e5` — Supabase Auth wiring |
+| **Body Scan Assets**| 67 Certified high-fidelity assets in `public/body-shapes/` |
 
 ---
 
 ## 🗺️ Project Phase Map
 
 ```
-Phase 1 — UI Shell          ✅ COMPLETE
-Phase 2 — Polish & Logic    ✅ COMPLETE
-Phase 3 — Auth (Supabase)   🟡 IN PROGRESS (code wired, needs credentials)
-Phase 4 — Database          ⬜ NOT STARTED
-Phase 5 — Core Features     ⬜ NOT STARTED
-Phase 6 — AI Integration    ⬜ NOT STARTED
+Phase 1 — UI Shell              ✅ COMPLETE
+Phase 2 — Polish & Logic        ✅ COMPLETE
+Phase 3 — Auth (Supabase)       ✅ COMPLETE (wired to real project)
+Phase 4 — Database & Persistence✅ COMPLETE (Supabase tables + Score Engine)
+Phase 5 — Hologram Body Suite   ✅ COMPLETE (67 assets + 3D UI controls)
+Phase 6 — AI Integration        ⬜ NOT STARTED
 ```
 
 ---
 
-## ✅ Everything Done In This Session (2026-07-19)
+## ✅ Everything Done In This Session (2026-09-13)
+
+### Holographic Body Scan Expansion & App Attachment (67 Assets Complete)
+- Resumed and completed all image generation batches (Batches 1, 2, 3, 4):
+  - **Batch 2 (Tall & Short Statures)**: 10/10 complete (`tall_athletic_male_45deg`, `tall_muscular_male_front`, `tall_lean_female_front`, `tall_athletic_female_front`, `tall_muscular_female_front`, `short_athletic_male_front`, `short_muscular_female_front`, etc.).
+  - **Batch 3 (Realistic Body Shapes)**: 10/10 complete (`apple_male_front`, `pear_female_front`, `hourglass_female_front`, `rectangular_male_front`, `endomorph_male_front`, `skinnyfat_female_front`, `dadbod_male_side`, `apple_female_front`, `pear_male_front`, `endomorph_female_front`).
+  - **Batch 4 (1:1 Aspect Ratio Icons)**: 8/8 complete (`short_lean_neutral_icon`, `short_muscular_neutral_icon`, `tall_lean_neutral_icon`, `tall_muscular_neutral_icon`, `skinnyfat_neutral_icon`, `dadbod_neutral_icon`, `apple_neutral_icon`, `pear_neutral_icon`).
+- Audited all assets against the 5 Zero-Tolerance Constraints (pure `#00E676` neon green, faceless ovoid head, zero internal bones, compression apparel, clean void HUD).
+- Integrated all 67 assets into the central asset registry (`src/data/bodyScanRegistry.ts`).
+- Enhanced dynamic resolver (`src/utils/bodyScanResolver.ts`) with stature-aware icon lookups and realistic category mappings.
+- Attached live interactive angle (`Front`, `Side`, `45°`) and gender switchers to `BodyShapeStep.tsx` during onboarding.
+- Embedded holographic archetype scan into `DNAResultStep.tsx` celebration card.
+- Added dedicated **"Digital Twin Hologram Scan"** section to Body Stats screen (`src/app/(app)/profile/body/BodyContent.tsx`) calibrated to user's measured height tier and body shape archetype.
+- Updated `docs/BODY_SHAPE_EXPANSION_HANDBOOK.md` with complete 67-asset inventory.
+- Cleaned lint warnings in `scoreEngine.ts`, `bodyScanResolver.ts`, and `getProfileData.ts` (0 errors, 0 warnings).
+
+---
+
+## ✅ Previous Session Accomplishments
 
 ### UI Audit & Fixes
 Ran a full browser subagent audit of all 5 tabs. Applied all findings:

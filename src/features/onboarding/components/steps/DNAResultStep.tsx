@@ -1,6 +1,7 @@
 import { Dna } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { CircularProgress } from "@/components/ui/CircularProgress";
+import { HologramBodyScan } from "@/components/ui/HologramBodyScan";
 import { iconSize } from "@/constants/icons";
 import { StatChipRow, type StatEntry } from "@/features/shared/components/StatChipRow";
 import {
@@ -62,6 +63,20 @@ export function DNAResultStep({
             {archetype}
           </h2>
         </div>
+
+        {/* Target Hologram Body Scan Preview */}
+        {goalBodyShape && (
+          <div className="w-40 sm:w-48 pt-2">
+            <HologramBodyScan
+              bodyShape={goalBodyShape}
+              gender="male"
+              viewAngle="45deg"
+              showHudBrackets={true}
+              showStatureBadge={true}
+              aspectRatio="3/4"
+            />
+          </div>
+        )}
       </Card>
 
       <StatChipRow stats={identityStats} columns={2} />

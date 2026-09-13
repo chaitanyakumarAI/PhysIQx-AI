@@ -45,25 +45,50 @@ export const REGISTERED_BODY_SCANS: Set<string> = new Set([
   "powerful_female_45deg.png",
   "powerful_neutral_icon.png",
 
-  // CURRENT STARTING POINTS
+  // CURRENT STARTING POINTS & REALISTIC SHAPES
   "current_underweight_front.png",
   "current_average_front.png",
   "current_overweight_front.png",
   "skinnyfat_male_front.png",
+  "skinnyfat_female_front.png",
+  "skinnyfat_neutral_icon.png",
   "dadbod_male_front.png",
+  "dadbod_male_side.png",
+  "dadbod_neutral_icon.png",
+  "apple_male_front.png",
+  "apple_female_front.png",
+  "apple_neutral_icon.png",
+  "pear_male_front.png",
+  "pear_female_front.png",
+  "pear_neutral_icon.png",
+  "hourglass_female_front.png",
+  "rectangular_male_front.png",
+  "endomorph_male_front.png",
+  "endomorph_female_front.png",
 
   // SHORT HEIGHT VARIANTS
   "short_lean_male_front.png",
   "short_lean_male_side.png",
+  "short_lean_female_front.png",
+  "short_lean_neutral_icon.png",
+  "short_athletic_male_front.png",
+  "short_athletic_female_front.png",
   "short_muscular_male_front.png",
   "short_muscular_male_45deg.png",
-  "short_lean_female_front.png",
-  "short_athletic_female_front.png",
+  "short_muscular_female_front.png",
+  "short_muscular_neutral_icon.png",
 
   // TALL HEIGHT VARIANTS
   "tall_lean_male_front.png",
   "tall_lean_male_side.png",
+  "tall_lean_female_front.png",
+  "tall_lean_neutral_icon.png",
   "tall_athletic_male_front.png",
+  "tall_athletic_male_45deg.png",
+  "tall_athletic_female_front.png",
+  "tall_muscular_male_front.png",
+  "tall_muscular_female_front.png",
+  "tall_muscular_neutral_icon.png",
 ]);
 
 /**

@@ -4,7 +4,6 @@ import {
 import type {
   BodyScanAssetMeta,
   BodyScanQueryParams,
-  HeightTier,
 } from "@/types/bodyScan";
 
 const DEFAULT_FALLBACK = "athletic_male_front.png";
@@ -72,6 +71,23 @@ export function resolveBodyScanAsset(
 
   // Candidate 4: Neutral Icon Fallback if icon view angle requested
   if (viewAngle === "icon") {
+    // 4a. Exact height-aware icon (e.g. "tall_lean_neutral_icon.png")
+    if (heightTier !== "average") {
+      const candidateHeightIcon = `${heightTier}_${bodyShape}_neutral_icon.png`;
+      if (isBodyScanRegistered(candidateHeightIcon)) {
+        return {
+          filename: candidateHeightIcon,
+          url: `/body-shapes/${candidateHeightIcon}`,
+          heightTier,
+          bodyShape,
+          gender: "neutral",
+          viewAngle: "icon",
+          isExactMatch: true,
+        };
+      }
+    }
+
+    // 4b. Base icon (e.g. "lean_neutral_icon.png" or "apple_neutral_icon.png")
     const candidateIcon = `${bodyShape}_neutral_icon.png`;
     if (isBodyScanRegistered(candidateIcon)) {
       return {
@@ -81,21 +97,22 @@ export function resolveBodyScanAsset(
         bodyShape,
         gender: "neutral",
         viewAngle: "icon",
-        isExactMatch: false,
+        isExactMatch: heightTier === "average",
       };
     }
   }
 
-  // Candidate 5: Category Fallback (e.g., if "apple" or "pear" requested before generation)
+  // Candidate 5: Category Fallback (Direct real archetype mappings)
   const categoryFallbackMap: Record<string, string> = {
-    skinnyfat: "current_average_front.png",
-    dadbod: "current_overweight_front.png",
-    apple: "current_overweight_front.png",
-    pear: "current_average_front.png",
-    hourglass: "athletic_female_front.png",
-    rectangular: "athletic_male_front.png",
-    endomorph: "powerful_male_front.png",
+    skinnyfat: "skinnyfat_male_front.png",
+    dadbod: "dadbod_male_front.png",
+    apple: "apple_male_front.png",
+    pear: "pear_female_front.png",
+    hourglass: "hourglass_female_front.png",
+    rectangular: "rectangular_male_front.png",
+    endomorph: "endomorph_male_front.png",
     underweight: "current_underweight_front.png",
+    average: "current_average_front.png",
     overweight: "current_overweight_front.png",
   };
 
@@ -107,7 +124,7 @@ export function resolveBodyScanAsset(
       heightTier: "average",
       bodyShape,
       gender,
-      viewAngle,
+      viewAngle: "front",
       isExactMatch: false,
     };
   }

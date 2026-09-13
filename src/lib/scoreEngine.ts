@@ -1,5 +1,5 @@
 import { createServerSupabaseClient } from "@/lib/supabase/server";
-import { computeWeightedScore, findWeakestPillar, pillarWeights } from "@/lib/score";
+import { computeWeightedScore, findWeakestPillar } from "@/lib/score";
 import type { PhysIQScoreSnapshot, PillarScore, PillarId } from "@/types/score";
 import { pillarLabels } from "@/types/score";
 
