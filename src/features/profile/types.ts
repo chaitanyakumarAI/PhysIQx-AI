@@ -31,6 +31,7 @@ export type SettingsIconId =
   | "play"
   | "ruler"
   | "sliders"
+  | "camera"
   | "log-out";
 
 export interface SettingsItem {

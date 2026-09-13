@@ -43,6 +43,7 @@ const achievements: ProfileAchievement[] = [
 
 const settings: ProfileData["settings"] = [
   { id: "body-stats", label: "Body stats", iconId: "ruler", href: "/profile/body" },
+  { id: "photos", label: "Progress photos", iconId: "camera", href: "/profile/photos" },
   { id: "preferences", label: "Preferences & Logging", iconId: "sliders", href: "/profile/settings/preferences" },
   { id: "avatar", label: "Avatar", iconId: "user", href: "/profile/settings/avatar" },
   { id: "notifications", label: "Notifications", value: "On", iconId: "bell", href: "/profile/settings/notifications" },

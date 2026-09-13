@@ -1,8 +1,12 @@
+"use client";
+
+import { useEffect } from "react";
 import { Card } from "@/components/ui/Card";
 import { CircularProgress } from "@/components/ui/CircularProgress";
 import { Mascot } from "@/components/mascots/Mascot";
 import { StatChipRow, type StatEntry } from "@/features/shared/components/StatChipRow";
 import { formatElapsedTime } from "../lib/derive";
+import { playCelebrationFanfare } from "@/lib/audioEngine";
 
 export interface SessionSummaryCardProps {
   durationSeconds: number;
@@ -22,6 +26,9 @@ export function SessionSummaryCard({
   xpReward,
   className,
 }: SessionSummaryCardProps) {
+  useEffect(() => {
+    playCelebrationFanfare();
+  }, []);
   const stats: StatEntry[] = [
     { label: "Duration", value: formatElapsedTime(durationSeconds) },
     { label: "Volume", value: `${volume.toLocaleString()}${unit}` },

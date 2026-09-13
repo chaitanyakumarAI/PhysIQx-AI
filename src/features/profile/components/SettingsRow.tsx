@@ -13,6 +13,7 @@ import {
   Ruler,
   Shield,
   Sliders,
+  Camera,
   type LucideIcon,
 } from "lucide-react";
 import { iconSize } from "@/constants/icons";
@@ -34,6 +35,7 @@ const settingsIcon: Record<SettingsIconId, LucideIcon> = {
   play: Play,
   ruler: Ruler,
   sliders: Sliders,
+  camera: Camera,
   "log-out": LogOut,
 };
 

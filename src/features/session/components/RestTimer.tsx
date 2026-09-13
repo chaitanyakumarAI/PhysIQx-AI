@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { cn } from "@/lib/utils";
+import { playCountdownTick, playRestComplete } from "@/lib/audioEngine";
 
 export interface RestTimerProps {
   seconds: number;
@@ -33,8 +34,13 @@ export function RestTimer({ seconds, onComplete, className }: RestTimerProps) {
         }
         if (current <= 1) {
           clearInterval(interval);
+          playRestComplete();
           onCompleteRef.current?.();
           return 0;
+        }
+        // Audio tick on 3, 2, 1
+        if (current <= 4 && current > 1) {
+          playCountdownTick();
         }
         return current - 1;
       });
@@ -65,6 +71,7 @@ export function RestTimer({ seconds, onComplete, className }: RestTimerProps) {
         type="button"
         onClick={() => {
           setRemaining(0);
+          playRestComplete();
           onCompleteRef.current?.();
         }}
         className="min-h-11 rounded-full px-4 text-sm font-semibold text-info transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-info/60"

@@ -114,6 +114,15 @@ export function TrainScreen({
         </m.div>
 
         <m.div variants={fadeInUp} className="flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <h2 className="font-display text-lg font-bold">Exercises</h2>
+            <Link
+              href="/train/exercises"
+              className="text-xs font-semibold text-brand transition-colors hover:text-brand/80"
+            >
+              Browse all {catalogSize} ↗
+            </Link>
+          </div>
           <div className="flex flex-col gap-4" data-tour="train-search">
             <SearchInput
               placeholder={`Search ${catalogSize} exercises`}

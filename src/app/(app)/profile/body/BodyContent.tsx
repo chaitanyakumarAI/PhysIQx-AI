@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Gauge, Ruler, Scale } from "lucide-react";
+import Link from "next/link";
+import { Camera, Gauge, Ruler, Scale } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
@@ -118,6 +119,26 @@ export function BodyContent() {
           label={bmi !== null ? `BMI · ${bmiCategory(bmi)}` : "BMI"}
           tone="info"
         />
+      </div>
+
+      <div className="flex items-center justify-between rounded-card border border-border/60 bg-surface p-3.5">
+        <div className="flex items-center gap-3">
+          <span className="grid size-9 place-items-center rounded-full bg-brand/15 text-brand">
+            <Camera size={16} aria-hidden />
+          </span>
+          <div>
+            <p className="text-xs font-semibold text-foreground">Transformation Photos</p>
+            <p className="text-[11px] text-foreground-secondary">
+              Timeline gallery and before-and-after comparison
+            </p>
+          </div>
+        </div>
+        <Link
+          href="/profile/photos"
+          className="rounded-full bg-surface-elevated px-3 py-1.5 text-xs font-semibold text-brand transition-colors hover:bg-brand hover:text-background"
+        >
+          View Photos ↗
+        </Link>
       </div>
 
       <Section title="Digital Twin Hologram Scan">
