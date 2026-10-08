@@ -3,10 +3,9 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { ArrowLeft, CheckCircle2, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, CheckCircle2, ChevronLeft, ChevronRight, HeartPulse } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { FilterChipRow } from "@/components/ui/FilterChipRow";
-import { Mascot } from "@/components/mascots/Mascot";
 import { IconButton } from "@/components/ui/IconButton";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { iconSize } from "@/constants/icons";
@@ -262,10 +261,10 @@ export function CalendarContent() {
                 {selected.trained && (
                   <CheckCircle2 size={iconSize.md} aria-hidden className="shrink-0 text-brand" />
                 )}
-                {/* Rest days are Nyra's surface (docs/MASCOTS.md): she
-                    enforces recovery — quiet presence, no message. */}
                 {!selected.trained && !selected.workoutName && (
-                  <Mascot pose="nyra-stare" size={44} shape="circle" className="shrink-0" />
+                  <span className="grid size-11 shrink-0 place-items-center rounded-full bg-surface-elevated text-foreground-secondary">
+                    <HeartPulse size={iconSize.sm} aria-hidden />
+                  </span>
                 )}
                 <div>
                   <p className="text-sm font-semibold">

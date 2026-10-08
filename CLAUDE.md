@@ -22,7 +22,7 @@ Before beginning a task:
 
 1. Read `docs/PROJECT.md`.
 2. Read any documentation relevant to the current task.
-3. During UI recreation, use the screenshots inside `/design` as the visual source of truth.
+3. For UI work, use the screenshots inside `/design` as the visual source of truth.
 4. Read only the files necessary for the current task.
 
 Avoid loading unnecessary context.
@@ -31,7 +31,7 @@ Avoid loading unnecessary context.
 
 # Current Phase
 
-Follow the current development phase described in `docs/PROJECT.md`.
+See "Current Phase & Scope" below and `docs/TODO.md`.
 
 Do not implement future phases unless explicitly instructed.
 
@@ -99,28 +99,32 @@ Preserve existing architecture unless improvement is justified.
 
 ---
 
-# UI Recreation
+# Current Phase & Scope
 
-Current priority is UI recreation.
+UI recreation (Phase 1) is complete. Auth scaffolding, local-first data
+engines, offline sync, PWA, and rule-based AI (program generator) have
+shipped. See `docs/TODO.md` for live status and
+`docs/SESSION_HANDOFF.md` for the latest handover.
 
-Use mock data.
+Next open items: live Supabase integration (schema + replacing `src/data/`
+fixtures behind the `api/get*Data.ts` seams) and session-experience polish.
 
-Do not implement:
+Still true:
 
-- Backend
-- Database
-- API integrations
-- Authentication logic
-- AI
-- ML
-
-Navigation is allowed if requested.
-
-Maintain visual fidelity to the provided designs.
-
-Minor improvements that increase consistency, accessibility, responsiveness, or maintainability are encouraged.
-
-Do not significantly redesign screens without approval.
+- Screens should read data through the `api/get*Data.ts` seams, not
+  directly from fixtures or Supabase.
+- Everything must work offline; writes go local-first, then `syncEngine.ts`.
+- AI features are currently client-side and deterministic; ask before
+  adding external model or API calls.
+- Never label a feature "AI" in user-facing copy unless it actually uses a
+  model. Rule-based features get plain names (e.g. "PhysIQ Split").
+- The conversational AI Coach (`/coach`) is deferred to a future version:
+  the route returns `notFound()` and has no entry points. Don't re-enable it
+  without the user's go-ahead.
+- Mascots are hidden (`Mascot.tsx` returns `null`) until the user says how
+  to reintroduce them.
+- Use `/design` screenshots as the visual source of truth for existing
+  screens. Do not significantly redesign screens without approval.
 
 ---
 

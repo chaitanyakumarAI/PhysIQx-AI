@@ -29,7 +29,7 @@ export function buildProgressStats(
 ): StatEntry[] {
   return [
     { label: "Sessions", value: stats.sessions.toLocaleString(), href: "/profile/history" },
-    { label: "Streak", value: `${streak.currentStreakDays}d`, href: "/insights" },
+    { label: "Streak", value: `${streak.currentStreakDays}d`, href: "/profile/achievements" },
     { label: "Total XP", value: stats.totalXP.toLocaleString() },
   ];
 }

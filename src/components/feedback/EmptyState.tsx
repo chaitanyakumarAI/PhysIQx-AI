@@ -1,13 +1,10 @@
-import type { LucideIcon } from "lucide-react";
-import { Mascot, type MascotPose } from "@/components/mascots/Mascot";
+import { Dumbbell, type LucideIcon } from "lucide-react";
+import type { MascotPose } from "@/components/mascots/Mascot";
 import { iconSize } from "@/constants/icons";
 import { cn } from "@/lib/utils";
 
 export interface EmptyStateProps extends React.ComponentProps<"div"> {
   icon?: LucideIcon;
-  /** A mascot face instead of an icon — for moments of emotion (a dead end,
-   *  a rest day), never for plain input feedback like a search miss
-   *  (docs/MASCOTS.md, the anti-Clippy law). Wins over `icon` if both set. */
   mascot?: MascotPose;
   title: string;
   description?: string;
@@ -18,12 +15,14 @@ export interface EmptyStateProps extends React.ComponentProps<"div"> {
 export function EmptyState({
   className,
   icon: Icon,
-  mascot,
+  mascot: _mascot,
   title,
   description,
   action,
   ...props
 }: EmptyStateProps) {
+  const DisplayIcon = Icon ?? Dumbbell;
+
   return (
     <div
       className={cn(
@@ -32,24 +31,12 @@ export function EmptyState({
       )}
       {...props}
     >
-      {mascot ? (
-        <Mascot
-          pose={mascot}
-          size={80}
-          shape="circle"
-          className="mb-2 ring-2 ring-surface-elevated"
+      <div className="mb-2 grid size-14 place-items-center rounded-full bg-surface-elevated text-foreground-secondary">
+        <DisplayIcon
+          size={iconSize.md}
+          aria-hidden
         />
-      ) : (
-        Icon && (
-          <div className="mb-2 grid size-14 place-items-center rounded-full bg-surface-elevated">
-            <Icon
-              size={iconSize.md}
-              aria-hidden
-              className="text-foreground-secondary"
-            />
-          </div>
-        )
-      )}
+      </div>
       <h3 className="text-base font-semibold">{title}</h3>
       {description && (
         <p className="max-w-xs text-sm text-foreground-secondary">

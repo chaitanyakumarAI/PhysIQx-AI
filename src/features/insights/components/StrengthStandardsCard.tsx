@@ -64,29 +64,32 @@ export function StrengthStandardsCard() {
         </div>
       </div>
 
-      {/* Lift Grid */}
-      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
+      {/* Lift Grid - Clean 2x2 layout with spacious cards */}
+      <div className="grid grid-cols-2 gap-3">
         {profile.evaluations.map((ev) => {
           const colors = TIER_COLORS[ev.currentTier];
           return (
             <div
               key={ev.exerciseId}
-              className="flex flex-col rounded-xl bg-surface-elevated/70 p-3 border border-border/40"
+              className="flex flex-col justify-between rounded-xl bg-surface-elevated/70 p-3.5 border border-border/40 min-w-0"
             >
-              <span className="text-xs font-semibold text-foreground-secondary truncate">
-                {ev.shortName}
-              </span>
-              <div className="mt-1 flex items-baseline gap-1">
-                <span className="text-base font-bold font-display tabular-nums text-foreground">
-                  {ev.oneRepMaxKg}
+              <div className="flex items-start justify-between gap-1">
+                <span className="text-xs font-semibold text-foreground truncate" title={ev.exerciseName}>
+                  {ev.shortName || ev.exerciseName}
                 </span>
-                <span className="text-[11px] text-foreground-secondary">kg</span>
-                <span className="text-[11px] font-semibold text-foreground-secondary ml-auto tabular-nums">
+                <span className="text-[11px] font-bold text-foreground-secondary tabular-nums shrink-0">
                   {ev.ratio}×
                 </span>
               </div>
+              <div className="mt-2 flex items-baseline gap-1">
+                <span className="text-lg font-bold font-display tabular-nums text-foreground">
+                  {ev.oneRepMaxKg}
+                </span>
+                <span className="text-xs text-foreground-secondary">kg</span>
+                <span className="text-[10px] text-foreground-secondary ml-1 font-medium">est. 1RM</span>
+              </div>
               <span
-                className={`mt-2 inline-block rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider border self-start ${colors.text} ${colors.bg} ${colors.border}`}
+                className={`mt-2.5 inline-block rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider border self-start ${colors.text} ${colors.bg} ${colors.border}`}
               >
                 {TIER_LABELS[ev.currentTier]}
               </span>

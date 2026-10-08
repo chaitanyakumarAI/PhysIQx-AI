@@ -10,7 +10,7 @@ import type { TrainData } from "../types";
  */
 
 const programs: Program[] = [
-  { id: "program-ai", name: "Coach", type: "ai", source: "ai" },
+  { id: "program-ai", name: "PhysIQ Split", type: "ai", source: "ai" },
   { id: "program-ppl", name: "PPL", type: "ppl", source: "preset" },
   {
     id: "program-upper-lower",

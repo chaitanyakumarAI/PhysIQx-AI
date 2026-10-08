@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BookOpen, Dumbbell, HeartPulse, History, Trophy } from "lucide-react";
+import { BookOpen, Dumbbell, History, Trophy } from "lucide-react";
 import { QuickActionGrid } from "@/features/home/components/QuickActionGrid";
 import type { QuickAction } from "@/features/home/types";
 import { m } from "framer-motion";
@@ -43,7 +43,6 @@ export type HomeScreenProps = Pick<
  */
 const HOME_QUICK_ACTIONS: QuickAction[] = [
   { id: "start-workout", label: "Train", icon: Dumbbell, href: "/train" },
-  { id: "log-cardio", label: "Cardio", icon: HeartPulse, href: "/train/cardio" },
   { id: "browse-exercises", label: "Library", icon: BookOpen, href: "/train/exercises" },
   { id: "history", label: "History", icon: History, href: "/profile/history" },
   { id: "compete", label: "Compete", icon: Trophy, href: "/compete" },

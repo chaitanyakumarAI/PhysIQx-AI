@@ -28,13 +28,26 @@ Three route groups, three layout worlds:
 (app)                       protected, tab shell layout (bottom nav)
   /home
   /train
+  /train/exercises          exercise catalog
   /train/exercises/[id]     exercise detail
+  /train/programs/[type]    program detail (incl. `ai` generated program)
+  /train/plans/new          custom plan builder
+  /train/plans/[id]         custom plan detail
+  /train/cardio             cardio log + wearable sync info
+  /train/calendar           monthly training history
   /insights
+  /insights/recovery        readiness / recovery
+  /insights/strength        Big 4 strength standards
   /compete
   /compete/challenges/[id]  challenge detail
   /profile
-  /profile/settings         settings sections as sub-routes as they grow
   /profile/achievements     full collection view
+  /profile/body             body stats, weight history
+  /profile/history          session-history list
+  /profile/photos           progress photos
+  /profile/integrations     wearables manager (mock)
+  /profile/settings/*       preferences, notifications, appearance,
+                            privacy, export, avatar
 
 (app, full-screen — inside auth, outside the tab shell)
   /session/[id]             workout session: live view while active,
@@ -147,12 +160,12 @@ Canonical URLs are a product feature, not a technicality:
 
 | Route | Feature |
 |---|---|
-| `/coach` | Conversational AI Coach, if it outgrows inline cards |
+| `/coach` | Conversational AI Coach — v1 built, route disabled, deferred to a future version |
 | `/fuel` or `/fuel/scanner` | Food scanner / full nutrition logging |
-| `/profile/photos` | Progress photos |
-| `/profile/history` | Full session-history list (detail already exists at `/session/[id]`) |
-| `/profile/integrations` | Wearables / Apple Health / Health Connect |
 | `(marketing)` group at `/` | Public site, SEO pages |
+
+Shipped from this list: `/profile/photos`, `/profile/history`,
+`/profile/integrations`.
 
 Rule for adding routes: a new feature gets a new route when it is a
 *destination* (linkable, restorable, back-navigable). It stays a component

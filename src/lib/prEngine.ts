@@ -71,9 +71,6 @@ export function derivePersonalRecords(
   }
 
   const results: PersonalRecord[] = [];
-  const thirtyDaysAgo = new Date();
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-  const thirtyDaysAgoIso = thirtyDaysAgo.toISOString().split("T")[0]!;
 
   // 2. Compute PRs per exercise
   for (const [id, { exerciseName, events }] of exerciseEvents.entries()) {
@@ -95,13 +92,18 @@ export function derivePersonalRecords(
 
     const allTimeBest = currentBest;
 
-    // Delta vs 30 days ago
-    const olderEvents = events.filter((e) => e.date < thirtyDaysAgoIso);
+    // Delta vs 30 days ago (calculated relative to latest activity)
+    const latestEventDate = events.length > 0 ? new Date(events[events.length - 1]!.date) : new Date();
+    const thirtyDaysAgo = new Date(latestEventDate);
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const thirtyDaysAgoIso = thirtyDaysAgo.toISOString().split("T")[0]!;
+
+    const olderEvents = events.filter((e) => e.date <= thirtyDaysAgoIso);
     let baselineBest = 0;
     if (olderEvents.length > 0) {
       baselineBest = Math.max(...olderEvents.map((e) => e.weightKg));
     } else {
-      // If all lifts are recent, baseline is first logged lift
+      // If all lifts are within the window, baseline is the first logged lift in the series
       baselineBest = events[0]?.weightKg ?? allTimeBest;
     }
 

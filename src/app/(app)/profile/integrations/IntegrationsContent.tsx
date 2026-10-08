@@ -223,14 +223,14 @@ export function IntegrationsContent() {
                   aria-pressed={provider.connected}
                   aria-label={`Toggle ${provider.name} connection`}
                   className={cn(
-                    "relative h-6 w-11 shrink-0 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-brand/60",
-                    provider.connected ? "bg-brand" : "bg-surface-elevated border border-border"
+                    "relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus:outline-none focus:ring-2 focus:ring-brand/60",
+                    provider.connected ? "bg-brand" : "bg-surface-elevated border-border"
                   )}
                 >
                   <span
                     className={cn(
-                      "inline-block size-4 transform rounded-full bg-background transition-transform",
-                      provider.connected ? "translate-x-6" : "translate-x-1"
+                      "pointer-events-none inline-block size-4 transform rounded-full bg-zinc-950 shadow transition-transform",
+                      provider.connected ? "translate-x-5" : "translate-x-0.5"
                     )}
                   />
                 </button>

@@ -197,31 +197,33 @@ export function ExercisePlateModal({
             <div className="flex flex-col gap-4">
               {/* Barbell Sleeve Graphic */}
               <div className="relative flex flex-col items-center justify-center rounded-2xl bg-black/40 p-5 border border-border/80">
-                <div className="relative flex items-center justify-center h-28 w-full max-w-sm">
+                <div className="relative flex items-center justify-center h-28 w-full max-w-sm overflow-x-auto py-2">
                   {/* Shaft & Collar */}
-                  <div className="h-4 w-16 bg-neutral-600 rounded-l-sm" />
-                  <div className="h-10 w-3 bg-neutral-400 rounded-sm" />
-                  <div className="h-6 flex-1 max-w-[200px] bg-neutral-500 relative flex items-center px-1">
+                  <div className="h-4 w-12 bg-neutral-600 rounded-l-sm shrink-0" />
+                  <div className="h-12 w-3 bg-neutral-400 rounded-sm shrink-0" />
+                  <div className="h-6 bg-neutral-500 relative flex items-center px-1 rounded-r-sm shrink-0 min-w-[140px]">
                     {/* Stacked plates */}
-                    <div className="flex items-center gap-1">
-                      {plateResult.platesPerSide.map((plate: PlateCount, idx: number) => {
-                        const heightPx = Math.min(100, Math.max(36, plate.weight * 3.6));
-                        return (
-                          <div
-                            key={`${plate.weight}-${idx}`}
-                            className={`flex items-center justify-center rounded-sm font-bold text-[10px] text-white shadow-md ${plate.color}`}
-                            style={{
-                              height: `${heightPx}px`,
-                              width: `${Math.max(14, Math.min(24, plate.weight * 0.7))}px`,
-                            }}
-                            title={`${plate.count}x ${plate.weight}kg plate`}
-                          >
-                            <span className="[writing-mode:vertical-rl] rotate-180">
-                              {plate.weight}
-                            </span>
-                          </div>
-                        );
-                      })}
+                    <div className="flex items-center gap-0.5">
+                      {plateResult.platesPerSide.flatMap((plate: PlateCount, pIdx: number) =>
+                        Array.from({ length: plate.count }).map((_, cIdx: number) => {
+                          const heightPx = Math.min(100, Math.max(36, plate.weight * 3.6));
+                          return (
+                            <div
+                              key={`${plate.weight}-${pIdx}-${cIdx}`}
+                              className={`flex items-center justify-center rounded-sm font-bold text-[9px] text-white shadow-md shrink-0 border border-black/30 ${plate.color}`}
+                              style={{
+                                height: `${heightPx}px`,
+                                width: `${Math.max(12, Math.min(22, plate.weight * 0.65))}px`,
+                              }}
+                              title={`${plate.weight}kg plate (${cIdx + 1} of ${plate.count})`}
+                            >
+                              <span className="[writing-mode:vertical-rl] rotate-180 select-none">
+                                {plate.weight}
+                              </span>
+                            </div>
+                          );
+                        })
+                      )}
                       {plateResult.platesPerSide.length === 0 && (
                         <span className="text-[11px] text-foreground-secondary ml-2 italic">Empty sleeve</span>
                       )}

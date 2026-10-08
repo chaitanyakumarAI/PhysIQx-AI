@@ -72,7 +72,7 @@ export interface UserPreferences {
   autoRestTimer: boolean;
   /** Display Kix and Nyra mascot illustrations and coaching commentary across the app. */
   showMascots: boolean;
-  /** Display AI-generated coach insight cards on Home and Insights. */
+  /** Display rule-based coach insight cards (from logged data) on Home and Insights. */
   showAiInsights: boolean;
   /** Particle confetti and celebration modal animations on achievements or finished workouts. */
   celebrationEffects: boolean;

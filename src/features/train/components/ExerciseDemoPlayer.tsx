@@ -247,7 +247,7 @@ export function ExerciseDemoPlayer({ exercise }: ExerciseDemoPlayerProps) {
             <button
               key={s}
               type="button"
-              onClick={() => setSpeed(s as any)}
+              onClick={() => setSpeed(s as 0.5 | 1 | 1.5)}
               className={`px-2 py-0.5 rounded transition-colors ${
                 speed === s
                   ? "bg-brand/15 text-brand font-bold"

@@ -9,8 +9,8 @@ export const metadata: Metadata = {
 };
 
 const features = [
-  { icon: Zap, text: "AI-powered PhysIQ Score" },
-  { icon: TrendingUp, text: "Track strength, cardio & fuel" },
+  { icon: Zap, text: "One PhysIQ Score for all your training" },
+  { icon: TrendingUp, text: "Track strength, cardio & consistency" },
   { icon: Shield, text: "Your data, protected" },
 ];
 
@@ -45,7 +45,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             your <span className="auth-hero-highlight">PhysIQ Score</span>.
           </h2>
           <p className="auth-hero-sub">
-            The AI fitness platform that tracks everything — strength, cardio, nutrition, recovery — and turns it into one smart score.
+            Log your strength, cardio, consistency and body progress — PhysIQx turns it into one score.
           </p>
 
           {/* Feature pills */}

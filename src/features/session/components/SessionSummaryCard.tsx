@@ -1,16 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Share2 } from "lucide-react";
+import { Share2, Trophy } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { CircularProgress } from "@/components/ui/CircularProgress";
-import { Mascot } from "@/components/mascots/Mascot";
+import { iconSize } from "@/constants/icons";
 import { StatChipRow, type StatEntry } from "@/features/shared/components/StatChipRow";
-import { formatElapsedTime } from "../lib/derive";
+import { formatElapsedTime } from "@/features/session/lib/derive";
 import { playCelebrationFanfare } from "@/lib/audioEngine";
 import { WorkoutShareModal } from "./WorkoutShareModal";
-import { iconSize } from "@/constants/icons";
 
 export interface SessionSummaryCardProps {
   durationSeconds: number;
@@ -48,7 +47,9 @@ export function SessionSummaryCard({
     <div className={className}>
       <Card variant="accent" padding="lg" className="flex flex-col items-center gap-4 text-center">
         <CircularProgress value={100} size={112} strokeWidth={6} glow>
-          <Mascot pose="kix-proud" size={92} shape="circle" />
+          <span className="grid size-full place-items-center rounded-full bg-brand/15 text-brand">
+            <Trophy size={48} aria-hidden />
+          </span>
         </CircularProgress>
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-foreground-secondary">

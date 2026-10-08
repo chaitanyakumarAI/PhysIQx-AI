@@ -48,11 +48,11 @@ const navItems: BottomNavItem[] = [
   { href: "/playground/profile", label: "Profile", icon: User },
 ];
 
-const filterOptions = ["AI", "PPL", "Upper/Lower", "Bro", "Full Body"];
+const filterOptions = ["PhysIQ", "PPL", "Upper/Lower", "Bro", "Full Body"];
 const muscleOptions = ["Chest", "Back", "Legs", "Shoulders"];
 
 export default function PlaygroundPage() {
-  const [filter, setFilter] = useState("AI");
+  const [filter, setFilter] = useState("PhysIQ");
   const [muscle, setMuscle] = useState("Chest");
 
   return (
@@ -104,7 +104,7 @@ export default function PlaygroundPage() {
 
       <Section title="Badges & chips">
         <div className="flex flex-wrap gap-2">
-          <Badge tone="brand">AI Programmed</Badge>
+          <Badge tone="brand">PhysIQ Split</Badge>
           <Badge tone="warning">27 day streak</Badge>
           <Badge tone="neutral">52 min</Badge>
           <Badge tone="info">Rare</Badge>

@@ -17,15 +17,13 @@ The objective is helping users build long-term fitness consistency.
 
 # Current Phase
 
-UI Recreation
+Phase 1 (UI Recreation) is complete. Later phases are partially shipped
+(auth scaffolding, local-first engines, offline sync, PWA, rule-based
+program generator). No AI/ML model is used anywhere yet.
 
-Current objective:
+Next open items: live Supabase schema + data integration, session polish.
 
-Recreate the Lovable UI with reusable React components.
-
-Use mock data only.
-
-No backend implementation.
+Live status: `docs/TODO.md`.
 
 ---
 
@@ -128,7 +126,10 @@ Recovery Analytics
 
 ML Recommendation Engine
 
-These should NOT be implemented during UI recreation.
+Status: UI shells exist for wearables (`/profile/integrations`), progress
+photos (`/profile/photos`), and recovery analytics (`/insights/recovery`),
+all on mock data. Real wearable sync, the food scanner, and ML models are
+not built.
 
 ---
 
@@ -170,22 +171,6 @@ No unnecessary dialogs.
 
 ---
 
-# Current Development Phase
-
-Only recreate UI.
-
-Mock data only.
-
-No authentication logic.
-
-No API calls.
-
-No backend.
-
-No database.
-
----
-
 # Tech Stack
 
 Frontend
@@ -194,12 +179,12 @@ Frontend
 - React 19
 - TypeScript
 - Tailwind CSS v4
-- shadcn/ui
+- Radix Slot + class-variance-authority primitives (`src/components/ui`)
 - Framer Motion
 
 Charts
 
-- Recharts
+- Custom pure-SVG components (no charting library)
 
 State
 

@@ -15,7 +15,7 @@ export type ProgramType =
 
 /** Shared display labels — used by Train's program chips and Profile's SPLIT stat. */
 export const programTypeLabels: Record<ProgramType, string> = {
-  ai: "Coach",
+  ai: "PhysIQ Split",
   ppl: "PPL",
   "upper-lower": "Upper/Lower",
   bro: "Bro",

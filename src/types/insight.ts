@@ -1,5 +1,5 @@
 /**
- * AI Insight — docs/DATA_MODELS.md "Insight". `body` carries a length
+ * Coach Insight (rule-based) — docs/DATA_MODELS.md "Insight". `body` carries a length
  * contract (≤ 2 sentences) that AIInsightCard is designed around.
  */
 export type InsightCategory = "training" | "nutrition" | "recovery" | "score";

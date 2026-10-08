@@ -166,7 +166,7 @@ export function HydrationLogSheet({ isOpen, onClose }: HydrationLogSheetProps) {
             className="flex items-center gap-1 hover:text-rose-400 transition-colors"
           >
             <RotateCcw size={11} />
-            Reset today's log
+            Reset today&apos;s log
           </button>
           <button
             type="button"

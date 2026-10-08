@@ -187,7 +187,7 @@ export function NotificationCenter() {
               </div>
               <div>
                 <p className="font-display text-sm font-bold text-foreground">
-                  You're all caught up!
+                  You&apos;re all caught up!
                 </p>
                 <p className="text-xs text-foreground-secondary mt-1 max-w-[240px]">
                   No active alerts in this section. New personal records and challenge updates will appear here.

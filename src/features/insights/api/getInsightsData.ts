@@ -32,16 +32,16 @@ export async function getInsightsData(): Promise<InsightsData> {
       .eq("user_id", user.id)
       .order("completed_at", { ascending: true });
 
-    const history: CompletedSessionSummary[] = (dbSessions ?? []).map((row: any) => ({
-      id: row.client_ref || row.id,
-      missionId: row.mission_id || "mission-custom",
-      title: row.title || "Workout",
-      date: (row.completed_at || row.created_at || new Date().toISOString()).slice(0, 10),
-      completedAt: row.completed_at || row.created_at || new Date().toISOString(),
-      durationSec: row.duration_seconds || 0,
-      setsCompleted: row.sets_completed || 0,
-      totalVolumeKg: row.total_volume_kg || 0,
-      xpEarned: row.xp_earned || 0,
+    const history: CompletedSessionSummary[] = (dbSessions ?? []).map((row: Record<string, unknown>) => ({
+      id: String(row.client_ref || row.id || ""),
+      missionId: String(row.mission_id || "mission-custom"),
+      title: String(row.title || "Workout"),
+      date: (String(row.completed_at || row.created_at || new Date().toISOString())).slice(0, 10),
+      completedAt: String(row.completed_at || row.created_at || new Date().toISOString()),
+      durationSec: Number(row.duration_seconds) || 0,
+      setsCompleted: Number(row.sets_completed) || 0,
+      totalVolumeKg: Number(row.total_volume_kg) || 0,
+      xpEarned: Number(row.xp_earned) || 0,
       topSets: [],
       status: row.status,
     }));

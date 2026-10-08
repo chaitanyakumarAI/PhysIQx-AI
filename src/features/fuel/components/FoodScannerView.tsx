@@ -77,7 +77,7 @@ export function FoodScannerView() {
 
         <div className="flex items-center gap-1.5 rounded-full bg-zinc-900/80 px-3 py-1 text-xs font-semibold">
           <span className="size-2 rounded-full bg-brand animate-pulse" />
-          <span>AI Vision Scanner</span>
+          <span>Barcode Scanner</span>
         </div>
 
         <div className="flex items-center gap-2">

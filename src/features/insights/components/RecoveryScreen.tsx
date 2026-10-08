@@ -6,7 +6,6 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { Card } from "@/components/ui/Card";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { Button } from "@/components/ui/Button";
-import { Mascot } from "@/components/mascots/Mascot";
 import { iconSize } from "@/constants/icons";
 import {
   calculateReadiness,
@@ -200,13 +199,15 @@ export function RecoveryScreen() {
         </Card>
       </div>
 
-      {/* Dual Mascot Take */}
+      {/* Training Guidance */}
       <div className="grid grid-cols-2 gap-3">
-        {/* Kix */}
+        {/* Intensity */}
         <Card padding="sm" className="flex flex-col gap-2 border border-brand/20 bg-brand/5">
           <div className="flex items-center gap-2">
-            <Mascot pose="kix-determined" size={32} shape="circle" />
-            <span className="text-xs font-bold text-brand">Kix • Intensity</span>
+            <span className="grid size-7 place-items-center rounded-full bg-brand/20 text-brand">
+              <Zap size={14} aria-hidden />
+            </span>
+            <span className="text-xs font-bold text-brand">Target Intensity</span>
           </div>
           <p className="text-[11px] text-foreground-secondary leading-snug">
             {readiness.score >= 70
@@ -215,16 +216,18 @@ export function RecoveryScreen() {
           </p>
         </Card>
 
-        {/* Nyra */}
+        {/* Recovery Strategy */}
         <Card padding="sm" className="flex flex-col gap-2 border border-info/20 bg-info/5">
           <div className="flex items-center gap-2">
-            <Mascot pose="nyra-nod" size={32} shape="circle" />
-            <span className="text-xs font-bold text-info">Nyra • Recovery</span>
+            <span className="grid size-7 place-items-center rounded-full bg-info/20 text-info">
+              <Shield size={14} aria-hidden />
+            </span>
+            <span className="text-xs font-bold text-info">Recovery Strategy</span>
           </div>
           <p className="text-[11px] text-foreground-secondary leading-snug">
-            {todayWater < hydrationTarget
-              ? "Drink 500ml water before training to optimize fascial sliding."
-              : "Hydration balance is optimal for muscle protein synthesis."}
+            {readiness.score >= 70
+              ? "CNS recovery is optimal. Compound lifts prioritized."
+              : "Incorporate longer intra-set rest and keep 2-3 reps in reserve."}
           </p>
         </Card>
       </div>

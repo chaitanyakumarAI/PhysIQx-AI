@@ -1,4 +1,4 @@
-import { BarChart3, Dumbbell, HeartPulse, Droplets, Sparkles } from "lucide-react";
+import { BarChart3, Dumbbell, HeartPulse, Droplets } from "lucide-react";
 import type { DayStatus } from "@/types/training";
 import { mockTodayMission } from "@/data/mission";
 import { mockLatestPR } from "@/data/personalRecords";
@@ -94,25 +94,25 @@ const insight: Insight = {
 // logging surface, "drink more" linked to a dead route — a broken promise.)
 const priorities: DailyPriority[] = [
   {
-    id: "priority-hydration",
-    label: "Drink water (3.0L target)",
-    detail: "Supports recovery, joint lubrication, and cellular hydration",
-    iconId: "droplets",
+    id: "priority-workout",
+    label: "Hit today's Push-Heavy session",
+    detail: "Progressive overload on Barbell Bench Press & compound lifts",
+    iconId: "dumbbell",
     completed: false,
-    href: "/home?log=water",
+    href: "/train",
   },
   {
-    id: "priority-cardio",
-    label: "20-min zone-2 walk",
-    detail: "Cardio carries 25% of your score — an easy walk counts",
-    iconId: "heart-pulse",
+    id: "priority-strength",
+    label: "Check Strength Standards",
+    detail: "Track Big 4 1RM progress against Intermediate milestones",
+    iconId: "scale",
     completed: false,
-    href: "/train/cardio",
+    href: "/insights/strength",
   },
   {
     id: "priority-weigh-in",
     label: "Weekly weigh-in",
-    detail: "Keeps your Body Shape pillar current",
+    detail: "Keeps your strength-to-bodyweight ratios calibrated",
     iconId: "scale",
     completed: false,
     href: "/profile/body",
@@ -123,7 +123,6 @@ const quickActions: QuickAction[] = [
   { id: "log-cardio", label: "Log cardio", icon: HeartPulse, href: "/train/cardio" },
   { id: "start-workout", label: "Start workout", icon: Dumbbell, href: "/train" },
   { id: "log-water", label: "Log water", icon: Droplets, href: "/home?log=water" },
-  { id: "ai-coach", label: "AI Coach", icon: Sparkles, href: "/coach" },
 ];
 
 export const mockHomeData: HomeData = {

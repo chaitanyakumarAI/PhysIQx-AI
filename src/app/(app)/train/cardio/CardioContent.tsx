@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, X } from "lucide-react";
+import { Activity, ArrowLeft, ChevronRight, X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { FilterChipRow, type FilterChipOption } from "@/components/ui/FilterChipRow";
@@ -96,6 +97,35 @@ export function CardioContent() {
           tone="brand"
           aria-label={`${weekMinutes} of ${WEEKLY_TARGET_MINUTES} weekly cardio minutes`}
         />
+      </Card>
+
+      {/* Automatic Wearable Device Sync Card */}
+      <Card variant="accent" padding="md" className="flex flex-col gap-3 border border-brand/30 bg-surface/80">
+        <div className="flex items-start gap-3">
+          <span className="grid size-9 shrink-0 place-items-center rounded-full bg-brand/15 text-brand">
+            <Activity size={18} aria-hidden />
+          </span>
+          <div className="flex flex-col gap-0.5 min-w-0">
+            <h3 className="text-xs font-bold text-foreground">
+              Automatic Cardio Tracking
+            </h3>
+            <p className="text-[11px] text-foreground-secondary leading-relaxed">
+              Don&apos;t want to log manually? Connect Apple Health, Garmin, or Google Health Connect to automatically import outdoor runs, bike rides, and walks into your Cardio pillar.
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center justify-between border-t border-border/40 pt-2 text-xs">
+          <span className="text-[10px] text-foreground-secondary">
+            Syncs heart rate &amp; duration
+          </span>
+          <Link
+            href="/profile/integrations"
+            className="flex items-center gap-1 font-bold text-brand hover:underline"
+          >
+            <span>Set up device sync</span>
+            <ChevronRight size={13} aria-hidden />
+          </Link>
+        </div>
       </Card>
 
       <Section title="What did you do?">

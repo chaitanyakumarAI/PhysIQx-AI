@@ -78,7 +78,7 @@ export function GenerateProgramScreen() {
         </Link>
         <div>
           <h1 className="font-display text-2xl font-bold tracking-tight">
-            AI Program Architect
+            Program Builder
           </h1>
           <p className="text-xs text-foreground-secondary">
             Synthesizes split, volume sets, and progressive stimulus
@@ -183,7 +183,7 @@ export function GenerateProgramScreen() {
         <div className="flex items-start justify-between">
           <div>
             <span className="rounded-md bg-brand/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-brand">
-              AI Tailored Plan
+              Your Plan
             </span>
             <h2 className="mt-1 font-display text-xl font-bold">
               {generated.program.name}

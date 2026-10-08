@@ -4,7 +4,6 @@ import { useState } from "react";
 import { X, Share2, Copy, Check, Sparkles, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { Mascot } from "@/components/mascots/Mascot";
 import { iconSize } from "@/constants/icons";
 import { formatElapsedTime } from "../lib/derive";
 import { playScanSuccess } from "@/lib/audioEngine";
@@ -102,9 +101,9 @@ export function WorkoutShareModal({
             <Sparkles size={11} /> Verified Workout
           </div>
 
-          {/* Mascot Trophy Frame */}
-          <div className="my-4 size-24 overflow-hidden rounded-full ring-4 ring-brand/40 shadow-lg bg-surface">
-            <Mascot pose="kix-proud" shape="circle" size={96} />
+          {/* Trophy Frame */}
+          <div className="my-4 grid size-24 place-items-center rounded-full ring-4 ring-brand/40 shadow-lg bg-surface text-brand">
+            <Trophy size={48} aria-hidden />
           </div>
 
           <h3 className="font-display text-xl font-bold text-foreground line-clamp-1">

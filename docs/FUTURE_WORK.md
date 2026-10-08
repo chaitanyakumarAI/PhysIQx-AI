@@ -20,6 +20,7 @@ This document captures features, architectures, data models, and component bluep
 
 ### 1. Conversational AI Coach Dialogue (`/coach`)
 - **Route**: `/coach`
+- **Status (2026-09-28)**: A rule-based v1 exists in code but is switched off for this version. `src/app/(app)/coach/page.tsx` returns `notFound()`; Home and Insights entry points were removed. The UI (`CoachScreen.tsx`) and engine (`src/lib/aiCoachChat.ts` + tests) are kept for reinstatement.
 - **Concept & Architecture**:
   - Dedicated interactive dialogue surface connecting athletes directly to dual AI mascot coaching personas:
     - **Kix**: The Power Mascot (Greyhound/Canine) focusing on drive, progressive overload, streak consistency, and mental discipline.

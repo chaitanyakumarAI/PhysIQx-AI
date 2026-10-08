@@ -46,8 +46,8 @@ const coachAtmospherePrefs: PreferenceItem[] = [
   },
   {
     id: "showAiInsights",
-    label: "AI Coach Insights",
-    description: "Display AI-generated recommendations and training advice cards on Home and Insights screens.",
+    label: "Coach Insights",
+    description: "Show short training tips, calculated from your logged workouts, on Home and Insights.",
   },
   {
     id: "celebrationEffects",

@@ -15,7 +15,7 @@ export interface CoachInsightsContext {
 }
 
 /**
- * Generates deterministic, actionable AI Coach insights derived directly from
+ * Generates deterministic, rule-based coach insights derived directly from
  * completed workouts, pillar scores, streak momentum, and training ledgers.
  * Every insight body is strictly enforced to <= 2 sentences.
  */

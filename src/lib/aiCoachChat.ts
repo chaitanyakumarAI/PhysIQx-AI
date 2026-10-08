@@ -138,7 +138,7 @@ export function generateCoachResponse(
     } else {
       responseText = `Scheduled deloads every 5 to 8 weeks dissipate joint wear and reset neurological fatigue. Keep the weight moderate and focus on movement trajectory.`;
     }
-    action = { label: "Check AI split suggestions", href: "/train/programs/ai" };
+    action = { label: "View PhysIQ Split", href: "/train/programs/ai" };
   }
 
   // 7. General fallback

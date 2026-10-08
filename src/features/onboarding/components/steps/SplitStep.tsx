@@ -8,7 +8,7 @@ export interface SplitStepProps {
 }
 
 const splitDescription: Record<ProgramType, string> = {
-  ai: "Let PhysIQx build and adjust your plan",
+  ai: "A ready-made split that fits your training days",
   ppl: "Push, Pull, Legs rotation",
   "upper-lower": "Alternate upper and lower body days",
   bro: "One muscle group per session",

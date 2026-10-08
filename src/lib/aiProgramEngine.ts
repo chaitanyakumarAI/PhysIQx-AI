@@ -404,15 +404,15 @@ export function generateAdaptiveProgram(
 
   const variant: ProgramVariant = {
     daysPerWeek: clampedDays,
-    notes: `Adaptive AI program generated for ${goal} goal at ${experienceLevel} level.`,
+    notes: `Fixed program for a ${goal} goal at ${experienceLevel} level.`,
     days,
   };
 
   const program: ProgramDefinition = {
     type: "ai",
-    name: "PhysIQ Adaptive Engine",
+    name: "PhysIQ Split",
     level: toProgramLevel(experienceLevel),
-    description: `Customized ${clampedDays}-day split designed dynamically for your active ${goal} goal and fatigue profile.`,
+    description: `A ready-made ${clampedDays}-day split matched to your ${goal} goal and ${experienceLevel} experience level.`,
     recommendedDaysPerWeek: [clampedDays],
     variants: [variant],
   };
@@ -425,7 +425,7 @@ export function generateAdaptiveProgram(
 
   const userPlan: UserPlan = {
     id: `plan-ai-adaptive-${Date.now()}`,
-    name: `Adaptive ${goal.toUpperCase()} Split (${clampedDays}D)`,
+    name: `PhysIQ ${goal.toUpperCase()} Split (${clampedDays}D)`,
     days: userPlanDays,
   };
 
@@ -562,7 +562,8 @@ export function forecastScoreTrajectory(
 }
 
 /**
- * Builds the canonical multi-variant AI Coach program definition for Train screen and static routes.
+ * Builds the canonical multi-variant PhysIQ Split program definition for Train screen and static routes.
+ * Rule-based: fixed templates per days/week, sets/reps/rest from goal + experience. No model, no adaptation.
  */
 export function buildAiCoachProgramDefinition(
   goal: ProfileGoal = "bulk",
@@ -571,16 +572,16 @@ export function buildAiCoachProgramDefinition(
   const frequencies = [3, 4, 5, 6];
   const variants: ProgramVariant[] = frequencies.map((days) => ({
     daysPerWeek: days,
-    notes: `Adaptive AI split engineered for ${goal} at ${days} days per week. Auto-regulates volume based on logged session RPE.`,
+    notes: `Fixed ${days}-day template for a ${goal} goal at ${experienceLevel} level.`,
     days: generateDaysForFrequency(days, goal, experienceLevel),
   }));
 
   return {
     type: "ai",
-    name: "AI Coach Adaptive",
+    name: "PhysIQ Split",
     level: toProgramLevel(experienceLevel),
     description:
-      "Dynamic periodized split engineered by the PhysIQ AI Coach. Auto-adjusts sets, intensity, and volume based on your recovery, RPE, and progress.",
+      `A ready-made split for a ${goal} goal at ${experienceLevel} level, with ${frequencies[0]}–${frequencies[frequencies.length - 1]} day options. Sets, reps and rest follow standard ranges for that goal.`,
     recommendedDaysPerWeek: frequencies,
     variants,
   };
