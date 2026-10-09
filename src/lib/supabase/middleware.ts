@@ -21,7 +21,7 @@ async function checkSupabaseAvailable(url: string): Promise<boolean> {
 
   try {
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 800);
+    const timer = setTimeout(() => controller.abort(), 2500);
     const res = await fetch(`${url}/auth/v1/health`, {
       method: "GET",
       signal: controller.signal,

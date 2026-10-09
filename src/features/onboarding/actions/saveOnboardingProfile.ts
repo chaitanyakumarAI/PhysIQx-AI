@@ -29,6 +29,25 @@ export async function saveOnboardingProfile(
     return { success: false, error: "Not authenticated. Please log in again." };
   }
 
+  // 1. Try updating existing profile row created by signup trigger
+  const { error: updateError } = await supabase
+    .from("profiles")
+    .update({
+      goal: values.goal ?? null,
+      experience_level: values.experienceLevel ?? null,
+      active_split: values.activeSplit ?? null,
+      session_frequency: values.sessionFrequency ?? null,
+      goal_body_shape: values.goalBodyShape ?? null,
+      training_days_per_week: values.trainingDaysPerWeek,
+      onboarding_completed_at: new Date().toISOString(),
+    })
+    .eq("id", user.id);
+
+  if (!updateError) {
+    return { success: true };
+  }
+
+  // 2. Fallback to upsert if row did not exist
   const { error } = await supabase.from("profiles").upsert(
     {
       id: user.id,
