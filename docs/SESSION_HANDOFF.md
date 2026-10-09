@@ -1,5 +1,6 @@
 # PhysIQx AI — Complete Agent Handover & Architecture Guide
-*Last updated: 2026-09-28 · Comprehensive handover for incoming coding agents.*
+*Last updated: 2026-10-09 · Comprehensive handover for incoming coding agents.*
+*Latest Directives: See `docs/PRODUCT_DIRECTIVES.md` (Kix & Nyra CoC-style hover dialogue guide, social video series, AI word cleanse, hydration removal, sync-only cardio).*
 
 ---
 

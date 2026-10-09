@@ -25,12 +25,10 @@ export const onboardingSchema = z.object({
   sessionFrequency: z.enum(["once", "twice", "flexible"]).optional(),
   goalBodyShape: z.enum(["lean", "athletic", "muscular", "powerful"]).optional(),
   trainingDaysPerWeek: z.number().min(3).max(6),
-  hydrationGoalLiters: z.number().min(1.5).max(5),
 });
 
 export type OnboardingValues = z.infer<typeof onboardingSchema>;
 
 export const defaultOnboardingValues: OnboardingValues = {
   trainingDaysPerWeek: 4,
-  hydrationGoalLiters: 2.5,
 };

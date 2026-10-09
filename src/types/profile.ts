@@ -51,7 +51,6 @@ export interface Profile {
   activeSplit: ProgramType;
   sessionFrequency: SessionFrequency;
   goalBodyShape: GoalBodyShape;
-  hydrationGoalLiters: number;
   dnaArchetype: string;
   units: "kg" | "lb";
 }

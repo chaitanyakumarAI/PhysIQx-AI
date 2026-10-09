@@ -20,7 +20,7 @@ export const BASE_ACHIEVEMENTS_CATALOG: Omit<ProfileAchievement, "state" | "prog
   { id: "first-rep", name: "First Rep", rarity: "common", iconId: "trophy" },
   { id: "week-warrior", name: "Week Warrior", rarity: "common", iconId: "flame" },
   { id: "iron-month", name: "Iron Month", rarity: "rare", iconId: "dumbbell" },
-  { id: "hydration-master", name: "Hydration Master", rarity: "rare", iconId: "droplet" },
+  { id: "cardio-crusher", name: "Cardio Crusher", rarity: "rare", iconId: "flame" },
   { id: "pr-hunter", name: "PR Hunter", rarity: "epic", iconId: "trophy" },
   { id: "gym-warrior", name: "Gym Warrior", rarity: "epic", iconId: "dumbbell" },
   { id: "consistency-king", name: "Consistency King", rarity: "legendary", iconId: "crown" },
@@ -72,8 +72,8 @@ export function evaluateAchievements(
         // 30 sessions
         rawProgress = Math.min(1, sessionsCount / 30);
         break;
-      case "hydration-master":
-        // Fallback progress or session frequency proxy
+      case "cardio-crusher":
+        // 5 consistent conditioning sessions
         rawProgress = sessionsCount >= 5 ? 1 : Math.min(1, sessionsCount / 5);
         break;
       case "pr-hunter": {

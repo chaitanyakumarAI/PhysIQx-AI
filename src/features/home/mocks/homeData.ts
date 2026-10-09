@@ -63,16 +63,7 @@ const week: HomeData["week"] = {
   days,
 };
 
-const fuel: FuelProgress[] = [
-  {
-    kind: "hydration",
-    label: "Hydration",
-    current: 1.8,
-    goal: profile.hydrationGoalLiters,
-    unit: "L",
-    percent: computePercent(1.8, profile.hydrationGoalLiters),
-  },
-];
+const fuel: FuelProgress[] = [];
 
 // Coach insights only speak from tracked inputs (sessions, cardio logs,
 // weigh-ins) — hydration is a self-serve habit with no coach commentary.

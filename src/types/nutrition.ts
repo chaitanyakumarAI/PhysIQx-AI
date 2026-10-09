@@ -1,4 +1,4 @@
-export type FuelKind = "hydration";
+export type FuelKind = "protein" | "calories";
 
 export interface FuelProgress {
   kind: FuelKind;

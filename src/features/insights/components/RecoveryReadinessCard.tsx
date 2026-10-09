@@ -11,17 +11,9 @@ import {
   type SessionRecord,
 } from "@/lib/recoveryEngine";
 import { useSessionStore } from "@/store/sessionStore";
-import { useHydrationStore } from "@/store/hydrationStore";
 
 export function RecoveryReadinessCard() {
   const history = useSessionStore((state) => state.history);
-  const hydrationEntries = useHydrationStore((state) => state.entries);
-  const hydrationTarget = useHydrationStore((state) => state.dailyGoalMl ?? 3000);
-
-  const todayStr = new Date().toISOString().slice(0, 10);
-  const todayWater = hydrationEntries
-    .filter((e) => e.timestamp.startsWith(todayStr))
-    .reduce((sum, e) => sum + e.amountMl, 0);
 
   const sessionRecords: SessionRecord[] = history.map((s) => ({
     date: s.completedAt || s.date,
@@ -30,7 +22,7 @@ export function RecoveryReadinessCard() {
     durationSec: s.durationSec,
   }));
 
-  const readiness = calculateReadiness(sessionRecords, todayWater, hydrationTarget, 3);
+  const readiness = calculateReadiness(sessionRecords, 3);
   const tierMeta = READINESS_TIER_META[readiness.tier];
 
   return (
@@ -73,12 +65,12 @@ export function RecoveryReadinessCard() {
         </div>
       </div>
 
-      {/* 4 Pillar Breakdown Mini-Gauges */}
-      <div className="grid grid-cols-2 gap-2 text-xs">
+      {/* 3 Pillar Breakdown Mini-Gauges */}
+      <div className="grid grid-cols-3 gap-2 text-xs">
         <div className="flex flex-col gap-1 rounded-lg bg-surface-elevated/40 p-2 border border-border/30">
           <div className="flex items-center justify-between">
-            <span className="text-foreground-secondary text-[11px]">Neuromuscular</span>
-            <span className="font-semibold font-display tabular-nums text-foreground text-[11px]">
+            <span className="text-foreground-secondary text-[10px] truncate">Neuromuscular</span>
+            <span className="font-semibold font-display tabular-nums text-foreground text-[10px]">
               {readiness.pillars.neuromuscular}%
             </span>
           </div>
@@ -87,8 +79,8 @@ export function RecoveryReadinessCard() {
 
         <div className="flex flex-col gap-1 rounded-lg bg-surface-elevated/40 p-2 border border-border/30">
           <div className="flex items-center justify-between">
-            <span className="text-foreground-secondary text-[11px]">Connective Tissue</span>
-            <span className="font-semibold font-display tabular-nums text-foreground text-[11px]">
+            <span className="text-foreground-secondary text-[10px] truncate">Connective</span>
+            <span className="font-semibold font-display tabular-nums text-foreground text-[10px]">
               {readiness.pillars.connectiveTissue}%
             </span>
           </div>
@@ -97,22 +89,12 @@ export function RecoveryReadinessCard() {
 
         <div className="flex flex-col gap-1 rounded-lg bg-surface-elevated/40 p-2 border border-border/30">
           <div className="flex items-center justify-between">
-            <span className="text-foreground-secondary text-[11px]">Autonomic CNS</span>
-            <span className="font-semibold font-display tabular-nums text-foreground text-[11px]">
+            <span className="text-foreground-secondary text-[10px] truncate">Autonomic</span>
+            <span className="font-semibold font-display tabular-nums text-foreground text-[10px]">
               {readiness.pillars.autonomicNervous}%
             </span>
           </div>
           <ProgressBar value={readiness.pillars.autonomicNervous} size="sm" tone="brand" />
-        </div>
-
-        <div className="flex flex-col gap-1 rounded-lg bg-surface-elevated/40 p-2 border border-border/30">
-          <div className="flex items-center justify-between">
-            <span className="text-foreground-secondary text-[11px]">Hydration Recovery</span>
-            <span className="font-semibold font-display tabular-nums text-foreground text-[11px]">
-              {readiness.pillars.glycogenHydration}%
-            </span>
-          </div>
-          <ProgressBar value={readiness.pillars.glycogenHydration} size="sm" tone="info" />
         </div>
       </div>
 

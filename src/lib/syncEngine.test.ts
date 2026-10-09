@@ -5,7 +5,12 @@ import {
   removePendingSession,
   clearSyncQueue,
   flushSyncQueue,
+  enqueuePendingCardioSession,
+  getPendingCardioSyncQueue,
+  clearCardioSyncQueue,
+  flushCardioSyncQueue,
 } from "./syncEngine";
+import type { CardioSession } from "@/store/cardioStore";
 import type { WorkoutSession } from "@/types/workoutSession";
 import type { CompletedSessionSummary } from "@/store/sessionStore";
 
@@ -103,5 +108,55 @@ describe("syncEngine", () => {
     const queue = getPendingSyncQueue();
     expect(queue.length).toBe(1);
     expect(queue[0]?.retryCount).toBe(1);
+  });
+
+  describe("cardio sync queue", () => {
+    beforeEach(() => {
+      clearCardioSyncQueue();
+    });
+
+    const mockCardio: CardioSession = {
+      id: "cardio-run-1",
+      date: "2026-10-09",
+      activity: "run",
+      minutes: 30,
+      source: "apple_health",
+      distanceKm: 5.2,
+      avgHeartRate: 155,
+      caloriesBurned: 320,
+    };
+
+    it("enqueues a wearable cardio session and avoids duplicates", () => {
+      enqueuePendingCardioSession(mockCardio);
+      const queue = getPendingCardioSyncQueue();
+      expect(queue.length).toBe(1);
+      expect(queue[0]?.session.activity).toBe("run");
+      expect(queue[0]?.session.source).toBe("apple_health");
+
+      // duplicate attempt
+      enqueuePendingCardioSession(mockCardio);
+      expect(getPendingCardioSyncQueue().length).toBe(1);
+    });
+
+    it("flushes successful cardio sessions and retries failed ones", async () => {
+      enqueuePendingCardioSession(mockCardio);
+
+      const mockActionSuccess = vi.fn().mockResolvedValue({ success: true, cardioDbId: "db-cardio-1" });
+      const report = await flushCardioSyncQueue(mockActionSuccess);
+
+      expect(report.syncedCount).toBe(1);
+      expect(report.failedCount).toBe(0);
+      expect(getPendingCardioSyncQueue().length).toBe(0);
+
+      // Re-enqueue and simulate failure
+      enqueuePendingCardioSession(mockCardio);
+      const mockActionFail = vi.fn().mockResolvedValue({ success: false, error: "Supabase timeout" });
+      const failReport = await flushCardioSyncQueue(mockActionFail);
+
+      expect(failReport.syncedCount).toBe(0);
+      expect(failReport.failedCount).toBe(1);
+      expect(getPendingCardioSyncQueue().length).toBe(1);
+      expect(getPendingCardioSyncQueue()[0]?.retryCount).toBe(1);
+    });
   });
 });

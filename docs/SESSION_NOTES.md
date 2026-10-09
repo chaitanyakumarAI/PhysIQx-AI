@@ -1,6 +1,22 @@
-# Session Notes — July 7, 2026
+# Session Notes — October 9, 2026
 
-A full record of decisions, evaluations, and future directions discussed in this session.
+## Core Directives & Vision Updates
+1. **Gamified Fitness Characters (Kix & Nyra — Clash of Clans / Supercell Style)**:
+   - Inspired by the Villager character in Clash of Clans who appears contextually with speech bubbles ("Welcome Chief!", "Thank goodness you're back!", "The whole village is counting on you!").
+   - Kix (effort, progressive overload, heavy iron) and Nyra (biomechanics, recovery, standards) will appear as hover dialogue companions introducing the app, explaining features, welcoming users back, and celebrating achievements.
+   - Social media video series planned starring Kix and Nyra.
+2. **Remove Misleading 'AI' Buzzwords**:
+   - Audit across the app and remove "AI" wherever machine learning is not used.
+3. **Remove All Hydration Features**:
+   - Completely disconnect and remove all hydration-related tracking from the app functioning.
+4. **Cardio Architecture: Sync-Only**:
+   - Remove manual cardio logging form; focus exclusively on wearable device syncing.
+
+*See `docs/PRODUCT_DIRECTIVES.md` for the full specification.*
+
+---
+
+# Past Session Notes — July 7, 2026
 
 ---
 

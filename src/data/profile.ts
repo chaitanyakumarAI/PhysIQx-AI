@@ -13,7 +13,6 @@ export const mockProfile: Profile = {
   activeSplit: "ppl",
   sessionFrequency: "once",
   goalBodyShape: "athletic",
-  hydrationGoalLiters: 3,
   dnaArchetype: "Endurance-forward hybrid athlete",
   units: "kg",
 };

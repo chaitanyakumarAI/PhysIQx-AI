@@ -16,7 +16,6 @@ export type ReadinessTier = "peak" | "optimal" | "fatigued" | "overreached";
 export interface RecoveryPillars {
   neuromuscular: number; // 0 - 100
   connectiveTissue: number; // 0 - 100
-  glycogenHydration: number; // 0 - 100
   autonomicNervous: number; // 0 - 100
 }
 
@@ -75,8 +74,6 @@ export interface SessionRecord {
  */
 export function calculateReadiness(
   recentSessions: SessionRecord[],
-  todayHydrationMl: number = 2500,
-  hydrationTargetMl: number = 3000,
   currentStreakDays: number = 3
 ): ReadinessScore {
   // 1. Calculate Acute (last 7 days) and Chronic (last 28 days) volume
@@ -112,17 +109,13 @@ export function calculateReadiness(
       : 1.0;
 
   // 2. Pillar Sub-scores
-  // Neuromuscular: starts at 100, drops with heavy acute spikes and high RPE
+  // Neuromuscular: starts at 95, drops with heavy acute spikes and high RPE
   let neuromuscular = 95 - (acwrRatio > 1.3 ? (acwrRatio - 1.3) * 50 : 0) - recentHighRpeCount * 8;
   neuromuscular = Math.min(100, Math.max(20, Math.round(neuromuscular)));
 
   // Connective tissue: drops if training >= 6 days in a row without a rest day
   let connectiveTissue = 100 - (sessionsLast7Days >= 5 ? 20 : 0) - (currentStreakDays > 7 ? 15 : 0);
   connectiveTissue = Math.min(100, Math.max(25, Math.round(connectiveTissue)));
-
-  // Glycogen & Hydration: ratio of consumed water vs target
-  const hydrationRatio = Math.min(1.2, todayHydrationMl / Math.max(1000, hydrationTargetMl));
-  const glycogenHydration = Math.min(100, Math.max(30, Math.round(hydrationRatio * 90)));
 
   // Autonomic nervous system: balanced by ACWR sweet spot (0.8 - 1.25)
   let autonomicNervous = 90;
@@ -135,12 +128,11 @@ export function calculateReadiness(
   }
   autonomicNervous = Math.min(100, Math.max(20, Math.round(autonomicNervous)));
 
-  // 3. Composite Readiness Score (weighted sum)
+  // 3. Composite Readiness Score (weighted sum: neuromuscular 40%, autonomic 35%, connective 25%)
   const compositeScore = Math.round(
-    neuromuscular * 0.35 +
-      autonomicNervous * 0.3 +
-      connectiveTissue * 0.2 +
-      glycogenHydration * 0.15
+    neuromuscular * 0.40 +
+      autonomicNervous * 0.35 +
+      connectiveTissue * 0.25
   );
 
   const score = Math.min(100, Math.max(0, compositeScore));
@@ -186,10 +178,10 @@ export function calculateReadiness(
     tier = "overreached";
     headline = "High fatigue load. Recovery protocol strongly advised.";
     recommendation =
-      "Your acute-to-chronic workload ratio indicates acute overreaching. Take a dedicated rest day with hydration.";
+      "Your acute-to-chronic workload ratio indicates acute overreaching. Take a dedicated full recovery rest day.";
     suggestedAction = {
-      label: "Log Hydration & Rest",
-      href: "/home?log=water",
+      label: "View Recovery Protocols",
+      href: "/insights/recovery",
     };
   }
 
@@ -200,7 +192,6 @@ export function calculateReadiness(
     pillars: {
       neuromuscular,
       connectiveTissue,
-      glycogenHydration,
       autonomicNervous,
     },
     headline,

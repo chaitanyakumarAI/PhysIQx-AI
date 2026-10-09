@@ -1,24 +1,13 @@
-"use client";
-
 import { useMemo } from "react";
-import { Droplets, Flame, Zap } from "lucide-react";
+import { Flame, Zap } from "lucide-react";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { iconSize } from "@/constants/icons";
-import { useHydrationStore, getTodayHydrationTotal } from "@/store/hydrationStore";
 import { useNutritionStore } from "@/store/nutritionStore";
-import { playWaterDrop } from "@/lib/audioEngine";
 
 export function MacroGaugeCard() {
   const targets = useNutritionStore((state) => state.targets);
   const items = useNutritionStore((state) => state.items);
-  const hydrationEntries = useHydrationStore((state) => state.entries);
-  const addWater = useHydrationStore((state) => state.addWater);
-
-  const waterConsumed = useMemo(
-    () => getTodayHydrationTotal(hydrationEntries),
-    [hydrationEntries],
-  );
 
   const summary = useMemo(() => {
     const today = new Date().toISOString().split("T")[0]!;
@@ -59,11 +48,6 @@ export function MacroGaugeCard() {
     100,
     Math.round((summary.consumedFat / targets.fat) * 100),
   );
-
-  const handleQuickWater = () => {
-    addWater(250);
-    playWaterDrop();
-  };
 
   return (
     <Card className="flex flex-col gap-5 border-border/80 bg-surface/90">
@@ -169,31 +153,6 @@ export function MacroGaugeCard() {
           <span className="text-[10px] text-foreground-secondary">
             Goal: {targets.fat}g
           </span>
-        </div>
-      </div>
-
-      {/* Hydration Synchronizer Strip */}
-      <div className="flex items-center justify-between rounded-card border border-sky-500/20 bg-sky-950/20 px-3.5 py-2.5 text-xs">
-        <div className="flex items-center gap-2.5 text-sky-300">
-          <Droplets size={iconSize.sm} className="shrink-0 text-sky-400" />
-          <span>
-            Hydration: <strong>{waterConsumed.toLocaleString()}</strong> / {targets.waterMl.toLocaleString()} ml
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={handleQuickWater}
-            className="rounded-full border border-sky-500/40 bg-sky-500/20 px-2.5 py-1 text-[11px] font-semibold text-sky-300 transition-colors hover:bg-sky-500/30"
-          >
-            +250ml
-          </button>
-          <Link
-            href="/home?log=water"
-            className="text-[11px] font-medium text-sky-400 underline underline-offset-2 hover:text-sky-300"
-          >
-            Ledger
-          </Link>
         </div>
       </div>
     </Card>

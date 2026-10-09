@@ -1,6 +1,8 @@
 import type { WorkoutSession } from "@/types/workoutSession";
 import type { CompletedSessionSummary } from "@/store/sessionStore";
 import type { SaveSessionResult } from "@/features/session/actions/saveWorkoutSession";
+import type { CardioSession } from "@/store/cardioStore";
+import type { SaveCardioResult } from "@/features/train/actions/saveCardioSession";
 
 export interface PendingSyncItem {
   id: string;
@@ -177,5 +179,106 @@ export function initOnlineSync(
 
   return () => {
     window.removeEventListener("online", handleOnline);
+  };
+}
+
+// ------------------------------------------------------------------
+// Cardio Sync Queue (Wearable synced activities)
+// ------------------------------------------------------------------
+
+const CARDIO_STORAGE_KEY = "physiqx-cardio-sync-queue";
+
+export interface PendingCardioSyncItem {
+  id: string;
+  session: CardioSession;
+  queuedAt: string;
+  retryCount: number;
+}
+
+export function getPendingCardioSyncQueue(): PendingCardioSyncItem[] {
+  const storage = getStorage();
+  if (!storage) return [];
+  try {
+    const raw = storage.getItem(CARDIO_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function savePendingCardioSyncQueue(queue: PendingCardioSyncItem[]): void {
+  const storage = getStorage();
+  if (!storage) return;
+  try {
+    storage.setItem(CARDIO_STORAGE_KEY, JSON.stringify(queue));
+  } catch (error) {
+    console.error("[syncEngine] Error saving cardio sync queue:", error);
+  }
+}
+
+export function enqueuePendingCardioSession(session: CardioSession): void {
+  const queue = getPendingCardioSyncQueue();
+  const exists = queue.some((item) => item.id === session.id);
+
+  if (!exists) {
+    queue.push({
+      id: session.id,
+      session,
+      queuedAt: new Date().toISOString(),
+      retryCount: 0,
+    });
+    savePendingCardioSyncQueue(queue);
+  }
+}
+
+export function removePendingCardioSession(sessionId: string): void {
+  const queue = getPendingCardioSyncQueue();
+  const filtered = queue.filter((item) => item.id !== sessionId);
+  savePendingCardioSyncQueue(filtered);
+}
+
+export function clearCardioSyncQueue(): void {
+  const storage = getStorage();
+  if (!storage) return;
+  try {
+    storage.removeItem(CARDIO_STORAGE_KEY);
+  } catch {
+    // Ignore storage errors
+  }
+}
+
+export async function flushCardioSyncQueue(
+  syncAction: (session: CardioSession) => Promise<SaveCardioResult>,
+): Promise<SyncReport> {
+  const queue = getPendingCardioSyncQueue();
+  if (queue.length === 0) {
+    return { syncedCount: 0, failedCount: 0, remainingCount: 0 };
+  }
+
+  let syncedCount = 0;
+  let failedCount = 0;
+  const remainingQueue: PendingCardioSyncItem[] = [];
+
+  for (const item of queue) {
+    try {
+      const result = await syncAction(item.session);
+      if (result.success) {
+        syncedCount += 1;
+      } else {
+        failedCount += 1;
+        remainingQueue.push({ ...item, retryCount: item.retryCount + 1 });
+      }
+    } catch {
+      failedCount += 1;
+      remainingQueue.push({ ...item, retryCount: item.retryCount + 1 });
+    }
+  }
+
+  savePendingCardioSyncQueue(remainingQueue);
+
+  return {
+    syncedCount,
+    failedCount,
+    remainingCount: remainingQueue.length,
   };
 }

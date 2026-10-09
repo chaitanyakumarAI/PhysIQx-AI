@@ -39,7 +39,7 @@ export default function HologramDemoPage() {
           PhysIQx AI — Hologram Body Scan Scanner
         </h1>
         <p className="mt-2 text-sm md:text-base text-gray-400">
-          Dynamic Asset Registry ({REGISTERED_BODY_SCANS.size} Certified AI Assets Loaded) • Smart Fallback Architecture
+          Dynamic Asset Registry ({REGISTERED_BODY_SCANS.size} Certified 3D Scan Models Loaded) • Smart Fallback Architecture
         </p>
       </header>
 

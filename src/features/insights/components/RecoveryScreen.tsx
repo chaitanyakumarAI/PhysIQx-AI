@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, HeartPulse, Sparkles, Activity, Droplets, Zap, Shield, Dumbbell } from "lucide-react";
+import { ArrowLeft, HeartPulse, Sparkles, Activity, Zap, Shield, Dumbbell } from "lucide-react";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { Card } from "@/components/ui/Card";
 import { ProgressBar } from "@/components/ui/ProgressBar";
@@ -13,17 +13,9 @@ import {
   type SessionRecord,
 } from "@/lib/recoveryEngine";
 import { useSessionStore } from "@/store/sessionStore";
-import { useHydrationStore } from "@/store/hydrationStore";
 
 export function RecoveryScreen() {
   const history = useSessionStore((state) => state.history);
-  const hydrationEntries = useHydrationStore((state) => state.entries);
-  const hydrationTarget = useHydrationStore((state) => state.dailyGoalMl ?? 3000);
-
-  const todayStr = new Date().toISOString().slice(0, 10);
-  const todayWater = hydrationEntries
-    .filter((e) => e.timestamp.startsWith(todayStr))
-    .reduce((sum, e) => sum + e.amountMl, 0);
 
   const sessionRecords: SessionRecord[] = history.map((s) => ({
     date: s.completedAt || s.date,
@@ -32,7 +24,7 @@ export function RecoveryScreen() {
     durationSec: s.durationSec,
   }));
 
-  const readiness = calculateReadiness(sessionRecords, todayWater, hydrationTarget, 3);
+  const readiness = calculateReadiness(sessionRecords, 3);
   const tierMeta = READINESS_TIER_META[readiness.tier];
 
   return (
@@ -176,25 +168,6 @@ export function RecoveryScreen() {
               Measures sympathetic vs parasympathetic tone, workload equilibrium, and systemic stress.
             </p>
             <ProgressBar value={readiness.pillars.autonomicNervous} size="sm" tone="brand" className="mt-2" />
-          </div>
-        </Card>
-
-        {/* Hydration */}
-        <Card padding="sm" className="flex items-start gap-3 border border-border/60">
-          <span className="grid size-9 place-items-center rounded-full bg-cyan-500/15 text-cyan-400 shrink-0 mt-0.5">
-            <Droplets size={iconSize.sm} />
-          </span>
-          <div className="flex-1">
-            <div className="flex items-baseline justify-between">
-              <h4 className="text-xs font-bold text-foreground">Cellular Glycogen & Hydration</h4>
-              <span className="font-display text-xs font-bold tabular-nums text-foreground">
-                {readiness.pillars.glycogenHydration}%
-              </span>
-            </div>
-            <p className="text-[11px] text-foreground-secondary mt-0.5">
-              Connective tissue lubrication, fluid volume ({todayWater}ml / {hydrationTarget}ml), and substrate availability.
-            </p>
-            <ProgressBar value={readiness.pillars.glycogenHydration} size="sm" tone="info" className="mt-2" />
           </div>
         </Card>
       </div>

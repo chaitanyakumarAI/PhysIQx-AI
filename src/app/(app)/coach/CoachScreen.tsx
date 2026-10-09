@@ -208,7 +208,7 @@ export function CoachScreen() {
             <Sparkles size={16} aria-hidden />
           </span>
           <div>
-            <h1 className="font-display text-base font-bold leading-tight">AI Coach</h1>
+            <h1 className="font-display text-base font-bold leading-tight">Coach</h1>
             <p className="text-[11px] text-foreground-secondary">
               {persona === "kix" ? "Kix · drive & overload" : "Nyra · precision & recovery"}
             </p>

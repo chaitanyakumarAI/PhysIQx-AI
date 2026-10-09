@@ -114,7 +114,7 @@ export function MovementFormGuide({ exercise }: MovementFormGuideProps) {
         </Card>
       )}
 
-      {/* Ask AI Coach Nyra Cues Banner */}
+      {/* Ask Coach Nyra Cues Banner */}
       <Card padding="sm" className="flex items-center justify-between gap-3 bg-surface-elevated/70 border border-border/60">
         <div className="flex items-center gap-2.5">
           <span className="grid size-9 place-items-center rounded-full bg-info/15 text-info">

@@ -16,7 +16,7 @@ describe("recoveryEngine", () => {
       { date: new Date(Date.now() - 26 * 24 * 3600 * 1000).toISOString(), totalVolumeKg: 7000, avgRpe: 7.0 },
     ];
 
-    const readiness = calculateReadiness(sessions, 3000, 3000, 2);
+    const readiness = calculateReadiness(sessions, 2);
     expect(readiness.score).toBeGreaterThanOrEqual(80);
     expect(readiness.pillars.neuromuscular).toBeGreaterThan(80);
     expect(readiness.pillars.autonomicNervous).toBeGreaterThan(80);
@@ -33,27 +33,31 @@ describe("recoveryEngine", () => {
       { date: new Date(Date.now() - 5 * 24 * 3600 * 1000).toISOString(), totalVolumeKg: 13000, avgRpe: 9.0 },
     ];
 
-    const readiness = calculateReadiness(sessions, 1500, 3000, 10);
+    const readiness = calculateReadiness(sessions, 10);
     expect(readiness.acwrRatio).toBeGreaterThan(1.4);
     expect(readiness.score).toBeLessThan(65);
     expect(["fatigued", "overreached"]).toContain(readiness.tier);
     expect(readiness.pillars.neuromuscular).toBeLessThan(75);
   });
 
-  it("penalizes score when dehydration is significant", () => {
+  it("penalizes connective tissue when streak is excessively long without rest days", () => {
     const sessions: SessionRecord[] = [
-      { date: new Date(Date.now() - 2 * 24 * 3600 * 1000).toISOString(), totalVolumeKg: 7000, avgRpe: 7.0 },
+      { date: new Date(Date.now() - 1 * 24 * 3600 * 1000).toISOString(), totalVolumeKg: 5000, avgRpe: 7.0 },
+      { date: new Date(Date.now() - 2 * 24 * 3600 * 1000).toISOString(), totalVolumeKg: 5000, avgRpe: 7.0 },
+      { date: new Date(Date.now() - 3 * 24 * 3600 * 1000).toISOString(), totalVolumeKg: 5000, avgRpe: 7.0 },
+      { date: new Date(Date.now() - 4 * 24 * 3600 * 1000).toISOString(), totalVolumeKg: 5000, avgRpe: 7.0 },
+      { date: new Date(Date.now() - 5 * 24 * 3600 * 1000).toISOString(), totalVolumeKg: 5000, avgRpe: 7.0 },
+      { date: new Date(Date.now() - 6 * 24 * 3600 * 1000).toISOString(), totalVolumeKg: 5000, avgRpe: 7.0 },
     ];
 
-    const hydrated = calculateReadiness(sessions, 3000, 3000, 2);
-    const dehydrated = calculateReadiness(sessions, 500, 3000, 2);
+    const restedStreak = calculateReadiness(sessions, 3);
+    const excessiveStreak = calculateReadiness(sessions, 12);
 
-    expect(hydrated.pillars.glycogenHydration).toBeGreaterThan(dehydrated.pillars.glycogenHydration);
-    expect(hydrated.score).toBeGreaterThan(dehydrated.score);
+    expect(restedStreak.pillars.connectiveTissue).toBeGreaterThanOrEqual(excessiveStreak.pillars.connectiveTissue);
   });
 
   it("handles zero sessions gracefully without NaN or division by zero", () => {
-    const readiness = calculateReadiness([], 0, 3000, 0);
+    const readiness = calculateReadiness([], 0);
     expect(readiness.score).toBeGreaterThan(0);
     expect(readiness.score).toBeLessThanOrEqual(100);
     expect(isNaN(readiness.score)).toBe(false);

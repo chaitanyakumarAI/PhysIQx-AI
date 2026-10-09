@@ -5,7 +5,34 @@ Last audited: **2026-09-28**.
 
 ---
 
-## 🔴 Do Now — Blockers & Quick Fixes
+## 🔴 Immediate Action Items (October 2026 Directives)
+
+- [ ] **Disconnect & Remove All Hydration Features**
+  Remove `HydrationLogSheet.tsx`, disconnect `hydrationStore.ts`, remove water quick-logs,
+  remove hydration from `recoveryEngine.ts` and `RecoveryReadinessCard.tsx`, remove hydration goals
+  from profile/onboarding schemas, and remove "Hydration Master" achievement.
+
+- [ ] **Cardio Refinement: Sync-Only (No Manual Logging)**
+  In `/train/cardio` (`CardioContent.tsx`), remove manual activity chips, duration chips, custom duration input,
+  and "Save session" button. Keep screen dedicated strictly to synced activities from connected wearables (Apple Health, Garmin, Health Connect).
+
+- [ ] **Terminology Audit: Remove Misleading 'AI' Buzzwords**
+  Remove 'AI' wherever machine learning is not used: change "AI Coach" → "Coach",
+  "AI Insights" → "Coach Insights", "Certified AI Assets" → "Certified 3D Scan Models",
+  "AI Program Architect" → "Smart Program Architect". Keep copy authentic.
+
+- [ ] **Gamified Character Overlays (Kix & Nyra — Interactive Dialogue Guide Mechanic)**
+  Adapt the mobile gaming engagement mechanic (Supercell-style contextual speech bubbles, warm greetings, and guidance)
+  into PhysIQx's sleek dark-athletic aesthetic (not a literal visual copy). Includes onboarding welcome, screen explanations,
+  welcome-back greetings, and PR celebration dialogue bubbles.
+
+- [ ] **Kix & Nyra Social Media Video Series Planning**
+  Plan short-form video series (Instagram/TikTok/Shorts) featuring Kix & Nyra discussing fitness myths,
+  lifting mechanics, athlete humor, and gamified challenges to establish IP and community.
+
+---
+
+## 🔴 Past Blockers & Quick Fixes (Completed)
 
 - [x] **Commit the design-folder reorganisation** *(67fde01)*
   `design/` reorganised — past UI screenshots moved to `past_UI/`,
@@ -170,15 +197,20 @@ Last audited: **2026-09-28**.
 
 ---
 
-## 🔵 Phase 4 — Database
+## 🔵 Phase 4 — Database & Offline Sync (Complete)
 
-- [ ] Design Supabase schema: `profiles`, `sessions`, `session_exercises`,
-  `sets`, `cardio_logs`, `hydration_logs`, `xp_transactions`
-- [ ] Replace `src/data/` fixtures with real `supabase.from()` calls
-  behind the existing `api/get*Data.ts` seams (no screen changes needed)
-- [x] **Offline-first session logging** — `lib/syncEngine.ts`
-  Local store-first writes with persistent background sync queue (`physiqx-sync-queue`).
-  Auto-retries on browser `online` event and app rehydration. Survives airplane mode.
+- [x] **Design Supabase schema & migrations**
+  Created migration files `001_create_profiles.sql`, `002_create_workout_tables.sql`,
+  `003_add_session_client_ref.sql`, and `004_create_cardio_and_device_sync.sql`
+  covering `profiles`, `sessions`, `session_exercises`, `exercise_sets`, `cardio_logs`, and `xp_transactions`.
+- [x] **Wire database seams with safe offline fallback**
+  `getProfileData.ts`, `getHomeData.ts`, `getInsightsData.ts`, and `getCompeteData.ts`
+  query Supabase directly and gracefully fall back to local ledgers/fixtures if unauthenticated or offline.
+- [x] **Persist onboarding output to `profiles` table**
+  `saveOnboardingProfile.ts` server action upserts to Supabase `profiles` with user auth guard.
+- [x] **Offline-first session & cardio logging** — `lib/syncEngine.ts`
+  Local store-first writes with persistent background sync queues (`physiqx-sync-queue` and `physiqx-cardio-sync-queue`).
+  Auto-retries on browser `online` event and app rehydration. Tested with 6 passing unit tests.
 - [x] **Real PhysIQ Score computation from live ledger data** — `lib/scoreEngine.ts`
   Computes 4-pillar dynamic scores from Supabase user sessions, volume, and profile goals.
 - [x] **Real streak and DayStatus derivation from session history** — `lib/streakEngine.ts` & `lib/prEngine.ts`
