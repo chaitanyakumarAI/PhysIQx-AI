@@ -14,7 +14,6 @@ import {
   useCardioStore,
   type WearableSource,
 } from "@/store/cardioStore";
-import { CoachInfoButton } from "@/features/coach/components/CoachInfoButton";
 
 /** WHO guideline: 150 min of moderate cardio per week. */
 const WEEKLY_TARGET_MINUTES = 150;
@@ -59,13 +58,7 @@ export function CardioContent() {
           <ArrowLeft size={iconSize.sm} aria-hidden />
         </IconButton>
         <div>
-          <div className="flex items-center gap-2">
-            <h1 className="font-display text-2xl font-bold">Cardio Sync</h1>
-            <CoachInfoButton
-              featureKey="INFO_CARDIO_SYNC"
-              label="Explain cardio auto-sync"
-            />
-          </div>
+          <h1 className="font-display text-2xl font-bold">Cardio Sync</h1>
           <p className="text-xs text-foreground-secondary">
             Wearable activity imports &amp; aerobic capacity
           </p>

@@ -10,7 +10,6 @@ import {
   type PlateCount,
   type WarmupSet,
 } from "@/lib/barbellCalculator";
-import { CoachInfoButton } from "@/features/coach/components/CoachInfoButton";
 
 export interface ExercisePlateModalProps {
   isOpen: boolean;
@@ -74,15 +73,9 @@ export function ExercisePlateModal({
               <Dumbbell size={iconSize.sm} />
             </span>
             <div>
-              <div className="flex items-center gap-1.5">
-                <h2 id="plate-modal-title" className="text-base font-bold text-foreground line-clamp-1">
-                  {exerciseName}
-                </h2>
-                <CoachInfoButton
-                  featureKey="INFO_BARBELL_PLATE_CALC"
-                  label="Explain plate loading order"
-                />
-              </div>
+              <h2 id="plate-modal-title" className="text-base font-bold text-foreground line-clamp-1">
+                {exerciseName}
+              </h2>
               <p className="text-xs text-foreground-secondary">Plate Math & Warmup Ladder</p>
             </div>
           </div>

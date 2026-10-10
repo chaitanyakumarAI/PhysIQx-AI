@@ -5,7 +5,6 @@ import { DeltaBadge } from "@/components/ui/DeltaBadge";
 import { TrendChart } from "@/components/charts/TrendChart";
 import { iconSize } from "@/constants/icons";
 import { scoreBand } from "@/lib/score";
-import { CoachInfoButton } from "@/features/coach/components/CoachInfoButton";
 import { cn } from "@/lib/utils";
 import type { ScoreState } from "@/types/score";
 
@@ -63,12 +62,9 @@ export function PhysIQScoreCard({
         className="pointer-events-none absolute left-1/2 top-8 size-56 -translate-x-1/2 rounded-full bg-brand/15 blur-3xl"
       />
       <div className="relative flex flex-col items-center gap-4 text-center">
-        <div className="flex items-center gap-1.5">
-          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-foreground-secondary">
-            PhysIQ Score
-          </span>
-          <CoachInfoButton featureKey="INFO_PHYSIQ_SCORE" />
-        </div>
+        <span className="text-xs font-semibold uppercase tracking-[0.18em] text-foreground-secondary">
+          PhysIQ Score
+        </span>
         <CircularProgress
           value={isCalibrating ? 0 : score}
           size={180}

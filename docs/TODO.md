@@ -7,23 +7,17 @@ Last audited: **2026-10-10**.
 
 ## 🔴 Current Active Phase: Phase 6 — Interactive Character Guide Overlays
 
-- [x] **Phase 6: Interactive Character Guide Overlays (The Coaches — Kix & Nyra)** *(Verified & Completed)*
-  - [x] **Item 6.1 — Content Integration & Type Definitions**:
-    Wired user-provided `physiqx_coach_content.json` into typed data store `src/data/coachContent.ts` and `src/types/coach.ts`.
-  - [x] **Item 6.2 — Animated Low-FPS Coach Avatar (`CoachAvatar.tsx`)**:
-    Built character portrait component featuring low-FPS (~3.5 FPS) expression frame-flipping,
-    subtle Framer Motion head-bobbing / breathing physics, tactical comms active-speaker glow,
-    equalizer waveforms, and tactical badges.
-  - [x] **Item 6.3 — Dual-Dialogue Prologue Briefing (`CoachBriefingModal.tsx`)**:
-    Implemented 5-scene back-and-forth comms walkthrough between Kix & Nyra educating the recruit on
-    Score, Missions, Ledger, and 3-Pillar Recovery. Triggers on `/home?tour=1` or manual replay via header Radio button.
-  - [x] **Item 6.4 — On-Demand `(i)` Feature Explainers (`CoachInfoButton.tsx` & `CoachInfoSheet.tsx`)**:
-    Added non-intrusive `(i)` info buttons next to PhysIQ Score, Recovery Pillars, RPE, Strength Standards,
-    Plate Calc, and Wearable Cardio Sync. Opens tactical coach card on user click only.
-  - [x] **Item 6.5 — Preloaded Coach Recommendations Widget (`CoachRecommendationWidget.tsx`)**:
-    Deterministic recommendation cards on Home/Insights driven by athlete telemetry (CNS Alert, PR Green Light, Plateau, Volume Spike).
-  - [x] **Item 6.6 — Vitest Test Suite & Regression Verification**:
-    Added comprehensive unit test suite in `coachLogic.test.ts` and `coachContent.test.ts`. 142/142 tests passing across 21 test suites; Next.js 15.5 production build clean.
+- [ ] **Phase 6: Interactive Character Guide Overlays (UI Rework Track)**
+  - [x] **Core Content & Data Store (SAFELY PRESERVED)**:
+    Ingested `physiqx_coach_content.json` with strict type contracts (`src/types/coach.ts`), character profile mappings (`COACH_PROFILES`), and accessor APIs (`src/data/coachContent.ts`).
+  - [x] **Telemetry & Rules Logic Engine**:
+    Deterministic recommendation logic (`deriveActiveRecommendation`), briefing state storage, and comprehensive tests in `coachLogic.test.ts` (142/142 tests passing).
+  - [ ] **Rework Briefing UI (Dialogue Walkthrough)**:
+    Replace clunky stacked-card bottom sheet with a premium, sleek presentation (e.g. cinematic floating speech HUD, translucent dynamic comms island, or Apple/Nike-style conversational card flow).
+  - [ ] **Rework Feature Explainer UI (On-Demand Info Cards)**:
+    Replace generic modal sheet with an ultra-polished popover or contextual micro-drawer that feels integrated, native, and high-end.
+  - [x] **Screens Cleaned of Disliked V1 Cards**:
+    Unmounted V1 `CoachBriefingModal` and V1 `CoachInfoSheet` triggers from Home, Insights, Session, Plate Modal, Cardio, and Integrations screens while preserving all underlying content safely.
 
 - [ ] **Phase 7: Kix & Nyra Social Media Video Series & Storyboards**
   - [ ] **Item 7.1 — Concept & Episode Bible**:

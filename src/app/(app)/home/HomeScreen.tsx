@@ -23,10 +23,6 @@ import { StatusStrip } from "@/features/home/components/StatusStrip";
 import { TodaysPriorities } from "@/features/home/components/TodaysPriorities";
 import { WeeklyActivityCard } from "@/features/home/components/WeeklyActivityCard";
 import { WelcomeHeader } from "@/features/home/components/WelcomeHeader";
-import {
-  CoachBriefingModal,
-  hasSeenCoachBriefing,
-} from "@/features/coach/components/CoachBriefingModal";
 import { CoachRecommendationWidget } from "@/features/coach/components/CoachRecommendationWidget";
 import type { HomeData } from "@/features/home/types";
 
@@ -67,15 +63,6 @@ export function HomeScreen({
   // timezone. useState pins it for the session; WelcomeHeader suppresses the
   // expected SSG-vs-client hydration text difference.
   const [greeting] = useState(() => getGreeting(new Date().getHours()));
-  const [showBriefing, setShowBriefing] = useState(false);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const isTour = window.location.search.includes("tour=1");
-    if (isTour || !hasSeenCoachBriefing()) {
-      setShowBriefing(true);
-    }
-  }, []);
 
   // Live truth over fixtures: week strip and streak all derive
   // from the real ledgers once anything is logged. Stores are empty during
@@ -103,7 +90,6 @@ export function HomeScreen({
             name={profile.displayName}
             streakDays={liveStreakDays}
             archetype={profile.dnaArchetype}
-            onOpenBriefing={() => setShowBriefing(true)}
             className="pt-0"
           />
           <QuickActionGrid actions={HOME_QUICK_ACTIONS} />
@@ -152,12 +138,6 @@ export function HomeScreen({
           />
         </m.div>
       </m.div>
-
-      {/* Interactive Dual-Dialogue Briefing Modal (Kix & Nyra) */}
-      <CoachBriefingModal
-        isOpen={showBriefing}
-        onClose={() => setShowBriefing(false)}
-      />
     </PageContainer>
   );
 }

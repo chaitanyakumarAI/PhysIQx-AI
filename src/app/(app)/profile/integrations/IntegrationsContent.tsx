@@ -21,7 +21,6 @@ import { iconSize } from "@/constants/icons";
 import { cn } from "@/lib/utils";
 import { SettingsPageHeader } from "@/features/profile/components/SettingsPageHeader";
 import { triggerHaptic } from "@/lib/audioEngine";
-import { CoachInfoButton } from "@/features/coach/components/CoachInfoButton";
 
 interface IntegrationProvider {
   id: string;
@@ -138,13 +137,7 @@ export function IntegrationsContent() {
               <Activity size={18} aria-hidden />
             </span>
             <div>
-              <div className="flex items-center gap-1.5">
-                <h2 className="font-display text-base font-bold">Health Synchronization</h2>
-                <CoachInfoButton
-                  featureKey="INFO_CARDIO_SYNC"
-                  label="Explain wearable cardio sync"
-                />
-              </div>
+              <h2 className="font-display text-base font-bold">Health Synchronization</h2>
               <p className="text-xs text-foreground-secondary">
                 {activeConnectedCount} active connected telemetry streams
               </p>

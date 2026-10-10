@@ -9,7 +9,6 @@ import { ScreenHeader } from "@/components/navigation/ScreenHeader";
 import { fadeInUp, staggerChildren } from "@/lib/motion";
 import { useEntranceOnce } from "@/lib/useEntranceOnce";
 import { AIInsightCard } from "@/features/shared/components/AIInsightCard";
-import { CoachInfoButton } from "@/features/coach/components/CoachInfoButton";
 import { deriveInsights } from "@/features/shared/lib/liveProgress";
 import { useCardioStore } from "@/store/cardioStore";
 import { useProfileStore } from "@/store/profileStore";
@@ -91,19 +90,13 @@ export function InsightsScreen({
         </m.div>
 
         <m.div variants={fadeInUp}>
-          <Section
-            title="Recovery & readiness"
-            action={<CoachInfoButton featureKey="INFO_RECOVERY_PILLARS" />}
-          >
+          <Section title="Recovery & readiness">
             <RecoveryReadinessCard />
           </Section>
         </m.div>
 
         <m.div variants={fadeInUp}>
-          <Section
-            title="Strength standards"
-            action={<CoachInfoButton featureKey="INFO_STRENGTH_STANDARDS" />}
-          >
+          <Section title="Strength standards">
             <StrengthStandardsCard />
           </Section>
         </m.div>
