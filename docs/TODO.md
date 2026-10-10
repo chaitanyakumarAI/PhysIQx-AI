@@ -1,34 +1,50 @@
 # PhysIQx — TODO
 
 Living task list. Grouped by urgency, then phase. Update as things land.
-Last audited: **2026-09-28**.
+Last audited: **2026-10-10**.
 
 ---
 
-## 🔴 Immediate Action Items (October 2026 Directives)
+## 🔴 Current Active Phase: Phase 6 — Interactive Character Guide Overlays
 
-- [ ] **Disconnect & Remove All Hydration Features**
-  Remove `HydrationLogSheet.tsx`, disconnect `hydrationStore.ts`, remove water quick-logs,
-  remove hydration from `recoveryEngine.ts` and `RecoveryReadinessCard.tsx`, remove hydration goals
-  from profile/onboarding schemas, and remove "Hydration Master" achievement.
+- [ ] **Phase 6: Interactive Character Guide Overlays (The Coaches — Kix & Nyra)**
+  - [ ] **Item 6.1 — Content Integration & Type Definitions**:
+    Wire user-provided `physiqx_coach_content.json` into typed data store `src/data/coachContent.ts`.
+  - [ ] **Item 6.2 — Animated Low-FPS Coach Avatar (`CoachAvatar.tsx`)**:
+    Build character portrait component featuring low-FPS (~4–6 FPS) expression frame-flipping,
+    subtle Framer Motion head-bobbing / breathing physics, tactical comms active-speaker glow,
+    and micro-gestures.
+  - [ ] **Item 6.3 — Dual-Dialogue Prologue Briefing (`CoachBriefingModal.tsx`)**:
+    Implement 5-scene back-and-forth comms walkthrough between Kix & Nyra educating the recruit on
+    Score, Missions, Ledger, and 3-Pillar Recovery. Triggers on `/home?tour=1` or manual replay.
+  - [ ] **Item 6.4 — On-Demand `(i)` Feature Explainers (`CoachInfoButton.tsx` & `CoachInfoSheet.tsx`)**:
+    Add non-intrusive `(i)` info buttons next to PhysIQ Score, Recovery Pillars, RPE, Strength Standards,
+    Plate Calc, and Wearable Cardio Sync. Opens tactical coach card on user click only.
+  - [ ] **Item 6.5 — Preloaded Coach Recommendations Widget (`CoachRecommendationWidget.tsx`)**:
+    Deterministic recommendation cards on Home/Insights driven by athlete telemetry (CNS Alert, PR Green Light, Plateau, Volume Spike).
+  - [ ] **Item 6.6 — Vitest Test Suite & Regression Verification**:
+    Unit tests for dialogue progression, info sheet toggles, recommendation trigger logic; maintain 100% green tests.
 
-- [ ] **Cardio Refinement: Sync-Only (No Manual Logging)**
-  In `/train/cardio` (`CardioContent.tsx`), remove manual activity chips, duration chips, custom duration input,
-  and "Save session" button. Keep screen dedicated strictly to synced activities from connected wearables (Apple Health, Garmin, Health Connect).
+- [ ] **Phase 7: Kix & Nyra Social Media Video Series & Storyboards**
+  - [ ] **Item 7.1 — Concept & Episode Bible**:
+    4 initial short-form video scripts (Iron Ledger, 3 Recovery Pillars, Why Hydration Was Cut, PR Protocol).
+  - [ ] **Item 7.2 — Storyboard & Visual Prompts**:
+    Visual staging, character visual cues, and visual asset generation prompts.
+  - [ ] **Item 7.3 — Audio & Voice Synthesis Guidelines**:
+    Pacing, cadence, and voice model profile prompts for Kix & Nyra.
 
-- [ ] **Terminology Audit: Remove Misleading 'AI' Buzzwords**
-  Remove 'AI' wherever machine learning is not used: change "AI Coach" → "Coach",
-  "AI Insights" → "Coach Insights", "Certified AI Assets" → "Certified 3D Scan Models",
-  "AI Program Architect" → "Smart Program Architect". Keep copy authentic.
+---
 
-- [ ] **Gamified Character Overlays (Kix & Nyra — Interactive Dialogue Guide Mechanic)**
-  Adapt the mobile gaming engagement mechanic (Supercell-style contextual speech bubbles, warm greetings, and guidance)
-  into PhysIQx's sleek dark-athletic aesthetic (not a literal visual copy). Includes onboarding welcome, screen explanations,
-  welcome-back greetings, and PR celebration dialogue bubbles.
+## 🟢 Recent Completed Directives (October 2026)
 
-- [ ] **Kix & Nyra Social Media Video Series Planning**
-  Plan short-form video series (Instagram/TikTok/Shorts) featuring Kix & Nyra discussing fitness myths,
-  lifting mechanics, athlete humor, and gamified challenges to establish IP and community.
+- [x] **Disconnect & Remove All Hydration Features** *(97dc858)*
+  Deleted `HydrationLogSheet.tsx`, `hydrationStore.ts`, removed hydration from `recoveryEngine.ts` (rebalanced to 40% Neuromuscular, 35% Autonomic CNS, 25% Connective Tissue), replaced "Hydration Master" with "Cardio Crusher", and dropped `hydration_logs` table.
+- [x] **Cardio Refinement: Sync-Only (No Manual Logging)** *(97dc858)*
+  Refactored `/train/cardio` (`CardioContent.tsx`) to strictly render synced activities from connected wearables (Apple Health, Garmin, Whoop). Created `saveCardioSession.ts` server action and updated `syncEngine.ts` with `cardio_logs` queue.
+- [x] **Terminology Audit: Cleansed Misleading 'AI' Buzzwords** *(97dc858)*
+  Audited user-facing copy: "AI Coach" → "Coach", "AI Insights" → "Coach Insights", "Certified AI Assets" → "Certified 3D Scan Models". Authenticity restored across all screens.
+- [x] **Live Supabase End-to-End Cloud Verification** *(8b42f83)*
+  100% live verified against Seoul Supabase PostgreSQL instance: User signup (`auth.users`), `profiles` auto-creation, onboarding selections persistence, workout logging (`sessions`, `session_exercises`, `exercise_sets`, `xp_transactions`). 129/129 vitest tests passing.
 
 ---
 
