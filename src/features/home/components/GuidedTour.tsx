@@ -5,6 +5,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { AnimatePresence, m, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { duration, easeOut } from "@/lib/motion";
+import { hasSeenCoachBriefing } from "@/features/coach/components/CoachBriefingModal";
 
 interface TourStep {
   id: string;
@@ -134,6 +135,16 @@ export function GuidedTour() {
 
   useEffect(() => {
     if (searchParams.get("tour") === "1") {
+      if (!hasSeenCoachBriefing()) {
+        const handleBriefingFinished = () => {
+          setStepIndex(0);
+          setActive(true);
+        };
+        window.addEventListener("physiqx_briefing_finished", handleBriefingFinished);
+        return () => {
+          window.removeEventListener("physiqx_briefing_finished", handleBriefingFinished);
+        };
+      }
       setStepIndex(0);
       setActive(true);
     }

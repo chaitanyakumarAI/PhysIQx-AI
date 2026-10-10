@@ -1,0 +1,172 @@
+{
+  "introBriefing": [
+    {
+      "step": 1,
+      "topic": "The Welcome",
+      "lines": [
+        {
+          "speaker": "kix",
+          "expression": "intense",
+          "text": "Recruit, welcome to PhysIQx. Every session is a mission, every rep is logged, and nothing you lift goes unrecorded. Show up and build."
+        },
+        {
+          "speaker": "nyra",
+          "expression": "calm",
+          "text": "I am Nyra. Before your first set, I am calibrating your telemetry profile: bodyweight, training history, and baseline strength. Accurate inputs produce an accurate ledger."
+        }
+      ]
+    },
+    {
+      "step": 2,
+      "topic": "The PhysIQ Score",
+      "lines": [
+        {
+          "speaker": "kix",
+          "expression": "confident",
+          "text": "Every clean rep feeds one number: your PhysIQ Score, zero to one hundred. Bank the volume, hit your targets, and watch it climb."
+        },
+        {
+          "speaker": "nyra",
+          "expression": "analytical",
+          "text": "The score rests on four pillars: Strength, Muscle Shape, Consistency, and Recovery. Neglect one and the composite reflects it. Balanced output scores highest."
+        }
+      ]
+    },
+    {
+      "step": 3,
+      "topic": "Missions and The Ledger",
+      "lines": [
+        {
+          "speaker": "kix",
+          "expression": "intense",
+          "text": "Daily missions set your targets. Beat last week's iron ledger by a rep or a few pounds. That is progressive overload. That breaks the floor."
+        },
+        {
+          "speaker": "nyra",
+          "expression": "analytical",
+          "text": "Logging integrity matters. Record actual load, actual reps, and honest effort. The ledger drives accurate progression only if every entry reflects the real set."
+        }
+      ]
+    },
+    {
+      "step": 4,
+      "topic": "The 3-Pillar Recovery Engine",
+      "lines": [
+        {
+          "speaker": "kix",
+          "expression": "confident",
+          "text": "Here is the part nobody likes hearing. Even iron needs reload windows. Rest is not weakness; it is where applied tension becomes strength."
+        },
+        {
+          "speaker": "nyra",
+          "expression": "analytical",
+          "text": "Recovery runs on three pillars: Neuromuscular at forty percent, Autonomic CNS at thirty-five, and Connective Tissue at twenty-five. Each is tracked on its own timeline."
+        }
+      ]
+    },
+    {
+      "step": 5,
+      "topic": "Ready for Engagement",
+      "lines": [
+        {
+          "speaker": "kix",
+          "expression": "intense",
+          "text": "Briefing complete. Your first mission is loaded and the bar is waiting. Step up, lock in, and put the first entry in the ledger."
+        },
+        {
+          "speaker": "nyra",
+          "expression": "calm",
+          "text": "Telemetry is live and your baseline is set. I will flag recovery risks when the data warrants it. Begin when ready, recruit."
+        }
+      ]
+    }
+  ],
+  "infoExplainers": [
+    {
+      "id": "info_physiq_score",
+      "featureKey": "INFO_PHYSIQ_SCORE",
+      "coach": "nyra",
+      "title": "PhysIQ Score Explained",
+      "summary": "A 0-100 composite built from four pillars: Strength, Muscle Shape, Consistency, and Recovery. Each logged set updates it, so the score reflects verified training output, not self-reported guesses.",
+      "tacticalTip": "Complete logs produce an accurate score."
+    },
+    {
+      "id": "info_recovery_pillars",
+      "featureKey": "INFO_RECOVERY_PILLARS",
+      "coach": "nyra",
+      "title": "Three Recovery Pillars",
+      "summary": "Recovery splits into three tracked systems: Neuromuscular (40%), Autonomic CNS (35%), and Connective Tissue (25%). Each recovers on a different timeline, so a strong overall reading can still hide one lagging pillar.",
+      "tacticalTip": "Check the lowest pillar before loading heavy."
+    },
+    {
+      "id": "info_rpe_rir",
+      "featureKey": "INFO_RPE_RIR",
+      "coach": "kix",
+      "title": "RPE and RIR",
+      "summary": "RPE rates how hard a set felt on a 1-10 scale. RIR counts clean reps left before failure. RPE 9 equals 1 RIR. Log it honestly so progression stays accurate.",
+      "tacticalTip": "Save the grinders for PR day."
+    },
+    {
+      "id": "info_strength_standards",
+      "featureKey": "INFO_STRENGTH_STANDARDS",
+      "coach": "kix",
+      "title": "Strength Standards",
+      "summary": "Your Big 4 lifts are benchmarked across four tiers: Novice, Intermediate, Advanced, and Elite. Tier placement scales to your profile and updates as your logged top sets improve.",
+      "tacticalTip": "Earn the tier with clean reps, not ego loads."
+    },
+    {
+      "id": "info_barbell_plate_calc",
+      "featureKey": "INFO_BARBELL_PLATE_CALC",
+      "coach": "kix",
+      "title": "Plate Loading Order",
+      "summary": "Load the heaviest plates inside, against the sleeve shoulder, and the lightest outside. Load both sides evenly. Competition collars weigh 2.5 kg each; count them in your total.",
+      "tacticalTip": "Same plates, both sides, every time."
+    },
+    {
+      "id": "info_cardio_sync",
+      "featureKey": "INFO_CARDIO_SYNC",
+      "coach": "nyra",
+      "title": "Cardio Auto-Sync",
+      "summary": "Cardio imports automatically from Apple Health, Garmin, or Whoop. Wearable data captures heart rate and duration without manual entry error, so your CNS telemetry reflects true cardiovascular load, not estimates.",
+      "tacticalTip": "Wear the device; the data does the logging."
+    }
+  ],
+  "preloadedRecommendations": [
+    {
+      "id": "REC_CNS_FATIGUE",
+      "coach": "nyra",
+      "triggerCondition": "Recovery pillar < 60%",
+      "title": "Reduce Volume Today",
+      "badge": "CNS ALERT",
+      "body": "Recovery has dropped below 60%. Autonomic reserve is depleted. Cut working sets by roughly a third and hold loads, or take an active rest day to restore capacity.",
+      "ctaLabel": "Adjust Session"
+    },
+    {
+      "id": "REC_PR_READINESS",
+      "coach": "kix",
+      "triggerCondition": "5-day streak and Recovery > 85%",
+      "title": "Cleared for PR",
+      "badge": "GREEN LIGHT",
+      "body": "Five days logged, recovery above 85%. The system is primed. Warm up methodically, then take a top set or a 1RM attempt. Break the floor.",
+      "ctaLabel": "Start PR Attempt"
+    },
+    {
+      "id": "REC_PLATEAU_DETECTED",
+      "coach": "kix",
+      "triggerCondition": "Same weight on primary compound for 3 consecutive weeks",
+      "title": "Plateau Detected",
+      "badge": "PLATEAU",
+      "body": "Same load for three weeks. Change the stimulus: shift your rep range, add a tempo variation, or swap to a close variant. A stalled bar needs new tension.",
+      "ctaLabel": "View Options"
+    },
+    {
+      "id": "REC_VOLUME_SPIKE",
+      "coach": "nyra",
+      "triggerCondition": "Weekly tonnage > 125% of baseline",
+      "title": "Volume Spike Detected",
+      "badge": "TISSUE STRAIN",
+      "body": "Weekly tonnage is over 25% above baseline. Connective tissue adapts slower than muscle, so strain risk is elevated. Reduce load jumps and prioritize a lower-volume session.",
+      "ctaLabel": "Review Load"
+    }
+  ]
+}

@@ -7,23 +7,23 @@ Last audited: **2026-10-10**.
 
 ## 🔴 Current Active Phase: Phase 6 — Interactive Character Guide Overlays
 
-- [ ] **Phase 6: Interactive Character Guide Overlays (The Coaches — Kix & Nyra)**
-  - [ ] **Item 6.1 — Content Integration & Type Definitions**:
-    Wire user-provided `physiqx_coach_content.json` into typed data store `src/data/coachContent.ts`.
-  - [ ] **Item 6.2 — Animated Low-FPS Coach Avatar (`CoachAvatar.tsx`)**:
-    Build character portrait component featuring low-FPS (~4–6 FPS) expression frame-flipping,
+- [x] **Phase 6: Interactive Character Guide Overlays (The Coaches — Kix & Nyra)** *(Verified & Completed)*
+  - [x] **Item 6.1 — Content Integration & Type Definitions**:
+    Wired user-provided `physiqx_coach_content.json` into typed data store `src/data/coachContent.ts` and `src/types/coach.ts`.
+  - [x] **Item 6.2 — Animated Low-FPS Coach Avatar (`CoachAvatar.tsx`)**:
+    Built character portrait component featuring low-FPS (~3.5 FPS) expression frame-flipping,
     subtle Framer Motion head-bobbing / breathing physics, tactical comms active-speaker glow,
-    and micro-gestures.
-  - [ ] **Item 6.3 — Dual-Dialogue Prologue Briefing (`CoachBriefingModal.tsx`)**:
-    Implement 5-scene back-and-forth comms walkthrough between Kix & Nyra educating the recruit on
-    Score, Missions, Ledger, and 3-Pillar Recovery. Triggers on `/home?tour=1` or manual replay.
-  - [ ] **Item 6.4 — On-Demand `(i)` Feature Explainers (`CoachInfoButton.tsx` & `CoachInfoSheet.tsx`)**:
-    Add non-intrusive `(i)` info buttons next to PhysIQ Score, Recovery Pillars, RPE, Strength Standards,
+    equalizer waveforms, and tactical badges.
+  - [x] **Item 6.3 — Dual-Dialogue Prologue Briefing (`CoachBriefingModal.tsx`)**:
+    Implemented 5-scene back-and-forth comms walkthrough between Kix & Nyra educating the recruit on
+    Score, Missions, Ledger, and 3-Pillar Recovery. Triggers on `/home?tour=1` or manual replay via header Radio button.
+  - [x] **Item 6.4 — On-Demand `(i)` Feature Explainers (`CoachInfoButton.tsx` & `CoachInfoSheet.tsx`)**:
+    Added non-intrusive `(i)` info buttons next to PhysIQ Score, Recovery Pillars, RPE, Strength Standards,
     Plate Calc, and Wearable Cardio Sync. Opens tactical coach card on user click only.
-  - [ ] **Item 6.5 — Preloaded Coach Recommendations Widget (`CoachRecommendationWidget.tsx`)**:
+  - [x] **Item 6.5 — Preloaded Coach Recommendations Widget (`CoachRecommendationWidget.tsx`)**:
     Deterministic recommendation cards on Home/Insights driven by athlete telemetry (CNS Alert, PR Green Light, Plateau, Volume Spike).
-  - [ ] **Item 6.6 — Vitest Test Suite & Regression Verification**:
-    Unit tests for dialogue progression, info sheet toggles, recommendation trigger logic; maintain 100% green tests.
+  - [x] **Item 6.6 — Vitest Test Suite & Regression Verification**:
+    Added comprehensive unit test suite in `coachLogic.test.ts` and `coachContent.test.ts`. 142/142 tests passing across 21 test suites; Next.js 15.5 production build clean.
 
 - [ ] **Phase 7: Kix & Nyra Social Media Video Series & Storyboards**
   - [ ] **Item 7.1 — Concept & Episode Bible**:

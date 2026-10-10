@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Flame, Bell } from "lucide-react";
+import { Flame, Bell, Radio } from "lucide-react";
 import { UserAvatar } from "@/features/shared/components/UserAvatar";
 import { Badge } from "@/components/ui/Badge";
 import { iconSize } from "@/constants/icons";
@@ -15,6 +15,7 @@ export interface WelcomeHeaderProps extends React.ComponentProps<"header"> {
   name: string;
   streakDays: number;
   archetype: string;
+  onOpenBriefing?: () => void;
 }
 
 export function WelcomeHeader({
@@ -23,6 +24,7 @@ export function WelcomeHeader({
   name,
   streakDays,
   archetype,
+  onOpenBriefing,
   ...props
 }: WelcomeHeaderProps) {
   const openDrawer = useNotificationStore((state) => state.openDrawer);
@@ -78,8 +80,24 @@ export function WelcomeHeader({
         </div>
       </div>
 
-      {/* Header Actions: Notification Bell + Avatar */}
-      <div className="flex items-center gap-2.5">
+      {/* Header Actions: Tactical Comms Briefing + Notification Bell + Avatar */}
+      <div className="flex items-center gap-2">
+        {onOpenBriefing && (
+          <button
+            type="button"
+            onClick={onOpenBriefing}
+            aria-label="Open tactical mission briefing with Kix & Nyra"
+            className="group relative grid size-10 place-items-center rounded-full border border-border/80 bg-surface-elevated text-foreground-secondary transition-all hover:border-emerald-500/60 hover:text-emerald-400 hover:shadow-[0_0_12px_rgba(16,185,129,0.25)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/60"
+            title="Tactical Mission Briefing (Kix & Nyra)"
+          >
+            <Radio size={17} className="group-hover:animate-pulse" />
+            <span className="absolute -top-0.5 -right-0.5 flex size-2">
+              <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />
+            </span>
+          </button>
+        )}
+
         <button
           type="button"
           onClick={openDrawer}
