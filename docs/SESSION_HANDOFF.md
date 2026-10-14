@@ -169,38 +169,60 @@ You are granted **full creative and technical freedom** to evaluate, brainstorm,
 
 ---
 
-## 📂 7. Directory Map & Critical Files
+## 📂 7. Critical Files Map for Context & Continuation
 
-```
-e:\physQIx AI\
-├── src\
-│   ├── app\                    # Next.js 15 App Router routes
-│   │   ├── (app)\              # Authenticated shell (home, train, insights, compete, profile, coach)
-│   │   ├── session\[id]\       # Full-screen active workout tracker
-│   │   └── onboarding\         # 6-step questionnaire wizard
-│   ├── components\
-│   │   ├── ui\                 # Primitives (Button, Card, Input, Switch, FilterChipRow)
-│   │   ├── mascots\            # Mascot.tsx (currently returning null)
-│   │   └── navigation\         # BottomNavigation, ScreenHeader
-│   ├── features\               # Domain modules (home, train, insights, compete, session, profile, fuel)
-│   ├── store\                  # Zustand stores (sessionStore, profileStore, cardioStore, hydrationStore)
-│   ├── lib\                    # Pure business logic engines
-│   │   ├── score.ts            # 4-pillar math (23 tests)
-│   │   ├── progression.ts      # Double progression & RPE auto-regulation (14 tests)
-│   │   ├── streakEngine.ts     # Heatmap & forgiving streak logic (8 tests)
-│   │   ├── prEngine.ts         # Epley 1RM PR derivation (7 tests)
-│   │   ├── aiCoachChat.ts      # Coach chat rule engine & catalog matcher (5 tests)
-│   │   ├── aiProgramEngine.ts  # Adaptive split & schedule generator (7 tests)
-│   │   ├── syncEngine.ts       # Offline sync queue (4 tests)
-│   │   └── audioEngine.ts      # Web Audio haptics & cues (2 tests)
-│   └── data\                   # Mock fixtures (exercises, programs, personas)
-├── docs\                       # Full architectural documentation
-│   ├── TODO.md                 # Living task checklist
-│   ├── ROUTES.md               # Route architecture
-│   ├── PHYSIQ_SCORE.md         # 4-pillar score breakdown
-│   └── SESSION_HANDOFF.md      # This file
-└── public\                     # Static assets (body-shapes, icons, sw.js)
-```
+### A. Coach & Interactive Character Files (Phase 6 Core)
+- `physiqx_coach_content.json`: Raw source of truth for 5 briefing dialogue scenes, 6 feature explainers, and 4 preloaded recommendations.
+- `src/types/coach.ts`: Strongly typed interfaces (`CoachId`, `CoachProfile`, `DualDialogueStep`, `FeatureInfoExplainer`, `PreloadedRecommendation`).
+- `src/data/coachContent.ts`: Profile tokens (Kix `#10b981`, Nyra `#06b6d4`), expression WebP frame paths, and accessor functions.
+- `src/components/ui/CoachAvatar.tsx`: Animated avatar component (~3.5 FPS frame-flipping, Framer Motion head bob, equalizer waveform, tactical badges).
+- `src/features/coach/components/CoachRecommendationWidget.tsx`: Deterministic recommendation card mounted under Quick Actions on `/home`.
+- `src/features/coach/components/CoachBriefingModal.tsx`: V1 dialogue briefing modal (unmounted, preserved for UI overhaul).
+- `src/features/coach/components/CoachInfoSheet.tsx`: V1 feature explainer sheet (unmounted, preserved for UI overhaul).
+- `src/features/coach/components/CoachInfoButton.tsx`: Discreet `(i)` button primitive for triggering coach explainers.
+- `src/data/coachContent.test.ts`: 4 Vitest tests for coach content integrity.
+- `src/features/coach/coachLogic.test.ts`: 9 Vitest tests for telemetry thresholds (<60% CNS fatigue, PR green lights) and briefing state storage.
+
+### B. Primary Screens & Components
+- `src/app/(app)/home/HomeScreen.tsx`: Home command hub (Status strip, greeting, quick action grid, coach recommendation, daily mission, priorities, score gauge).
+- `src/features/home/components/WelcomeHeader.tsx`: Greeting, streak badge, athletic archetype chip, notification drawer button.
+- `src/features/home/components/PhysIQScoreCard.tsx`: 0–100 circular gauge, delta indicator, 7-day sparkline trend.
+- `src/app/(app)/insights/InsightsScreen.tsx`: 4-pillar score radar, weakest axis alert, 12-week consistency heatmap, PR tracker.
+- `src/features/insights/components/RecoveryReadinessCard.tsx`: 3-Pillar recovery breakdown (Neuromuscular 40%, Autonomic CNS 35%, Connective Tissue 25%).
+- `src/features/insights/components/StrengthStandardsCard.tsx`: Big 4 strength tiers (Squat, Bench, Deadlift, Overhead Press) across Novice to Elite.
+- `src/app/(app)/train/page.tsx`: Training hub, split generator, and exercise library navigation.
+- `src/features/session/components/ExerciseSessionCard.tsx`: Active workout exercise container and plate calculator trigger.
+- `src/features/session/components/SetRow.tsx`: Set logging row (weight, reps, optional `@RPE` 1–10 / RIR, progressive overload ghost hints).
+- `src/features/session/components/ExercisePlateModal.tsx`: Barbell plate calculator (10/15/20/25kg bars, sleeve plate breakdown, warmup ladder).
+- `src/features/session/components/RestTimer.tsx`: Automatic rest timer countdown with skip and +30s increment.
+- `src/app/(app)/train/cardio/CardioContent.tsx`: Strictly sync-only cardio screen with 150-min weekly progress meter.
+- `src/app/(app)/profile/integrations/IntegrationsContent.tsx`: Wearable integrations manager (Apple Health, Garmin, WHOOP, Oura).
+- `src/app/(app)/compete/page.tsx`: Community XP leaderboards and time-limited challenges.
+- `src/app/(app)/profile/page.tsx`: Athlete profile, weigh-in trend chart, digital twin scan, preferences.
+- `src/app/(onboarding)/onboarding/page.tsx`: 6-step athletic DNA questionnaire and archetype reveal.
+- `src/features/home/components/GuidedTour.tsx`: Walkthrough tour highlighting core UI landmarks (`?tour=1`).
+- `src/app/(app)/AppBottomNav.tsx` & `src/components/navigation/BottomNavigation.tsx`: Persistent 5-destination bottom navigation bar.
+
+### C. Business Logic Engines & Store Files
+- `src/lib/score.ts`: 4-pillar composite score formula (23 tests).
+- `src/lib/recoveryEngine.ts`: 3-pillar recovery algorithm (no hydration).
+- `src/lib/barbellCalculator.ts`: Plate breakdown math and warmup progression ladder.
+- `src/lib/progression.ts`: Progressive overload double progression engine.
+- `src/lib/prEngine.ts`: 1RM detection and PR tracking.
+- `src/lib/streakEngine.ts`: Consistency streak logic with rest day forgiveness.
+- `src/lib/syncEngine.ts`: Offline-first persistent sync queue (`physiqx-sync-queue`).
+- `src/store/sessionStore.ts`: Active workout logging and history persistence.
+- `src/store/profileStore.ts`: Athlete profile, preferences (units, auto rest, RPE tracking).
+- `src/store/cardioStore.ts`: Synced wearable cardio activities.
+- `src/store/notificationStore.ts`: Notification drawer state.
+
+### D. Architectural Documentation
+- `docs/TODO.md`: Living task checklist with active Phase 6 UI rework track.
+- `docs/SESSION_HANDOFF.md`: This file.
+- `docs/PRODUCT_DIRECTIVES.md`: Core product rules (Kix & Nyra, zero hydration, sync-only cardio, AI buzzword cleanse).
+- `docs/DATA_MODELS.md`: Complete entity and Supabase database schemas.
+- `docs/ROUTES.md`: Complete URL routing tree.
+- `docs/PHYSIQ_SCORE.md`: Score mathematical whitepaper.
 
 ---
 
