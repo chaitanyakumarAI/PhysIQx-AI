@@ -30,7 +30,7 @@ export function PillarGrid({ pillars, weakestPillarId, className }: PillarGridPr
         <StatTile
           key={pillar.id}
           icon={pillarIcon[pillar.id]}
-          value={`${pillar.value}%`}
+          value={pillar.status === "untracked" ? "—" : `${pillar.value}%`}
           label={pillar.label}
           tone={pillar.id === weakestPillarId ? "warning" : pillarTone[pillar.id]}
         />

@@ -12,6 +12,8 @@ import { Button } from "@/components/ui/Button";
 import { SearchInput } from "@/components/ui/SearchInput";
 import { fadeInUp, staggerChildren } from "@/lib/motion";
 import { useEntranceOnce } from "@/lib/useEntranceOnce";
+import { missionFromPlanDay } from "@/lib/workoutPlan";
+import { useAthleteState } from "@/features/shared/hooks/useAthlete";
 import { FilterChipRow, type FilterChipOption } from "@/components/ui/FilterChipRow";
 import { ExerciseListItem } from "@/features/train/components/ExerciseListItem";
 import { MyPlansSection } from "@/features/train/components/MyPlansSection";
@@ -33,13 +35,20 @@ export type TrainScreenProps = TrainData;
  * filter UI state, and orchestrates entrance motion.
  */
 export function TrainScreen({
-  mission,
   programs,
   activeProgramId,
   exercises,
   catalogSize,
 }: TrainScreenProps) {
   const router = useRouter();
+  const { todaysWorkout, hydrated } = useAthleteState();
+  const mission = useMemo(
+    () =>
+      todaysWorkout && todaysWorkout.status === "ready"
+        ? missionFromPlanDay(todaysWorkout.plan, todaysWorkout.day, exercises, "pending")
+        : null,
+    [todaysWorkout, exercises],
+  );
   const [programId, setProgramId] = useState(activeProgramId);
   const {
     query,
@@ -78,14 +87,14 @@ export function TrainScreen({
         animate="visible"
         className="contents"
       >
-        <m.div variants={fadeInUp} data-tour="train-hero">
-          <WorkoutHeroCard
-            mission={mission}
-            onStart={
-              mission ? () => router.push(`/session/${mission.id}`) : undefined
-            }
-          />
-        </m.div>
+        {hydrated && mission && (
+          <m.div variants={fadeInUp} data-tour="train-hero">
+            <WorkoutHeroCard
+              mission={mission}
+              onStart={() => router.push(`/session/${mission.id}`)}
+            />
+          </m.div>
+        )}
 
         <m.div variants={fadeInUp} className="grid grid-cols-2 gap-2">
           <Button variant="secondary" size="sm" asChild>

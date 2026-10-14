@@ -7,13 +7,14 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { Card } from "@/components/ui/Card";
 import { iconSize } from "@/constants/icons";
 import { cn } from "@/lib/utils";
-import { useSessionStore } from "@/store/sessionStore";
-import { mockHistoricalSessions } from "@/features/profile/mocks/historyData";
+import { useLedger } from "@/features/shared/hooks/useAthlete";
 
 export function HistoryContent() {
-  const storeHistory = useSessionStore((state) => state.history);
-  // Merge store history with seed mock data so demo view is always rich
-  const allSessions = storeHistory.length > 0 ? storeHistory : mockHistoricalSessions;
+  const { ledger } = useLedger();
+  // Newest first — the ledger is stored oldest first.
+  const allSessions = [...ledger.sessions].sort((a, b) =>
+    b.completedAt.localeCompare(a.completedAt),
+  );
 
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"all" | "completed" | "strength">("all");

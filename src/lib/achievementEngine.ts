@@ -1,11 +1,16 @@
 import type { ProfileAchievement } from "@/features/profile/types";
-import type { CompletedSessionSummary } from "@/store/sessionStore";
+import type { CardioActivity } from "@/types/cardio";
+import type { CompletedSessionSummary } from "@/types/workoutSession";
+import { MIN_CARDIO_MINUTES_FOR_ACTIVE_DAY } from "./streakEngine";
 import type { AchievementRarity } from "@/types/achievement";
 
 export interface EvaluationContext {
   history: CompletedSessionSummary[];
+  /** Best streak to date — an earned streak badge stays earned. */
   streakDays: number;
+  cardio?: CardioActivity[];
   totalVolumeKg?: number;
+  /** Personal records set (lib/prEngine detectRecentPRs). */
   prCount?: number;
 }
 
@@ -42,8 +47,11 @@ export function evaluateAchievements(
   context: EvaluationContext,
   previousAchievements?: ProfileAchievement[],
 ): EvaluationResult {
-  const { history, streakDays, totalVolumeKg, prCount } = context;
-  const sessionsCount = history.length;
+  const { history, streakDays, totalVolumeKg, prCount = 0, cardio = [] } = context;
+  const sessionsCount = history.filter((session) => session.setsCompleted > 0).length;
+  const cardioCount = cardio.filter(
+    (activity) => activity.durationMin >= MIN_CARDIO_MINUTES_FOR_ACTIVE_DAY,
+  ).length;
   const computedVolume =
     totalVolumeKg ?? history.reduce((sum, s) => sum + (s.totalVolumeKg || 0), 0);
 
@@ -73,15 +81,13 @@ export function evaluateAchievements(
         rawProgress = Math.min(1, sessionsCount / 30);
         break;
       case "cardio-crusher":
-        // 5 consistent conditioning sessions
-        rawProgress = sessionsCount >= 5 ? 1 : Math.min(1, sessionsCount / 5);
+        // 5 real cardio sessions (20+ minutes)
+        rawProgress = Math.min(1, cardioCount / 5);
         break;
-      case "pr-hunter": {
-        // 5 PRs
-        const prs = prCount ?? Math.min(5, Math.floor(sessionsCount / 3));
-        rawProgress = Math.min(1, prs / 5);
+      case "pr-hunter":
+        // 5 personal records
+        rawProgress = Math.min(1, prCount / 5);
         break;
-      }
       case "gym-warrior":
         // 50 sessions
         rawProgress = Math.min(1, sessionsCount / 50);

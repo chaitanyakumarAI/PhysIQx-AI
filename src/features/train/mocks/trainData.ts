@@ -1,5 +1,4 @@
 import type { Program } from "@/types/training";
-import { mockTodayMission } from "@/data/mission";
 import { mockExercises } from "@/data/exercises";
 import type { TrainData } from "../types";
 
@@ -36,7 +35,6 @@ const programs: Program[] = [
 ];
 
 export const mockTrainData: TrainData = {
-  mission: mockTodayMission,
   programs,
   activeProgramId: "program-ai",
   exercises: mockExercises,

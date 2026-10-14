@@ -22,11 +22,22 @@ export const pillarLabels: Record<PillarId, string> = {
   bodyShape: "Body Shape",
 };
 
+/**
+ * active: enough recent data to score. low-signal: tracked, but little
+ * recent data — the value floors toward neutral instead of collapsing.
+ * untracked: the athlete doesn't track this pillar yet; it is weighted out
+ * of the composite rather than scored as a failure.
+ */
+export type PillarStatus = "active" | "low-signal" | "untracked";
+
 export interface PillarScore {
   id: PillarId;
   label: string;
   /** 0–100 */
   value: number;
+  status?: PillarStatus;
+  /** One line explaining the value ("3 of 4 sessions a week"). */
+  detail?: string;
 }
 
 export type ScoreState = "calibrating" | "active" | "stale";
@@ -48,6 +59,10 @@ export interface PhysIQScoreSnapshot {
   headline: string;
   state: ScoreState;
   scoreVersion: string;
+  /** While calibrating: which day of the calibration week this is (0–7). */
+  calibrationDay?: number;
+  /** Change today's activity will make when the day closes (finalized tomorrow). */
+  pending?: number;
 }
 
 /** The trend range selector on Insights (7D / 30D / 90D / 1Y). */

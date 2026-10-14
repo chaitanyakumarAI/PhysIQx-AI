@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { RecoveryScreen } from "@/features/insights/components/RecoveryScreen";
 
 export const metadata: Metadata = {
-  title: "Athletic Recovery & Readiness | PhysIQx",
-  description: "Monitor systemic fatigue, ACWR training load ratio, and neuromuscular recovery capacity.",
+  title: "Training load",
+  description: "This week's lifting volume against your own 4-week average.",
 };
 
 export default function RecoveryPage() {

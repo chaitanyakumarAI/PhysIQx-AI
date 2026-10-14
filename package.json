@@ -37,6 +37,7 @@
     "@vitejs/plugin-react": "^4.7.0",
     "eslint": "^9.39.4",
     "eslint-config-next": "^15.5.20",
+    "happy-dom": "^15.11.7",
     "postcss": "^8.5.16",
     "puppeteer-core": "^24.43.1",
     "tailwindcss": "^4.3.2",

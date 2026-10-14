@@ -1,12 +1,17 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { DEFAULT_NOTIFICATION_PREFERENCES } from "@/lib/notifications";
+import type { BodyBuild, Sex, WeighIn } from "@/types/ledger";
+import type {
+  ExperienceLevel,
+  GoalBodyShape,
+  ProfileGoal,
+  SessionFrequency,
+} from "@/types/profile";
+import type { ProgramType } from "@/types/training";
 
-/** One dated weight entry — ISO date (yyyy-mm-dd), kg. */
-export interface WeightEntry {
-  date: string;
-  weightKg: number;
-}
+/** One dated weight entry — local calendar day (yyyy-mm-dd), kg. */
+export type WeightEntry = WeighIn;
 
 export interface ProgressPhotoEntry {
   id: string;
@@ -20,22 +25,24 @@ export interface ProgressPhotoEntry {
 /** Ids of the placeholder photos earlier builds wrote into user data. */
 const LEGACY_SEED_PHOTO_PREFIX = "photo-seed-";
 
-/**
- * User-adjustable profile data — avatar plus body stats (height, dated
- * weight log). The second persisted store after sessionStore, following its
- * exact SSR contract: `skipHydration` + explicit rehydration from
- * StoreHydrator so the client's first render always matches the server's.
- * The mock Profile fixture stays the identity source of truth; this store
- * only overrides what the user has personally customized.
- */
+/** What onboarding asks about training. */
 export interface OnboardingProfileData {
-  goal?: string;
-  experienceLevel?: string;
-  activeSplit?: string;
-  sessionFrequency?: string;
-  goalBodyShape?: string;
+  goal?: ProfileGoal;
+  experienceLevel?: ExperienceLevel;
+  activeSplit?: ProgramType;
+  sessionFrequency?: SessionFrequency;
+  goalBodyShape?: GoalBodyShape;
   trainingDaysPerWeek?: number;
   completedAt?: string;
+}
+
+/** Who the athlete is — asked once ("About you"), editable in Profile. */
+export interface AthleteDetails {
+  displayName: string | null;
+  sex: Sex | null;
+  birthYear: number | null;
+  /** The silhouette the athlete picked as closest to them today. */
+  currentBuild: BodyBuild | null;
 }
 
 export interface UserPreferences {
@@ -45,7 +52,7 @@ export interface UserPreferences {
   showGhostSuggestions: boolean;
   /** Automatically start the rest countdown timer when a set is marked complete. */
   autoRestTimer: boolean;
-  /** Display Kix and Nyra mascot illustrations and coaching commentary across the app. */
+  /** Kept for persisted-state compatibility; mascots are hidden app-wide. */
   showMascots: boolean;
   /** Display rule-based coach insight cards (from logged data) on Home and Insights. */
   showAiInsights: boolean;
@@ -62,12 +69,18 @@ export const DEFAULT_USER_PREFERENCES: UserPreferences = {
   celebrationEffects: true,
 };
 
-interface ProfileStoreState {
+/**
+ * The athlete's own data — identity, body stats, onboarding answers,
+ * preferences. Part of the local-first ledger (see features/shared/hooks/
+ * useLedger): nothing here falls back to a fixture identity; unset is null.
+ * Same SSR contract as every persisted store: `skipHydration` + explicit
+ * rehydration from StoreHydrator.
+ */
+interface ProfileStoreState extends AthleteDetails {
   /** One of AVATAR_PRESETS' ids, or null when unset/uploaded. */
   avatarPresetId: string | null;
   /** A locally-uploaded image as a data URL (capped at upload time). */
   avatarDataUrl: string | null;
-  /** null until the user sets it — the UI falls back to the seed fixture. */
   heightCm: number | null;
   /** User-logged weights, one per date (logging twice a day overwrites). */
   weightEntries: WeightEntry[];
@@ -79,6 +92,8 @@ interface ProfileStoreState {
   showcaseAchievementIds: string[];
   /** Saved onboarding selections. */
   onboardingProfile: OnboardingProfileData | null;
+  /** Explore the app on generated sample data (never mixed into real data). */
+  demoMode: boolean;
   /** User preferences for logging, commentary, and visual noise. */
   preferences: UserPreferences;
   /** User notification preferences (streak risk, mission reminders, challenge results, etc.). */
@@ -88,10 +103,12 @@ interface ProfileStoreState {
   clearAvatar: () => void;
   setHeight: (heightCm: number) => void;
   logWeight: (weightKg: number, date: string) => void;
+  setAthleteDetails: (patch: Partial<AthleteDetails>) => void;
   addPhoto: (entry: Omit<ProgressPhotoEntry, "id">) => void;
   deletePhoto: (id: string) => void;
   toggleShowcaseAchievement: (id: string) => void;
   setOnboardingProfile: (data: Partial<OnboardingProfileData>) => void;
+  setDemoMode: (enabled: boolean) => void;
   updatePreferences: (patch: Partial<UserPreferences>) => void;
   updateNotificationPreferences: (patch: Record<string, boolean>) => void;
   resetPreferences: () => void;
@@ -102,6 +119,10 @@ const SHOWCASE_LIMIT = 3;
 export const useProfileStore = create<ProfileStoreState>()(
   persist(
     (set) => ({
+      displayName: null,
+      sex: null,
+      birthYear: null,
+      currentBuild: null,
       avatarPresetId: null,
       avatarDataUrl: null,
       heightCm: null,
@@ -109,6 +130,7 @@ export const useProfileStore = create<ProfileStoreState>()(
       photos: [],
       showcaseAchievementIds: [],
       onboardingProfile: null,
+      demoMode: false,
       preferences: DEFAULT_USER_PREFERENCES,
       notificationPreferences: DEFAULT_NOTIFICATION_PREFERENCES,
       setPresetAvatar: (presetId) =>
@@ -124,6 +146,7 @@ export const useProfileStore = create<ProfileStoreState>()(
             { date, weightKg },
           ].sort((a, b) => a.date.localeCompare(b.date)),
         })),
+      setAthleteDetails: (patch) => set(patch),
       addPhoto: (entry) =>
         set((state) => ({
           photos: [
@@ -163,6 +186,7 @@ export const useProfileStore = create<ProfileStoreState>()(
             completedAt: new Date().toISOString(),
           },
         })),
+      setDemoMode: (enabled) => set({ demoMode: enabled }),
       updatePreferences: (patch) =>
         set((state) => ({
           preferences: {
@@ -181,15 +205,23 @@ export const useProfileStore = create<ProfileStoreState>()(
     }),
     {
       name: "physiqx-profile",
-      version: 1,
-      // v0 → v1: drop the placeholder progress photos earlier builds seeded
-      // into the user's own data (they were being exported as theirs).
+      version: 2,
       migrate: (persisted, version) => {
         const state = persisted as Partial<ProfileStoreState>;
+        // v0 → v1: drop the placeholder progress photos earlier builds seeded
+        // into the user's own data (they were being exported as theirs).
         if (version < 1 && Array.isArray(state.photos)) {
           state.photos = state.photos.filter(
             (photo) => !photo.id.startsWith(LEGACY_SEED_PHOTO_PREFIX),
           );
+        }
+        // v1 → v2: athlete details and demo mode didn't exist yet.
+        if (version < 2) {
+          state.displayName ??= null;
+          state.sex ??= null;
+          state.birthYear ??= null;
+          state.currentBuild ??= null;
+          state.demoMode ??= false;
         }
         return state as ProfileStoreState;
       },

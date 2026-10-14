@@ -1,5 +1,5 @@
-import { goalLabels, type Profile } from "@/types/profile";
-import { programTypeLabels } from "@/types/training";
+import { goalLabels, type ProfileGoal } from "@/types/profile";
+import { programTypeLabels, type ProgramType } from "@/types/training";
 import type { StreakSummary } from "@/types/training";
 import type { StatEntry } from "@/features/shared/components/StatChipRow";
 import type { ProfileAchievement, ProfileStats } from "../types";
@@ -15,11 +15,17 @@ export function countUnlockedAchievements(achievements: ProfileAchievement[]): n
   return achievements.filter((achievement) => achievement.state === "unlocked").length;
 }
 
-export function buildIdentityStats(profile: Profile): StatEntry[] {
+export interface IdentityInput {
+  goal: ProfileGoal | null;
+  split: ProgramType | null;
+  trainingDaysPerWeek: number;
+}
+
+export function buildIdentityStats({ goal, split, trainingDaysPerWeek }: IdentityInput): StatEntry[] {
   return [
-    { label: "Goal", value: goalLabels[profile.goal] },
-    { label: "Split", value: programTypeLabels[profile.activeSplit] },
-    { label: "Days/wk", value: String(profile.trainingDaysPerWeek) },
+    { label: "Goal", value: goal ? goalLabels[goal] : "—" },
+    { label: "Split", value: split ? programTypeLabels[split] : "—" },
+    { label: "Days/wk", value: String(trainingDaysPerWeek) },
   ];
 }
 

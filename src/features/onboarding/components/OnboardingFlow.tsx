@@ -3,10 +3,9 @@
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, type UseFormSetValue } from "react-hook-form";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { m } from "framer-motion";
-import { ArrowLeft, AlertCircle } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { IconButton } from "@/components/ui/IconButton";
 import { ProgressBar } from "@/components/ui/ProgressBar";
@@ -14,17 +13,22 @@ import { iconSize } from "@/constants/icons";
 import { fadeInUp } from "@/lib/motion";
 import {
   defaultOnboardingValues,
+  isAboutYouValid,
   onboardingSchema,
   type OnboardingValues,
 } from "../schemas";
+import { todayIso } from "@/lib/dates";
+import { buildStarterPlan } from "@/lib/workoutPlan";
+import { usePlansStore } from "@/store/plansStore";
 import { useProfileStore } from "@/store/profileStore";
 import { saveOnboardingProfile } from "../actions/saveOnboardingProfile";
+import { AboutYouStep } from "./steps/AboutYouStep";
 import { BodyShapeStep } from "./steps/BodyShapeStep";
+import { CurrentBuildStep } from "./steps/CurrentBuildStep";
 import { DNAResultStep } from "./steps/DNAResultStep";
 import { ExperienceStep } from "./steps/ExperienceStep";
 import { GoalStep } from "./steps/GoalStep";
 import { RestDaysStep } from "./steps/RestDaysStep";
-import { SessionFrequencyStep } from "./steps/SessionFrequencyStep";
 import { SplitStep } from "./steps/SplitStep";
 import { WelcomeStep } from "./steps/WelcomeStep";
 
@@ -48,6 +52,33 @@ interface StepConfig {
  */
 const steps: StepConfig[] = [
   { id: "welcome", render: () => <WelcomeStep /> },
+  {
+    id: "about-you",
+    render: (values, setValue) => (
+      <AboutYouStep
+        values={values}
+        onChange={(patch) => {
+          // Each key is a top-level field whose value type matches the
+          // schema; react-hook-form can't express that for a dynamic key.
+          for (const key of Object.keys(patch) as (keyof typeof patch)[]) {
+            setValue(key, patch[key] as never);
+          }
+        }}
+      />
+    ),
+    canContinue: isAboutYouValid,
+  },
+  {
+    id: "current-build",
+    render: (values, setValue) => (
+      <CurrentBuildStep
+        value={values.currentBuild}
+        sex={values.sex}
+        onChange={(value) => setValue("currentBuild", value)}
+      />
+    ),
+    canContinue: (values) => !!values.currentBuild,
+  },
   {
     id: "goal",
     render: (values, setValue) => (
@@ -95,16 +126,6 @@ const steps: StepConfig[] = [
     ),
   },
   {
-    id: "session-frequency",
-    render: (values, setValue) => (
-      <SessionFrequencyStep
-        value={values.sessionFrequency}
-        onChange={(value) => setValue("sessionFrequency", value)}
-      />
-    ),
-    canContinue: (values) => !!values.sessionFrequency,
-  },
-  {
     id: "dna-result",
     render: (values) =>
       values.goal && values.activeSplit ? (
@@ -122,9 +143,14 @@ const steps: StepConfig[] = [
 export function OnboardingFlow() {
   const router = useRouter();
   const [step, setStep] = useState(0);
-  const [isSaving, setIsSaving] = useState(false);
-  const [saveError, setSaveError] = useState<string | null>(null);
   const setOnboardingProfile = useProfileStore((state) => state.setOnboardingProfile);
+  const setAthleteDetails = useProfileStore((state) => state.setAthleteDetails);
+  const setDemoMode = useProfileStore((state) => state.setDemoMode);
+  const setHeight = useProfileStore((state) => state.setHeight);
+  const logWeight = useProfileStore((state) => state.logWeight);
+  const hasPlans = usePlansStore((state) => state.plans.length > 0);
+  const savePlan = usePlansStore((state) => state.savePlan);
+  const setActivePlan = usePlansStore((state) => state.setActivePlan);
   const { watch, setValue } = useForm<OnboardingValues>({
     resolver: zodResolver(onboardingSchema),
     defaultValues: defaultOnboardingValues,
@@ -137,26 +163,42 @@ export function OnboardingFlow() {
 
   async function handleContinue() {
     if (isLast) {
-      setIsSaving(true);
-      setSaveError(null);
 
-      // Save to local Zustand store immediately (works offline too)
-      setOnboardingProfile(values);
-
-      // Persist to Supabase via Server Action
-      const result = await saveOnboardingProfile(values);
-
-      setIsSaving(false);
-
-      if (!result.success) {
-        // Non-blocking: show error but still allow entering the app
-        // Local store already has the data — Supabase sync retried on next login
-        setSaveError(result.error ?? "Could not save your profile. You can update it later in Settings.");
-        // Proceed after a short delay so user sees the message
-        setTimeout(() => router.push("/home?tour=1"), 2500);
-        return;
+      // Save to the local ledger immediately (works offline too).
+      setOnboardingProfile({
+        goal: values.goal,
+        experienceLevel: values.experienceLevel,
+        activeSplit: values.activeSplit,
+        goalBodyShape: values.goalBodyShape,
+        trainingDaysPerWeek: values.trainingDaysPerWeek,
+      });
+      setAthleteDetails({
+        displayName: values.displayName?.trim() || null,
+        sex: values.sex ?? null,
+        birthYear: values.birthYear ?? null,
+        currentBuild: values.currentBuild ?? null,
+      });
+      if (values.heightCm) setHeight(Math.round(values.heightCm));
+      if (values.weightKg) logWeight(Math.round(values.weightKg * 10) / 10, todayIso());
+      // The chosen split becomes the active plan, so Home has a workout
+      // ready on day one. Existing plans are never overwritten.
+      if (!hasPlans) {
+        const plan = buildStarterPlan(
+          {
+            split: values.activeSplit ?? null,
+            daysPerWeek: values.trainingDaysPerWeek,
+            goal: values.goal ?? null,
+            experienceLevel: values.experienceLevel ?? null,
+          },
+          Date.now(),
+        );
+        savePlan(plan);
+        setActivePlan(plan.id);
       }
 
+      // Cloud copy for signed-in athletes, in the background: the local
+      // ledger already has everything, so nobody waits on the network.
+      void saveOnboardingProfile(values).catch(() => undefined);
       router.push("/home?tour=1");
       return;
     }
@@ -202,28 +244,25 @@ export function OnboardingFlow() {
       </m.div>
 
       <div className="flex flex-col gap-3">
-        {/* Save error non-blocking banner */}
-        {saveError && (
-          <div className="flex items-start gap-2 rounded-lg bg-warning/10 px-3 py-2 text-xs text-warning" role="alert">
-            <AlertCircle size={iconSize.xs} className="mt-0.5 shrink-0" aria-hidden />
-            <span>{saveError}</span>
-          </div>
-        )}
         <Button
           size="lg"
           fullWidth
-          disabled={!canContinue || isSaving}
+          disabled={!canContinue}
           onClick={handleContinue}
         >
-          {isSaving ? "Saving your profile…" : isLast ? "Enter PhysIQx" : step === 0 ? "Get started" : "Continue"}
+          {isLast ? "Enter PhysIQx" : step === 0 ? "Get started" : "Continue"}
         </Button>
         {step === 0 && (
-          <Link
-            href="/home"
-            className="text-center text-sm text-foreground-secondary hover:underline"
+          <button
+            type="button"
+            onClick={() => {
+              setDemoMode(true);
+              router.push("/home");
+            }}
+            className="min-h-11 text-center text-sm text-foreground-secondary hover:underline"
           >
-            Skip for now
-          </Link>
+            Look around with sample data first
+          </button>
         )}
       </div>
     </div>

@@ -1,129 +1,91 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { CheckCircle2, Cloud, CloudOff, RefreshCw } from "lucide-react";
+import { useEffect, useState, useSyncExternalStore } from "react";
+import { AlertCircle, CheckCircle2, CloudOff, RefreshCw } from "lucide-react";
 import { iconSize } from "@/constants/icons";
-import {
-  flushSyncQueue,
-  getPendingSyncQueue,
-} from "@/lib/syncEngine";
-import { saveWorkoutSession } from "@/features/session/actions/saveWorkoutSession";
 import { playSyncSuccess } from "@/lib/audioEngine";
+import { syncNow, useOutboxStatus } from "@/lib/sync/syncClient";
 
+function subscribeOnline(onChange: () => void) {
+  window.addEventListener("online", onChange);
+  window.addEventListener("offline", onChange);
+  return () => {
+    window.removeEventListener("online", onChange);
+    window.removeEventListener("offline", onChange);
+  };
+}
+
+/**
+ * Quiet unless it matters: offline (everything still works and saves on
+ * this device), or cloud copies that keep failing to deliver. Guests see
+ * nothing — their data is meant to live on the device.
+ */
 export function NetworkStatusIndicator() {
-  const [isOnline, setIsOnline] = useState(true);
-  const [pendingCount, setPendingCount] = useState(0);
-  const [isSyncing, setIsSyncing] = useState(false);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
-
-  const checkStatus = () => {
-    if (typeof navigator !== "undefined") {
-      setIsOnline(navigator.onLine);
-    }
-    const queue = getPendingSyncQueue();
-    setPendingCount(queue.length);
-  };
-
-  const triggerSync = async () => {
-    if (!navigator.onLine || isSyncing) return;
-
-    const queue = getPendingSyncQueue();
-    if (queue.length === 0) return;
-
-    setIsSyncing(true);
-    try {
-      const report = await flushSyncQueue(saveWorkoutSession);
-      if (report.syncedCount > 0) {
-        playSyncSuccess();
-        setToastMessage(
-          `Back online &bull; ${report.syncedCount} workout${report.syncedCount > 1 ? "s" : ""} synchronized`,
-        );
-        setTimeout(() => setToastMessage(null), 4000);
-      }
-    } catch {
-      // Sync retry on next network tick
-    } finally {
-      setIsSyncing(false);
-      checkStatus();
-    }
-  };
+  const online = useSyncExternalStore(subscribeOnline, () => navigator.onLine, () => true);
+  const status = useOutboxStatus();
+  const [syncing, setSyncing] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
-    checkStatus();
+    if (!toast) return;
+    const timer = setTimeout(() => setToast(null), 4000);
+    return () => clearTimeout(timer);
+  }, [toast]);
 
-    const handleOnline = () => {
-      setIsOnline(true);
-      triggerSync();
-    };
+  async function retry() {
+    setSyncing(true);
+    try {
+      const report = await syncNow({ force: true });
+      if (report.synced > 0) {
+        playSyncSuccess();
+        setToast(`${report.synced} ${report.synced === 1 ? "item" : "items"} synced`);
+      }
+    } finally {
+      setSyncing(false);
+    }
+  }
 
-    const handleOffline = () => {
-      setIsOnline(false);
-      checkStatus();
-    };
-
-    window.addEventListener("online", handleOnline);
-    window.addEventListener("offline", handleOffline);
-
-    const interval = setInterval(checkStatus, 5000);
-
-    return () => {
-      window.removeEventListener("online", handleOnline);
-      window.removeEventListener("offline", handleOffline);
-      clearInterval(interval);
-    };
-  }, []);
-
-  // Show Toast when reconnect sync finishes
-  if (toastMessage) {
+  if (toast) {
     return (
       <aside
-        aria-label="Network synchronization"
-        className="fixed top-4 inset-x-0 z-50 mx-auto flex w-fit max-w-sm items-center gap-2 rounded-full border border-emerald-500/40 bg-surface-elevated/95 px-4 py-2 text-xs font-semibold text-emerald-400 shadow-card backdrop-blur-md animate-in fade-in slide-in-from-top duration-300"
+        role="status"
+        className="fixed inset-x-0 top-4 z-50 mx-auto flex w-fit max-w-sm items-center gap-2 rounded-full border border-brand/40 bg-surface-elevated/95 px-4 py-2 text-xs font-semibold text-brand shadow-card backdrop-blur-md"
       >
-        <CheckCircle2 size={iconSize.sm} />
-        <span dangerouslySetInnerHTML={{ __html: toastMessage }} />
+        <CheckCircle2 size={iconSize.sm} aria-hidden />
+        {toast}
       </aside>
     );
   }
 
-  // If online and zero pending, hide completely
-  if (isOnline && pendingCount === 0) {
-    return null;
+  if (!online) {
+    return (
+      <aside
+        role="status"
+        className="fixed inset-x-0 bottom-24 z-40 mx-auto flex w-fit max-w-sm items-center gap-2 rounded-full border border-border/80 bg-surface-elevated/95 px-3.5 py-1.5 text-xs text-foreground-secondary shadow-card backdrop-blur-md"
+      >
+        <CloudOff size={iconSize.xs} className="shrink-0 text-warning" aria-hidden />
+        Offline — everything saves on this device
+      </aside>
+    );
   }
 
-  // Display floating pill when offline or with pending items
+  if (status.blockedByAuth || status.failing === 0) return null;
+
   return (
     <aside
-      aria-label="Offline sync status"
-      className="fixed bottom-20 inset-x-0 z-40 mx-auto flex w-fit max-w-sm items-center gap-2.5 rounded-full border border-border/80 bg-surface-elevated/95 px-3.5 py-1.5 text-xs shadow-card backdrop-blur-md"
+      role="status"
+      className="fixed inset-x-0 bottom-24 z-40 mx-auto flex w-fit max-w-sm items-center gap-2.5 rounded-full border border-border/80 bg-surface-elevated/95 px-3.5 py-1.5 text-xs text-foreground-secondary shadow-card backdrop-blur-md"
     >
-      {!isOnline ? (
-        <>
-          <CloudOff size={iconSize.xs} className="text-amber-400 shrink-0" />
-          <span className="text-foreground-secondary">
-            Offline mode {pendingCount > 0 && `&bull; ${pendingCount} saved locally`}
-          </span>
-        </>
-      ) : (
-        <>
-          <Cloud size={iconSize.xs} className="text-brand shrink-0" />
-          <span className="text-foreground-secondary">
-            {pendingCount} workout{pendingCount > 1 ? "s" : ""} pending sync
-          </span>
-          <button
-            type="button"
-            onClick={triggerSync}
-            disabled={isSyncing}
-            className="flex items-center gap-1 text-xs font-bold text-brand hover:underline disabled:opacity-50"
-          >
-            {isSyncing ? (
-              <RefreshCw size={iconSize.xs} className="animate-spin" />
-            ) : (
-              "Sync now"
-            )}
-          </button>
-        </>
-      )}
+      <AlertCircle size={iconSize.xs} className="shrink-0 text-warning" aria-hidden />
+      {status.pending} {status.pending === 1 ? "item" : "items"} waiting to sync
+      <button
+        type="button"
+        onClick={retry}
+        disabled={syncing}
+        className="inline-flex min-h-8 items-center gap-1 font-bold text-brand hover:underline disabled:opacity-50"
+      >
+        {syncing ? <RefreshCw size={iconSize.xs} className="animate-spin" aria-hidden /> : "Retry"}
+      </button>
     </aside>
   );
 }

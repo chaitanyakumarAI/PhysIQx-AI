@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { initOnlineSync } from "@/lib/syncEngine";
-import { saveWorkoutSession } from "@/features/session/actions/saveWorkoutSession";
+import { startBackgroundSync } from "@/lib/sync/syncClient";
 
 /**
  * Registers the PWA Service Worker (/sw.js) in production or offline-capable
@@ -10,8 +9,8 @@ import { saveWorkoutSession } from "@/features/session/actions/saveWorkoutSessio
  */
 export function ServiceWorkerRegister() {
   useEffect(() => {
-    // 1. Initialize offline sync queue listener
-    const cleanupSync = initOnlineSync(saveWorkoutSession);
+    // 1. Deliver queued cloud writes now, on reconnect, and periodically.
+    const cleanupSync = startBackgroundSync();
 
     // 2. Register Service Worker in production
     if (

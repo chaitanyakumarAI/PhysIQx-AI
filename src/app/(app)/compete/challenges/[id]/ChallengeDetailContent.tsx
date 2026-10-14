@@ -16,8 +16,7 @@ import { Button } from "@/components/ui/Button";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { iconSize } from "@/constants/icons";
 
-import { useSessionStore } from "@/store/sessionStore";
-import { mockHistoricalSessions } from "@/features/profile/mocks/historyData";
+import { useLedger } from "@/features/shared/hooks/useAthlete";
 import type { Challenge } from "@/types/challenge";
 import { ChallengeCheerWall } from "@/features/compete/components/ChallengeCheerWall";
 
@@ -67,8 +66,8 @@ const MOCK_LEADERBOARD = [
 
 export function ChallengeDetailContent({ challengeId }: { challengeId: string }) {
   const challenge = CHALLENGE_REGISTRY[challengeId] || CHALLENGE_REGISTRY["challenge-volume-king"]!;
-  const sessionHistory = useSessionStore((state) => state.history);
-  const allSessions = sessionHistory.length > 0 ? sessionHistory : mockHistoricalSessions;
+  const { ledger } = useLedger();
+  const allSessions = ledger.sessions;
 
   // Calculate real volume from user's sessions
   const userVolume = useMemo(() => {
@@ -76,7 +75,7 @@ export function ChallengeDetailContent({ challengeId }: { challengeId: string })
   }, [allSessions]);
 
   // Scale or cap progress
-  const progress = Math.min(challenge.target, Math.max(24800, userVolume));
+  const progress = Math.min(challenge.target, userVolume);
   const percent = Math.min(100, Math.round((progress / challenge.target) * 100));
 
   return (

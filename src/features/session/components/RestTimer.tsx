@@ -25,7 +25,7 @@ export interface RestTimerProps {
 export function RestTimer({ seconds, onComplete, className }: RestTimerProps) {
   const [totalSeconds, setTotalSeconds] = useState(seconds);
   const [remaining, setRemaining] = useState(seconds);
-  const [voiceEnabled, setVoiceEnabled] = useState(true);
+  const [voiceEnabled, setVoiceEnabled] = useState(false);
   const onCompleteRef = useRef(onComplete);
   onCompleteRef.current = onComplete;
   const voiceEnabledRef = useRef(voiceEnabled);

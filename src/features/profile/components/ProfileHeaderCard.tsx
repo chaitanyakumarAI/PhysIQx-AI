@@ -6,7 +6,8 @@ export interface ProfileHeaderCardProps {
   name: string;
   archetype: string;
   level: number;
-  score: number;
+  /** null while the score is calibrating. */
+  score: number | null;
   className?: string;
 }
 
@@ -31,9 +32,9 @@ export function ProfileHeaderCard({
         </div>
         <div className="min-w-0">
           <h2 className="font-display text-2xl font-bold">{name}</h2>
-          <p className="text-sm text-foreground-secondary">{archetype}</p>
+          {archetype && <p className="text-sm text-foreground-secondary">{archetype}</p>}
           <Badge tone="brand" className="mt-2">
-            {score} PhysIQ Score
+            {score === null ? "Score calibrating" : `${score} PhysIQ Score`}
           </Badge>
         </div>
       </div>

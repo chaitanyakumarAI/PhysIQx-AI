@@ -15,8 +15,14 @@ import { SessionTimer } from "@/features/session/components/SessionTimer";
 import { useElapsedSeconds } from "@/features/session/hooks/useElapsedSeconds";
 import { computeSessionProgress, computeSessionVolume } from "@/features/session/lib/derive";
 import type { SessionSetup } from "@/features/session/api/getSessionSetup";
-import { saveWorkoutSession } from "@/features/session/actions/saveWorkoutSession";
-import { enqueuePendingSession } from "@/lib/syncEngine";
+import { queueWorkout } from "@/lib/sync/syncClient";
+import { mockExercises } from "@/data/exercises";
+import { todayIso } from "@/lib/dates";
+import { buildDemoData } from "@/lib/demo/demoLedger";
+import { buildPlanDayLaunch, planDayMissionId } from "@/lib/workoutPlan";
+import { usePlansStore } from "@/store/plansStore";
+import { useProfileStore } from "@/store/profileStore";
+import type { UserPlan } from "@/types/plan";
 import { useSessionStore } from "@/store/sessionStore";
 
 export interface SessionScreenProps {
@@ -39,7 +45,6 @@ export interface SessionScreenProps {
 export function SessionScreen({ missionId, setup }: SessionScreenProps) {
   const router = useRouter();
   const [hydrated, setHydrated] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
   const {
     session,
     history,
@@ -73,7 +78,11 @@ export function SessionScreen({ missionId, setup }: SessionScreenProps) {
     // rehydrate() types as `Promise<void> | void` (localStorage reads are
     // synchronous) — Promise.resolve() normalizes both so .then() always runs.
     let cancelled = false;
-    void Promise.resolve(useSessionStore.persist.rehydrate()).then(() => {
+    void Promise.all([
+      useSessionStore.persist.rehydrate(),
+      usePlansStore.persist.rehydrate(),
+      useProfileStore.persist.rehydrate(),
+    ]).then(() => {
       if (cancelled) return;
       if (setup) {
         startSession({
@@ -83,6 +92,20 @@ export function SessionScreen({ missionId, setup }: SessionScreenProps) {
           exercises: setup.exercises,
           xpReward: setup.mission.xpReward,
         });
+      } else {
+        // A plan day opened by URL (Home's start button, a coach action):
+        // start it unless that exact session is already running.
+        const current = useSessionStore.getState().session;
+        const alreadyRunning = current?.missionId === missionId && current.status === "active";
+        const plans: UserPlan[] = [...usePlansStore.getState().plans];
+        if (useProfileStore.getState().demoMode) plans.push(buildDemoData(todayIso()).plan);
+        const match = plans
+          .flatMap((plan) => plan.days.map((day) => ({ plan, day })))
+          .find(({ plan, day }) => planDayMissionId(plan, day) === missionId);
+        if (match && !alreadyRunning) {
+          const launch = buildPlanDayLaunch(match.plan, match.day);
+          startSession({ ...launch, exercises: mockExercises });
+        }
       }
       setHydrated(true);
     });
@@ -96,8 +119,8 @@ export function SessionScreen({ missionId, setup }: SessionScreenProps) {
     session?.status === "active",
   );
 
-  // Plan sessions can only resume what the Start button already created —
-  // a stale/shared URL with nothing in the store gets an honest state.
+  // A URL that matches no running session and no plan day gets an honest
+  // state instead of a blank screen.
   const sessionMatches = session?.missionId === missionId;
   if (!session || !sessionMatches) {
     if (!hydrated || setup) return null;
@@ -203,35 +226,17 @@ export function SessionScreen({ missionId, setup }: SessionScreenProps) {
         <Button
           size="lg"
           fullWidth
-          disabled={progress.completedSets === 0 || isSaving}
-          onClick={async () => {
-            // 1. Update local store first — works offline, no server needed
+          disabled={progress.completedSets === 0}
+          onClick={() => {
+            // Local ledger first (works offline); the outbox delivers a copy
+            // to the cloud whenever it can — never blocking the athlete.
             finishSession();
-
-            // 2. Sync to Supabase in the background (non-blocking)
-            //    We read the post-finish state from the store snapshot directly
-            const snap = useSessionStore.getState();
-            const completedSession = snap.session;
-            const latestSummary = snap.history.at(-1);
-
-            if (completedSession && latestSummary) {
-              setIsSaving(true);
-              try {
-                const result = await saveWorkoutSession(completedSession, latestSummary);
-                if (!result.success) {
-                  // Offline or unauthenticated -> Enqueue for background sync
-                  enqueuePendingSession(completedSession, latestSummary);
-                }
-              } catch {
-                // Network error -> Enqueue for background sync
-                enqueuePendingSession(completedSession, latestSummary);
-              } finally {
-                setIsSaving(false);
-              }
-            }
+            const snapshot = useSessionStore.getState();
+            const summary = snapshot.history.find((entry) => entry.id === snapshot.session?.id);
+            if (snapshot.session && summary) queueWorkout(snapshot.session, summary);
           }}
         >
-          {isSaving ? "Saving…" : "Finish workout"}
+          Finish workout
         </Button>
         {progress.completedSets === 0 && (
           <p className="text-center text-xs text-foreground-secondary">

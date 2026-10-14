@@ -1,34 +1,40 @@
 "use client";
+
 import Link from "next/link";
-import { ArrowLeft, HeartPulse, Activity, Zap, Shield } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { PageContainer } from "@/components/layout/PageContainer";
+import { Section } from "@/components/layout/Section";
 import { Card } from "@/components/ui/Card";
-import { ProgressBar } from "@/components/ui/ProgressBar";
-import { Button } from "@/components/ui/Button";
 import { iconSize } from "@/constants/icons";
-import {
-  calculateReadiness,
-  READINESS_TIER_META,
-  type SessionRecord,
-} from "@/lib/recoveryEngine";
-import { useSessionStore } from "@/store/sessionStore";
+import { DemoBanner } from "@/features/shared/components/DemoBanner";
+import { useAthleteState } from "@/features/shared/hooks/useAthlete";
+import { addDaysIso, weekMondayIso } from "@/lib/dates";
+import { BASELINE_DAYS } from "@/lib/trainingLoad";
+import { TrainingLoadCard } from "./TrainingLoadCard";
 
+const WEEKS_SHOWN = 8;
+
+/**
+ * Training Load (formerly "Recovery & readiness"): only what the log can
+ * honestly support — lifting volume against your own 4-week average,
+ * hard sessions, and days without rest. Readiness, HRV and sleep need a
+ * wearable feed; until one exists, this screen doesn't pretend.
+ */
 export function RecoveryScreen() {
-  const history = useSessionStore((state) => state.history);
-
-  const sessionRecords: SessionRecord[] = history.map((s) => ({
-    date: s.completedAt || s.date,
-    totalVolumeKg: s.totalVolumeKg,
-    avgRpe: s.avgRpe,
-    durationSec: s.durationSec,
-  }));
-
-  const readiness = calculateReadiness(sessionRecords, 3);
-  const tierMeta = READINESS_TIER_META[readiness.tier];
+  const { load, ledger, todayIso, demo } = useAthleteState();
+  const thisMonday = weekMondayIso(todayIso);
+  const weeks = Array.from({ length: WEEKS_SHOWN }, (_, index) => {
+    const start = addDaysIso(thisMonday, -(WEEKS_SHOWN - 1 - index) * 7);
+    const end = addDaysIso(start, 6);
+    const volume = ledger.sessions
+      .filter((session) => session.date >= start && session.date <= end)
+      .reduce((sum, session) => sum + Math.max(0, session.totalVolumeKg), 0);
+    return { start, volume };
+  });
+  const peak = Math.max(1, ...weeks.map((week) => week.volume));
 
   return (
     <PageContainer>
-      {/* Top Header */}
       <div className="flex items-center gap-3 pt-6">
         <Link
           href="/insights"
@@ -38,178 +44,46 @@ export function RecoveryScreen() {
           <ArrowLeft size={iconSize.sm} aria-hidden />
         </Link>
         <div>
-          <h1 className="font-display text-2xl font-bold">Recovery & Readiness</h1>
-          <p className="text-xs text-foreground-secondary">
-            Systemic capacity, ACWR workload ratio & recovery markers
-          </p>
+          <h1 className="font-display text-2xl font-bold">Training load</h1>
+          <p className="text-xs text-foreground-secondary">This week against your own baseline</p>
         </div>
       </div>
 
-      {/* Hero Readiness Card */}
-      <Card padding="lg" className="flex flex-col gap-4 border border-border/80 bg-gradient-to-br from-surface to-surface-elevated">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="grid size-11 place-items-center rounded-full bg-rose-500/15 text-rose-400">
-              <HeartPulse size={iconSize.md} />
-            </span>
-            <div>
-              <span className="text-xs font-semibold uppercase tracking-wider text-foreground-secondary">
-                Daily Capacity Score
-              </span>
-              <h2 className="text-xl font-bold capitalize text-foreground">
-                {tierMeta.label}
-              </h2>
-            </div>
-          </div>
+      {demo && <DemoBanner />}
 
-          <div className="text-right">
-            <span className="font-display text-3xl font-bold text-brand tabular-nums">
-              {readiness.score}
-              <span className="text-base font-semibold text-foreground-secondary">%</span>
-            </span>
-          </div>
-        </div>
+      <TrainingLoadCard load={load} />
 
-        <p className="text-sm leading-relaxed text-foreground-secondary border-t border-border/50 pt-3">
-          {readiness.headline} {readiness.recommendation}
-        </p>
-      </Card>
-
-      {/* ACWR Workload Ratio Card */}
-      <Card padding="md" className="flex flex-col gap-3.5 border border-border/70">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Activity size={iconSize.sm} className="text-brand" />
-            <h3 className="text-sm font-bold text-foreground">Acute-to-Chronic Workload Ratio (ACWR)</h3>
-          </div>
-          <span className="font-display font-bold text-brand tabular-nums text-sm">
-            {readiness.acwrRatio}×
-          </span>
-        </div>
-
-        <p className="text-xs text-foreground-secondary leading-relaxed">
-          Compares your acute 7-day fatigue demand against your 28-day chronic fitness adaptation. A ratio between 0.8× and 1.3× represents the athletic progression sweet spot.
-        </p>
-
-        {/* ACWR Spectrum Bar */}
-        <div className="flex flex-col gap-1.5 pt-1">
-          <div className="flex justify-between text-[10px] text-foreground-secondary font-semibold">
-            <span>Under-stim (&lt;0.8)</span>
-            <span className="text-brand">Sweet Spot (0.8–1.3)</span>
-            <span>Overreach (&gt;1.5)</span>
-          </div>
-          <div className="relative h-2 w-full rounded-full bg-surface-elevated overflow-hidden">
-            <div
-              className="absolute h-full rounded-full bg-brand"
-              style={{
-                width: `${Math.min(100, Math.max(10, (readiness.acwrRatio / 2.0) * 100))}%`,
-              }}
-            />
-          </div>
-        </div>
-      </Card>
-
-      {/* 4 Pillars Deep Dive */}
-      <div className="flex flex-col gap-3">
-        <h3 className="text-sm font-bold text-foreground">Biological Recovery Dimensions</h3>
-
-        {/* Neuromuscular */}
-        <Card padding="sm" className="flex items-start gap-3 border border-border/60">
-          <span className="grid size-9 place-items-center rounded-full bg-amber-500/15 text-amber-400 shrink-0 mt-0.5">
-            <Zap size={iconSize.sm} />
-          </span>
-          <div className="flex-1">
-            <div className="flex items-baseline justify-between">
-              <h4 className="text-xs font-bold text-foreground">Neuromuscular Excitability</h4>
-              <span className="font-display text-xs font-bold tabular-nums text-foreground">
-                {readiness.pillars.neuromuscular}%
-              </span>
-            </div>
-            <p className="text-[11px] text-foreground-secondary mt-0.5">
-              Reflects central motor unit recruitment fatigue from heavy compound sets and near-failure work.
-            </p>
-            <ProgressBar value={readiness.pillars.neuromuscular} size="sm" tone="brand" className="mt-2" />
+      <Section title="Weekly volume">
+        <Card padding="md">
+          <div className="flex h-36 items-end gap-2" role="img" aria-label="Lifting volume per week, last 8 weeks">
+            {weeks.map((week, index) => (
+              <div key={week.start} className="flex flex-1 flex-col items-center gap-1.5">
+                <div
+                  className={index === weeks.length - 1 ? "w-full rounded-md bg-brand" : "w-full rounded-md bg-white/[0.14]"}
+                  style={{ height: `${Math.max(4, (week.volume / peak) * 100)}%` }}
+                />
+                <span className="text-[10px] tabular-nums text-foreground-muted">
+                  {new Date(`${week.start}T00:00:00`).toLocaleDateString("en-US", { month: "numeric", day: "numeric" })}
+                </span>
+              </div>
+            ))}
           </div>
         </Card>
+      </Section>
 
-        {/* Connective Tissue */}
-        <Card padding="sm" className="flex items-start gap-3 border border-border/60">
-          <span className="grid size-9 place-items-center rounded-full bg-emerald-500/15 text-emerald-400 shrink-0 mt-0.5">
-            <Shield size={iconSize.sm} />
-          </span>
-          <div className="flex-1">
-            <div className="flex items-baseline justify-between">
-              <h4 className="text-xs font-bold text-foreground">Tendon & Joint Integrity</h4>
-              <span className="font-display text-xs font-bold tabular-nums text-foreground">
-                {readiness.pillars.connectiveTissue}%
-              </span>
-            </div>
-            <p className="text-[11px] text-foreground-secondary mt-0.5">
-              Tracks cumulative joint shear forces and multi-day training density without rest intervals.
-            </p>
-            <ProgressBar value={readiness.pillars.connectiveTissue} size="sm" tone="brand" className="mt-2" />
-          </div>
+      <Section title="How it's measured">
+        <Card padding="md">
+          <ul className="flex list-disc flex-col gap-2 pl-4 text-sm text-foreground-secondary">
+            <li>Volume is weight × reps across every completed set.</li>
+            <li>
+              The ratio compares the last 7 days with your average week over the 4 weeks before. It
+              appears after {BASELINE_DAYS} days of training.
+            </li>
+            <li>Sessions averaging RPE 9 or higher count as hard and raise the status one step.</li>
+            <li>Sleep, HRV and resting heart rate will join once a wearable can feed them in.</li>
+          </ul>
         </Card>
-
-        {/* Autonomic Nervous */}
-        <Card padding="sm" className="flex items-start gap-3 border border-border/60">
-          <span className="grid size-9 place-items-center rounded-full bg-rose-500/15 text-rose-400 shrink-0 mt-0.5">
-            <Activity size={iconSize.sm} />
-          </span>
-          <div className="flex-1">
-            <div className="flex items-baseline justify-between">
-              <h4 className="text-xs font-bold text-foreground">Autonomic Balance</h4>
-              <span className="font-display text-xs font-bold tabular-nums text-foreground">
-                {readiness.pillars.autonomicNervous}%
-              </span>
-            </div>
-            <p className="text-[11px] text-foreground-secondary mt-0.5">
-              Measures sympathetic vs parasympathetic tone, workload equilibrium, and systemic stress.
-            </p>
-            <ProgressBar value={readiness.pillars.autonomicNervous} size="sm" tone="brand" className="mt-2" />
-          </div>
-        </Card>
-      </div>
-
-      {/* Training Guidance */}
-      <div className="grid grid-cols-2 gap-3">
-        {/* Intensity */}
-        <Card padding="sm" className="flex flex-col gap-2 border border-brand/20 bg-brand/5">
-          <div className="flex items-center gap-2">
-            <span className="grid size-7 place-items-center rounded-full bg-brand/20 text-brand">
-              <Zap size={14} aria-hidden />
-            </span>
-            <span className="text-xs font-bold text-brand">Target Intensity</span>
-          </div>
-          <p className="text-[11px] text-foreground-secondary leading-snug">
-            {readiness.score >= 70
-              ? "Attack your target weights today. The machine is running hot."
-              : "Keep ego in check and stick to clean reps without missing."}
-          </p>
-        </Card>
-
-        {/* Recovery Strategy */}
-        <Card padding="sm" className="flex flex-col gap-2 border border-info/20 bg-info/5">
-          <div className="flex items-center gap-2">
-            <span className="grid size-7 place-items-center rounded-full bg-info/20 text-info">
-              <Shield size={14} aria-hidden />
-            </span>
-            <span className="text-xs font-bold text-info">Recovery Strategy</span>
-          </div>
-          <p className="text-[11px] text-foreground-secondary leading-snug">
-            {readiness.score >= 70
-              ? "CNS recovery is optimal. Compound lifts prioritized."
-              : "Incorporate longer intra-set rest and keep 2-3 reps in reserve."}
-          </p>
-        </Card>
-      </div>
-
-      {/* Suggested Action Button */}
-      <Button size="lg" fullWidth asChild>
-        <Link href={readiness.suggestedAction.href}>
-          {readiness.suggestedAction.label}
-        </Link>
-      </Button>
+      </Section>
     </PageContainer>
   );
 }

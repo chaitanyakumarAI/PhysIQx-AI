@@ -9,8 +9,8 @@ export function WelcomeStep() {
           Let&apos;s build your PhysIQ DNA
         </h1>
         <p className="mt-2 text-sm text-foreground-secondary">
-          Six quick questions. No wrong answers — this just tunes your score,
-          missions, and goals to you.
+          About two minutes. No wrong answers — this sets up your plan, your
+          score, and your first workout.
         </p>
       </div>
     </div>

@@ -50,6 +50,36 @@ export interface SessionExercise {
   suggest: { weightKg: number; reps: number } | null;
 }
 
+/** The best (heaviest) logged set of one exercise in one session. */
+export interface TopSet {
+  exerciseId: string;
+  exerciseName: string;
+  weightKg: number;
+  reps: number;
+}
+
+/**
+ * What a finished workout leaves behind — the ledger entry every derivation
+ * (streak, score, PRs, coach, achievements) reads. Computed once when the
+ * session ends, from its completed sets.
+ */
+export interface CompletedSessionSummary {
+  id: string;
+  missionId: string;
+  title: string;
+  /** Local calendar day (yyyy-mm-dd) of completion. */
+  date: string;
+  completedAt: string;
+  durationSec: number;
+  setsCompleted: number;
+  totalVolumeKg: number;
+  xpEarned: number;
+  topSets: TopSet[];
+  /** Average RPE across completed sets where RPE was logged. */
+  avgRpe?: number;
+  status?: SessionStatus;
+}
+
 export interface WorkoutSession {
   id: string;
   missionId: string;

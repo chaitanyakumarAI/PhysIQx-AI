@@ -15,6 +15,7 @@ import {
   type ProgramVariant,
 } from "@/data/programs";
 import { usePlansStore } from "@/store/plansStore";
+import { planFromProgram } from "@/lib/workoutPlan";
 import type { ProgramType } from "@/types/training";
 import { describeSets } from "@/types/workoutTemplate";
 
@@ -54,6 +55,7 @@ export function ProgramSchedule({
   className,
 }: ProgramScheduleProps) {
   const savePlan = usePlansStore((state) => state.savePlan);
+  const setActivePlan = usePlansStore((state) => state.setActivePlan);
   const program = findProgram(programType);
   const [variantIndex, setVariantIndex] = useState(0);
   const [openDay, setOpenDay] = useState<string | null>(null);
@@ -66,21 +68,11 @@ export function ProgramSchedule({
     program.variants[Math.min(variantIndex, program.variants.length - 1)]!;
 
   function handleAdopt() {
-    const stamp = Date.now();
-    const planName =
-      program!.variants.length > 1
-        ? `${program!.name} (${variant.daysPerWeek}-day)`
-        : program!.name;
-    savePlan({
-      id: `plan-${program!.type}-${stamp}`,
-      name: planName,
-      days: variant.days.map((day, index) => ({
-        id: `day-${stamp}-${index}`,
-        name: day.name,
-        exercises: day.exercises,
-      })),
-    });
-    setAdoptedName(planName);
+    // Adopting a program makes it the active plan — that's what "my plan" means.
+    const plan = planFromProgram(program!, variant, Date.now());
+    savePlan(plan);
+    setActivePlan(plan.id);
+    setAdoptedName(plan.name);
   }
 
   return (
@@ -193,7 +185,7 @@ export function ProgramSchedule({
       {adoptedName ? (
         <p role="status" className="flex items-center gap-2 text-sm font-semibold text-brand">
           <CheckCircle2 size={iconSize.sm} aria-hidden />
-          Added to My Plans as “{adoptedName}” — every day is startable above.
+          “{adoptedName}” is now your active plan — its next day is waiting on Home.
         </p>
       ) : (
         <Button fullWidth onClick={handleAdopt}>

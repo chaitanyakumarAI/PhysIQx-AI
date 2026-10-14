@@ -10,11 +10,16 @@ import { SettingsPageHeader } from "@/features/profile/components/SettingsPageHe
 import { useSessionStore, type CompletedSessionSummary } from "@/store/sessionStore";
 import { useProfileStore } from "@/store/profileStore";
 import { evaluateAchievements } from "@/lib/achievementEngine";
-import { computeStreakSummary } from "@/lib/streakEngine";
-import { mockHistoricalSessions } from "@/features/profile/mocks/historyData";
+import { todayIso } from "@/lib/dates";
+import { detectRecentPRs } from "@/lib/prEngine";
+import { computeStreak } from "@/lib/streakEngine";
+import { useCardioStore } from "@/store/cardioStore";
+import { usePlansStore } from "@/store/plansStore";
 
 const includedItems = [
   "Complete workout history and set details",
+  "Imported and synced cardio activities",
+  "Your workout plans",
   "Body stats and logged weight trend history",
   "Unlocked achievements and milestone progress",
   "Custom logging preferences and notification rules",
@@ -41,16 +46,22 @@ export function ExportContent() {
     successMessage: null,
   });
 
-  const sessionHistory = useSessionStore((state) => state.history);
+  // Only the athlete's own data — never demo or sample records.
+  const allSessions = useSessionStore((state) => state.history);
+  const cardio = useCardioStore((state) => state.activities);
+  const plans = usePlansStore((state) => state.plans);
   const profileState = useProfileStore();
-
-  // Combine seeded history with any active session store records
-  const allSessions: CompletedSessionSummary[] =
-    sessionHistory.length > 0 ? sessionHistory : mockHistoricalSessions;
-  const streak = computeStreakSummary(allSessions);
+  const streak = computeStreak({
+    sessions: allSessions,
+    cardio,
+    trainingDaysPerWeek: profileState.onboardingProfile?.trainingDaysPerWeek ?? 3,
+    todayIso: todayIso(),
+  });
   const evalResult = evaluateAchievements({
     history: allSessions,
-    streakDays: streak.currentStreakDays,
+    streakDays: streak.longestStreakDays,
+    cardio,
+    prCount: detectRecentPRs(allSessions, "0000-01-01").length,
   });
 
   function exportJSON() {
@@ -63,7 +74,13 @@ export function ExportContent() {
         totalWorkouts: allSessions.length,
       },
       profile: {
-        identity: profileState.onboardingProfile,
+        athlete: {
+          displayName: profileState.displayName,
+          sex: profileState.sex,
+          birthYear: profileState.birthYear,
+          currentBuild: profileState.currentBuild,
+        },
+        training: profileState.onboardingProfile,
         heightCm: profileState.heightCm,
         weightEntries: profileState.weightEntries,
         preferences: profileState.preferences,
@@ -73,10 +90,10 @@ export function ExportContent() {
         streak: {
           currentStreakDays: streak.currentStreakDays,
           longestStreakDays: streak.longestStreakDays,
-          completionPercent: streak.completionPercent,
-          activeStreak: streak.activeStreak,
         },
         sessions: allSessions,
+        cardio,
+        plans,
       },
       achievements: evalResult.achievements.map((a) => ({
         id: a.id,

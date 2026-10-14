@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Pencil, Play, Plus } from "lucide-react";
+import { Check, Pencil, Play, Plus } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { IconButton } from "@/components/ui/IconButton";
 import { Section } from "@/components/layout/Section";
 import { iconSize } from "@/constants/icons";
 import { mockExercises } from "@/data/exercises";
-import { buildPlanDayLaunch } from "../lib/planLaunch";
+import { buildPlanDayLaunch } from "@/lib/workoutPlan";
 import { usePlansStore } from "@/store/plansStore";
 import { useSessionStore } from "@/store/sessionStore";
 
@@ -22,6 +22,8 @@ import { useSessionStore } from "@/store/sessionStore";
 export function MyPlansSection() {
   const router = useRouter();
   const plans = usePlansStore((state) => state.plans);
+  const activePlanId = usePlansStore((state) => state.activePlanId);
+  const setActivePlan = usePlansStore((state) => state.setActivePlan);
   const startSession = useSessionStore((state) => state.startSession);
 
   return (
@@ -51,7 +53,23 @@ export function MyPlansSection() {
         plans.map((plan) => (
           <Card key={plan.id} padding="md" className="flex flex-col gap-3">
             <div className="flex items-center justify-between gap-2">
-              <h3 className="font-semibold">{plan.name}</h3>
+              <div className="flex min-w-0 items-center gap-2">
+                <h3 className="truncate font-semibold">{plan.name}</h3>
+                {plan.id === activePlanId ? (
+                  <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-brand/15 px-2 py-0.5 text-xs font-semibold text-brand">
+                    <Check size={12} aria-hidden />
+                    Active
+                  </span>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setActivePlan(plan.id)}
+                    className="inline-flex min-h-8 shrink-0 items-center rounded-full border border-border px-2.5 text-xs font-semibold text-foreground-secondary hover:border-brand/40 hover:text-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/60"
+                  >
+                    Make active
+                  </button>
+                )}
+              </div>
               <IconButton
                 label={`Edit ${plan.name}`}
                 variant="ghost"

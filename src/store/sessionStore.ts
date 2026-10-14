@@ -2,7 +2,13 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { Exercise } from "@/types/exercise";
 import type { WorkoutTemplate } from "@/types/workoutTemplate";
-import type { ExerciseSet, SessionExercise, WorkoutSession } from "@/types/workoutSession";
+import type {
+  CompletedSessionSummary,
+  ExerciseSet,
+  SessionExercise,
+  TopSet,
+  WorkoutSession,
+} from "@/types/workoutSession";
 import { computeOverloadSuggestion } from "@/lib/progression";
 import { localIsoFromTimestamp } from "@/lib/dates";
 import {
@@ -40,35 +46,8 @@ interface SetPatch {
   rpe?: number | null;
 }
 
-/** The best (heaviest) logged set of one exercise in one session. */
-export interface TopSet {
-  exerciseId: string;
-  exerciseName: string;
-  weightKg: number;
-  reps: number;
-}
-
-/**
- * What a finished workout leaves behind — the ledger that live progress
- * derivations (Home spotlight, coach insights) and the strength formula
- * read. Computed once at finish time from the completed sets.
- */
-export interface CompletedSessionSummary {
-  id: string;
-  missionId: string;
-  title: string;
-  /** ISO date (yyyy-mm-dd) of completion. */
-  date: string;
-  completedAt: string;
-  durationSec: number;
-  setsCompleted: number;
-  totalVolumeKg: number;
-  xpEarned: number;
-  topSets: TopSet[];
-  /** Average RPE across completed sets where RPE was logged. */
-  avgRpe?: number;
-  status?: "active" | "completed" | "abandoned";
-}
+// Ledger types live in @/types; re-exported for existing importers.
+export type { CompletedSessionSummary, TopSet };
 
 /**
  * Bounded so localStorage can't overflow, but generous: a summary is ~1 KB,

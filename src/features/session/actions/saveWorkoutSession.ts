@@ -1,13 +1,14 @@
 "use server";
 
 import { createServerSupabaseClient } from "@/lib/supabase/server";
-import type { CompletedSessionSummary } from "@/store/sessionStore";
-import type { WorkoutSession } from "@/types/workoutSession";
+import type { CompletedSessionSummary, WorkoutSession } from "@/types/workoutSession";
 
 export interface SaveSessionResult {
   success: boolean;
   sessionDbId?: string;
   error?: string;
+  /** "unauthenticated" = guest: keep the copy local, it's not a failure. */
+  reason?: "unauthenticated" | "error";
 }
 
 /**
@@ -38,7 +39,11 @@ export async function saveWorkoutSession(
   } = await supabase.auth.getUser();
 
   if (userError || !user) {
-    return { success: false, error: "Not authenticated. Session saved locally only." };
+    return {
+      success: false,
+      reason: "unauthenticated",
+      error: "Not authenticated. Session saved locally only.",
+    };
   }
 
   // ------------------------------------------------------------------

@@ -82,7 +82,7 @@ export const BIG_4_STANDARDS: StrengthBenchmark[] = [
     },
   },
   {
-    exerciseId: "ex-squat",
+    exerciseId: "ex-back-squat",
     exerciseName: "Barbell Back Squat",
     shortName: "Back Squat",
     tiers: {
@@ -217,7 +217,7 @@ export function evaluateStrengthProfile(
   else if (avgScore >= 1.5) overallTier = "novice";
 
   const benchKg = evaluations.find((e) => e.exerciseId === "ex-bench-press")?.oneRepMaxKg || 0;
-  const squatKg = evaluations.find((e) => e.exerciseId === "ex-squat")?.oneRepMaxKg || 0;
+  const squatKg = evaluations.find((e) => e.exerciseId === "ex-back-squat")?.oneRepMaxKg || 0;
   const deadliftKg = evaluations.find((e) => e.exerciseId === "ex-deadlift")?.oneRepMaxKg || 0;
   const ohpKg = evaluations.find((e) => e.exerciseId === "ex-overhead-press")?.oneRepMaxKg || 0;
 
@@ -237,4 +237,63 @@ export function evaluateStrengthProfile(
     big3TotalKg,
     big4TotalKg,
   };
+}
+
+// ---------------------------------------------------------------------------
+// Strength pillar scoring
+// ---------------------------------------------------------------------------
+
+/**
+ * Female standards as a fraction of the (male-calibrated) multipliers above,
+ * from published strength tables: upper-body lifts sit lower relative to
+ * bodyweight than lower-body lifts.
+ */
+const FEMALE_STANDARD_FACTOR: Record<string, number> = {
+  "ex-bench-press": 0.57,
+  "ex-back-squat": 0.7,
+  "ex-deadlift": 0.7,
+  "ex-overhead-press": 0.6,
+};
+
+/** The Big 4 standards for an athlete's sex (male tables when unknown). */
+export function standardsFor(sex: "male" | "female" | null): StrengthBenchmark[] {
+  if (sex !== "female") return BIG_4_STANDARDS;
+  return BIG_4_STANDARDS.map((benchmark) => {
+    const factor = FEMALE_STANDARD_FACTOR[benchmark.exerciseId] ?? 0.65;
+    const tiers = Object.fromEntries(
+      TIER_ORDER.map((tier) => [tier, Math.round(benchmark.tiers[tier] * factor * 100) / 100]),
+    ) as Record<StrengthTier, number>;
+    return { ...benchmark, tiers };
+  });
+}
+
+/**
+ * Pillar value at each tier threshold. Diminishing returns: the climb from
+ * nothing to Novice is worth more points than Advanced to Elite, so
+ * beginners are rewarded quickly and the top stays hard to earn.
+ */
+const TIER_SCORE_ANCHORS: Record<StrengthTier, number> = {
+  beginner: 35,
+  novice: 55,
+  intermediate: 72,
+  advanced: 86,
+  elite: 96,
+};
+
+/** Maps a lift's e1RM-to-bodyweight ratio onto the 0–100 pillar scale. */
+export function ratioToStrengthScore(ratio: number, tiers: Record<StrengthTier, number>): number {
+  if (ratio <= 0) return 0;
+  const anchors: [number, number][] = [
+    [0, 10],
+    ...TIER_ORDER.map((tier): [number, number] => [tiers[tier], TIER_SCORE_ANCHORS[tier]]),
+    [tiers.elite * 1.15, 100],
+  ];
+  for (let index = 1; index < anchors.length; index++) {
+    const [x1, y1] = anchors[index]!;
+    if (ratio <= x1) {
+      const [x0, y0] = anchors[index - 1]!;
+      return Math.round(y0 + ((ratio - x0) / (x1 - x0)) * (y1 - y0));
+    }
+  }
+  return 100;
 }

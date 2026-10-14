@@ -13,7 +13,6 @@ export default async function TrainPage() {
 
   return (
     <TrainScreen
-      mission={data.mission}
       programs={data.programs}
       activeProgramId={data.activeProgramId}
       exercises={data.exercises}

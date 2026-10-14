@@ -9,28 +9,16 @@ import { ProgressBar } from "@/components/ui/ProgressBar";
 import { iconSize } from "@/constants/icons";
 import { cn } from "@/lib/utils";
 import { useProfileStore } from "@/store/profileStore";
-import { useSessionStore } from "@/store/sessionStore";
-import { evaluateAchievements, type EvaluationContext } from "@/lib/achievementEngine";
-import { mockHistoricalSessions } from "@/features/profile/mocks/historyData";
+import { useProfileView } from "@/features/profile/hooks/useProfileView";
 import { AchievementBadge } from "@/features/profile/components/AchievementBadge";
 import type { ProfileAchievement } from "@/features/profile/types";
 
 export function AchievementsContent() {
   const showcaseIds = useProfileStore((state) => state.showcaseAchievementIds);
   const toggleShowcase = useProfileStore((state) => state.toggleShowcaseAchievement);
-  const storeHistory = useSessionStore((state) => state.history);
-
-  const history = storeHistory.length > 0 ? storeHistory : mockHistoricalSessions;
-  const context: EvaluationContext = {
-    history,
-    streakDays: 27,
-    totalVolumeKg: history.reduce((sum, s) => sum + (s.totalVolumeKg || 0), 0),
-    prCount: 4,
-  };
-
-  const result = evaluateAchievements(context);
-  const allBadges = result.achievements;
-  const unlockedCount = result.unlockedCount;
+  // Same derivation as Profile, so the two screens always agree.
+  const { achievements: allBadges } = useProfileView();
+  const unlockedCount = allBadges.filter((badge) => badge.state === "unlocked").length;
 
   const [category, setCategory] = useState<"all" | "unlocked" | "locked">("all");
 

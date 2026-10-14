@@ -1,8 +1,10 @@
 import { describe, it, expect } from "vitest";
 import {
+  BIG_4_STANDARDS,
   evaluateLift,
   evaluateStrengthProfile,
-  BIG_4_STANDARDS,
+  ratioToStrengthScore,
+  standardsFor,
   type StrengthBenchmark,
 } from "./strengthStandards";
 
@@ -39,7 +41,7 @@ describe("strengthStandards engine", () => {
     const profile = evaluateStrengthProfile(
       {
         "ex-bench-press": 100, // 1.33x BW (intermediate)
-        "ex-squat": 140,       // 1.86x BW (intermediate)
+        "ex-back-squat": 140,       // 1.86x BW (intermediate)
         "ex-deadlift": 180,    // 2.4x BW (advanced)
         "ex-overhead-press": 60, // 0.8x BW (intermediate)
       },
@@ -67,3 +69,34 @@ describe("strengthStandards engine", () => {
     });
   });
 });
+
+describe("strength pillar scoring", () => {
+  const bench = BIG_4_STANDARDS[0]!.tiers;
+
+  it("rises monotonically with the bodyweight ratio", () => {
+    const scores = [0.3, 0.55, 0.8, 1.15, 1.5, 1.85, 2.2].map((ratio) =>
+      ratioToStrengthScore(ratio, bench),
+    );
+    expect(scores).toEqual([...scores].sort((a, b) => a - b));
+  });
+
+  it("hits the tier anchors and caps at 100", () => {
+    expect(ratioToStrengthScore(bench.novice, bench)).toBe(55);
+    expect(ratioToStrengthScore(bench.elite, bench)).toBe(96);
+    expect(ratioToStrengthScore(10, bench)).toBe(100);
+    expect(ratioToStrengthScore(0, bench)).toBe(0);
+  });
+
+  it("gives diminishing returns near the top", () => {
+    const lowGain = ratioToStrengthScore(bench.novice, bench) - ratioToStrengthScore(bench.beginner, bench);
+    const highGain = ratioToStrengthScore(bench.elite, bench) - ratioToStrengthScore(bench.advanced, bench);
+    expect(highGain).toBeLessThan(lowGain);
+  });
+
+  it("scales standards down for female athletes", () => {
+    const female = standardsFor("female")[0]!.tiers;
+    expect(female.intermediate).toBeLessThan(bench.intermediate);
+    expect(standardsFor(null)).toBe(BIG_4_STANDARDS);
+  });
+});
+

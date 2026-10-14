@@ -1,88 +1,90 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { ingestActivities, type IncomingActivity, type IngestResult } from "@/lib/cardio/ingest";
+import type { CardioActivity, CardioActivityType, CardioSource } from "@/types/cardio";
 
-export type CardioActivity =
-  | "walk"
-  | "run"
-  | "cycle"
-  | "swim"
-  | "row"
-  | "hiit"
-  | "sports"
-  | "other";
+export { cardioActivityLabels } from "@/types/cardio";
+export type { CardioActivity } from "@/types/cardio";
 
-export const cardioActivityLabels: Record<CardioActivity, string> = {
-  walk: "Walk",
-  run: "Run",
-  cycle: "Cycle",
-  swim: "Swim",
-  row: "Row",
-  hiit: "HIIT",
-  sports: "Sports",
-  other: "Other",
-};
+/**
+ * The Cardio pillar's ledger: activities imported from files or synced from
+ * platforms (no manual logging — product directive). Every write goes
+ * through lib/cardio/ingest, which validates and de-duplicates across
+ * sources.
+ */
+interface CardioStoreState {
+  activities: CardioActivity[];
+  /** Validates, de-duplicates, and stores; returns what happened. */
+  ingest: (incoming: IncomingActivity[]) => Omit<IngestResult, "activities">;
+  removeActivity: (id: string) => void;
+}
 
-export type WearableSource =
-  | "apple_health"
-  | "garmin"
-  | "health_connect"
-  | "whoop"
-  | "oura"
-  | "manual";
-
-export interface CardioSession {
+/** The pre-v1 shape (minutes per day, no timestamps). */
+interface LegacyCardioSession {
   id: string;
-  /** ISO date (yyyy-mm-dd). */
   date: string;
-  activity: CardioActivity;
+  activity: CardioActivityType;
   minutes: number;
-  source?: WearableSource;
+  source?: string;
   distanceKm?: number;
   avgHeartRate?: number;
   caloriesBurned?: number;
 }
 
-/**
- * The Cardio pillar's store — stores synced sessions from connected wearables
- * (Apple Health, Garmin, Health Connect) and manages cardio minutes calculations.
- */
-interface CardioStoreState {
-  sessions: CardioSession[];
-  logSession: (activity: CardioActivity, minutes: number, date: string, source?: WearableSource) => void;
-  addSyncedSession: (session: Omit<CardioSession, "id"> & { id?: string }) => void;
-  removeSession: (id: string) => void;
+const LEGACY_SOURCES = new Set<CardioSource>(["apple_health", "garmin", "health_connect"]);
+
+function migrateLegacy(session: LegacyCardioSession): CardioActivity {
+  const startedAt = new Date(`${session.date}T12:00:00`).toISOString();
+  const source = LEGACY_SOURCES.has(session.source as CardioSource)
+    ? (session.source as CardioSource)
+    : "manual";
+  return {
+    id: `${source}:${session.id}`,
+    source,
+    externalId: session.id,
+    type: session.activity,
+    startedAt,
+    date: session.date,
+    durationMin: session.minutes,
+    distanceKm: session.distanceKm,
+    avgHeartRate: session.avgHeartRate,
+    calories: session.caloriesBurned,
+    importedAt: startedAt,
+  };
 }
 
 export const useCardioStore = create<CardioStoreState>()(
   persist(
-    (set) => ({
-      sessions: [],
-      logSession: (activity, minutes, date, source = "manual") =>
+    (set, get) => ({
+      activities: [],
+      ingest: (incoming) => {
+        const { activities, ...summary } = ingestActivities(
+          get().activities,
+          incoming,
+          new Date().toISOString(),
+        );
+        set({ activities });
+        return summary;
+      },
+      removeActivity: (id) =>
         set((state) => ({
-          sessions: [
-            ...state.sessions,
-            { id: `cardio-${Date.now()}`, date, activity, minutes, source },
-          ],
-        })),
-      addSyncedSession: (session) =>
-        set((state) => {
-          const id = session.id || `sync-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
-          // Deduplication: if exact id exists or same date + activity within ±15 min, avoid duplicate
-          const existingIndex = state.sessions.findIndex((s) => s.id === id);
-          if (existingIndex >= 0) {
-            const updated = [...state.sessions];
-            updated[existingIndex] = { ...session, id };
-            return { sessions: updated };
-          }
-          return { sessions: [session as CardioSession, ...state.sessions] };
-        }),
-      removeSession: (id) =>
-        set((state) => ({
-          sessions: state.sessions.filter((session) => session.id !== id),
+          activities: state.activities.filter((activity) => activity.id !== id),
         })),
     }),
     {
       name: "physiqx-cardio",
+      version: 1,
+      migrate: (persisted, version) => {
+        const state = persisted as { sessions?: LegacyCardioSession[]; activities?: CardioActivity[] };
+        if (version < 1) {
+          return {
+            activities: (state.sessions ?? [])
+              .filter((session) => session.minutes > 0)
+              .map(migrateLegacy),
+          } as CardioStoreState;
+        }
+        return state as CardioStoreState;
+      },
       skipHydration: true,
     },
   ),

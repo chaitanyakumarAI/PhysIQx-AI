@@ -1,10 +1,13 @@
 import { describe, it, expect } from "vitest";
+import { makeSession, top } from "@/test/fixtures";
 import {
+  bestE1rmByExercise,
+  buildLiftHistories,
   calculateEpley1RM,
   derivePersonalRecords,
-  deriveLatestPR,
+  detectRecentPRs,
+  findStalledLifts,
 } from "./prEngine";
-import type { CompletedSessionSummary } from "@/store/sessionStore";
 
 describe("prEngine", () => {
   describe("calculateEpley1RM", () => {
@@ -29,117 +32,85 @@ describe("prEngine", () => {
     });
   });
 
-  describe("derivePersonalRecords", () => {
-    it("returns standard fallback PRs when history is empty", () => {
-      const records = derivePersonalRecords([]);
-      expect(records.length).toBeGreaterThan(0);
-      expect(records[0]?.exerciseName).toBeDefined();
-      expect(records[0]?.trend.length).toBeGreaterThan(0);
-    });
 
-    it("computes authentic PRs and trend points from session history", () => {
-      const history: CompletedSessionSummary[] = [
-        {
-          id: "s1",
-          missionId: "m1",
-          title: "Bench Day",
-          date: "2026-08-01",
-          completedAt: "2026-08-01T10:00:00Z",
-          durationSec: 3000,
-          setsCompleted: 10,
-          totalVolumeKg: 2000,
-          xpEarned: 100,
-          topSets: [
-            {
-              exerciseId: "ex-bench-press",
-              exerciseName: "Barbell Bench Press",
-              weightKg: 80,
-              reps: 8,
-            },
-          ],
-        },
-        {
-          id: "s2",
-          missionId: "m1",
-          title: "Bench Day 2",
-          date: "2026-08-15",
-          completedAt: "2026-08-15T10:00:00Z",
-          durationSec: 3000,
-          setsCompleted: 10,
-          totalVolumeKg: 2200,
-          xpEarned: 100,
-          topSets: [
-            {
-              exerciseId: "ex-bench-press",
-              exerciseName: "Barbell Bench Press",
-              weightKg: 85,
-              reps: 8,
-            },
-          ],
-        },
-        {
-          id: "s3",
-          missionId: "m1",
-          title: "Bench Day 3",
-          date: "2026-09-01",
-          completedAt: "2026-09-01T10:00:00Z",
-          durationSec: 3000,
-          setsCompleted: 10,
-          totalVolumeKg: 2400,
-          xpEarned: 100,
-          topSets: [
-            {
-              exerciseId: "ex-bench-press",
-              exerciseName: "Barbell Bench Press",
-              weightKg: 90,
-              reps: 6,
-            },
-          ],
-        },
-      ];
+  const bench = (date: string, weightKg: number, reps = 8) =>
+    makeSession(date, { topSets: [top("ex-bench-press", weightKg, reps, "Bench Press")] });
 
-      const records = derivePersonalRecords(history, "kg");
-      expect(records.length).toBe(1);
-
-      const bench = records[0]!;
-      expect(bench.exerciseName).toBe("Barbell Bench Press");
-      expect(bench.value).toBe(90);
-      expect(bench.delta).toBe(10); // 90 - 80
-      expect(bench.trend.length).toBe(3);
-      expect(bench.trend[0]!.value).toBe(80);
-      expect(bench.trend[2]!.value).toBe(90);
+  describe("buildLiftHistories", () => {
+    it("keeps one point per day — that day's best", () => {
+      const sameDay = makeSession("2026-08-01", {
+        id: "pm",
+        completedAt: "2026-08-01T18:00:00.000Z",
+        topSets: [top("ex-bench-press", 95, 3)],
+      });
+      const [history] = buildLiftHistories([bench("2026-08-01", 80), sameDay]);
+      expect(history!.points).toHaveLength(1);
+      expect(history!.points[0]!.e1rm).toBe(calculateEpley1RM(95, 3));
     });
   });
 
-  describe("deriveLatestPR", () => {
-    it("returns null for empty records", () => {
-      expect(deriveLatestPR([])).toBeNull();
+  describe("derivePersonalRecords", () => {
+    it("returns nothing without a ledger (no fabricated records)", () => {
+      expect(derivePersonalRecords([], "2026-09-01")).toEqual([]);
     });
 
-    it("prioritizes the record with the largest positive delta", () => {
-      const records = [
-        {
-          id: "pr-1",
-          exerciseName: "Squat",
-          unit: "kg",
-          value: 120,
-          delta: 2.5,
-          windowLabel: "Last 30 days",
-          trend: [],
-        },
-        {
-          id: "pr-2",
-          exerciseName: "Deadlift",
-          unit: "kg",
-          value: 160,
-          delta: 10,
-          windowLabel: "Last 30 days",
-          trend: [],
-        },
-      ];
+    it("tracks the best e1RM, its 30-day change, and each new best", () => {
+      const records = derivePersonalRecords(
+        [bench("2026-07-01", 80), bench("2026-08-15", 85), bench("2026-09-01", 90, 6)],
+        "2026-09-02",
+      );
+      expect(records).toHaveLength(1);
+      const record = records[0]!;
+      expect(record.value).toBe(calculateEpley1RM(90, 6));
+      expect(record.delta).toBe(
+        Math.round((calculateEpley1RM(90, 6) - calculateEpley1RM(80, 8)) * 10) / 10,
+      );
+      expect(record.trend.map((point) => point.date)).toEqual([
+        "2026-07-01",
+        "2026-08-15",
+        "2026-09-01",
+      ]);
+    });
+  });
 
-      const latest = deriveLatestPR(records);
-      expect(latest?.exerciseName).toBe("Deadlift");
+  describe("detectRecentPRs", () => {
+    it("reports new bests since a date, but not first-ever logs", () => {
+      const sessions = [bench("2026-09-01", 80), bench("2026-09-10", 85), bench("2026-09-12", 82.5)];
+      const prs = detectRecentPRs(sessions, "2026-09-05");
+      expect(prs).toHaveLength(1);
+      expect(prs[0]).toMatchObject({ date: "2026-09-10", weightKg: 85 });
+      expect(detectRecentPRs([bench("2026-09-10", 100)], "2026-09-01")).toEqual([]);
+    });
+  });
+
+  describe("findStalledLifts", () => {
+    it("flags a regularly trained lift with no new best in 3+ weeks", () => {
+      const sessions = [
+        bench("2026-08-20", 90),
+        bench("2026-09-01", 87.5),
+        bench("2026-09-08", 90),
+        bench("2026-09-15", 87.5),
+      ];
+      const [stalled] = findStalledLifts(sessions, "2026-09-16");
+      expect(stalled).toMatchObject({ exerciseId: "ex-bench-press", weeksStalled: 3 });
+    });
+
+    it("ignores progressing lifts and lifts without recent evidence", () => {
+      const progressing = [bench("2026-08-20", 80), bench("2026-09-08", 82.5), bench("2026-09-15", 85)];
+      expect(findStalledLifts(progressing, "2026-09-16")).toEqual([]);
+      expect(findStalledLifts([bench("2026-08-20", 90), bench("2026-09-15", 85)], "2026-09-16")).toEqual(
+        [],
+      );
+    });
+  });
+
+  describe("bestE1rmByExercise", () => {
+    it("respects the since-date window", () => {
+      const sessions = [bench("2026-01-01", 120), bench("2026-09-01", 80)];
+      expect(bestE1rmByExercise(sessions).get("ex-bench-press")).toBe(calculateEpley1RM(120, 8));
+      expect(bestE1rmByExercise(sessions, "2026-06-01").get("ex-bench-press")).toBe(
+        calculateEpley1RM(80, 8),
+      );
     });
   });
 });
