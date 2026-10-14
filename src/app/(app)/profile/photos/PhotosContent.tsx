@@ -387,7 +387,7 @@ export function PhotosContent() {
                     </div>
                     {photo.notes && (
                       <p className="mt-1 text-xs text-foreground-secondary italic">
-                        "{photo.notes}"
+                        &ldquo;{photo.notes}&rdquo;
                       </p>
                     )}
                   </div>
@@ -497,7 +497,7 @@ export function PhotosContent() {
                   <span className="font-semibold text-foreground">{baselinePhoto.date}</span>
                   <span>{baselinePhoto.weightKg ? `${baselinePhoto.weightKg} kg` : ""}</span>
                   {baselinePhoto.notes && (
-                    <span className="truncate italic">"{baselinePhoto.notes}"</span>
+                    <span className="truncate italic">&ldquo;{baselinePhoto.notes}&rdquo;</span>
                   )}
                 </div>
               </Card>
@@ -522,7 +522,7 @@ export function PhotosContent() {
                     {currentPhoto.weightKg ? `${currentPhoto.weightKg} kg` : ""}
                   </span>
                   {currentPhoto.notes && (
-                    <span className="truncate italic">"{currentPhoto.notes}"</span>
+                    <span className="truncate italic">&ldquo;{currentPhoto.notes}&rdquo;</span>
                   )}
                 </div>
               </Card>

@@ -171,7 +171,7 @@ export function ChallengeDetailContent({ challengeId }: { challengeId: string })
           <li className="flex items-start gap-2">
             <span className="size-1.5 rounded-full bg-brand shrink-0 mt-1.5" />
             <span>
-              <strong>Auto-verification:</strong> Sets are scored and validated immediately upon tapping "Finish Workout" in active sessions.
+              <strong>Auto-verification:</strong> Sets are scored and validated immediately upon tapping &ldquo;Finish Workout&rdquo; in active sessions.
             </span>
           </li>
           <li className="flex items-start gap-2">
