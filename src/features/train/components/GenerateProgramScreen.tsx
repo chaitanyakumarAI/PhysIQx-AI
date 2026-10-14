@@ -3,14 +3,9 @@
 import { useMemo, useState } from "react";
 import {
   ArrowLeft,
-  Calendar,
   Check,
-  ChevronRight,
   Dumbbell,
-  Layers,
   Sparkles,
-  Trophy,
-  Zap,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -27,7 +22,7 @@ import type { ProfileGoal, ExperienceLevel, GoalBodyShape } from "@/types/profil
 import type { ProgramType } from "@/types/training";
 import { usePlansStore } from "@/store/plansStore";
 import { useSessionStore } from "@/store/sessionStore";
-import { playCelebrationFanfare, playScanSuccess } from "@/lib/audioEngine";
+import { playCelebrationFanfare } from "@/lib/audioEngine";
 
 export function GenerateProgramScreen() {
   const router = useRouter();

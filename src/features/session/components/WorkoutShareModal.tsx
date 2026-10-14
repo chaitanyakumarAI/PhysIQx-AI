@@ -1,9 +1,7 @@
 "use client";
-
 import { useState } from "react";
 import { X, Share2, Copy, Check, Sparkles, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
 import { iconSize } from "@/constants/icons";
 import { formatElapsedTime } from "../lib/derive";
 import { playScanSuccess } from "@/lib/audioEngine";

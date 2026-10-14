@@ -1,7 +1,6 @@
 "use client";
-
 import Link from "next/link";
-import { ArrowLeft, HeartPulse, Sparkles, Activity, Zap, Shield, Dumbbell } from "lucide-react";
+import { ArrowLeft, HeartPulse, Activity, Zap, Shield } from "lucide-react";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { Card } from "@/components/ui/Card";
 import { ProgressBar } from "@/components/ui/ProgressBar";

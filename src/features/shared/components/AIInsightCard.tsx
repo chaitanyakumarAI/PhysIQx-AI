@@ -1,6 +1,4 @@
 "use client";
-
-import Link from "next/link";
 import { Lightbulb } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { iconSize } from "@/constants/icons";

@@ -8,6 +8,8 @@
  * so the live session screen never needs a catalog lookup mid-workout —
  * one less thing that can go wrong offline.
  */
+import type { Equipment } from "./exercise";
+
 export type SessionStatus = "active" | "completed" | "abandoned";
 
 export interface ExerciseSet {
@@ -36,6 +38,9 @@ export interface SessionExercise {
   /** Denormalized from the template, same reasoning as exerciseName —
    *  the rest timer must not need a template lookup mid-workout. */
   restSeconds: number;
+  /** Denormalized so barbell-only tools (plate math) need no catalog
+   *  lookup. Absent on sessions persisted before it existed. */
+  equipment?: Equipment;
   sets: ExerciseSet[];
   /**
    * Progressive-overload suggestion derived from the last session's best set

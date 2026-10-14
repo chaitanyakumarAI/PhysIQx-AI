@@ -1,9 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import {
-  ArrowLeft,
   Activity,
   RefreshCw,
   CheckCircle2,
@@ -11,13 +9,12 @@ import {
   HeartPulse,
   Smartphone,
   ShieldCheck,
-  Zap,
   Sliders,
 } from "lucide-react";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { iconSize } from "@/constants/icons";
+
 import { cn } from "@/lib/utils";
 import { SettingsPageHeader } from "@/features/profile/components/SettingsPageHeader";
 import { triggerHaptic } from "@/lib/audioEngine";

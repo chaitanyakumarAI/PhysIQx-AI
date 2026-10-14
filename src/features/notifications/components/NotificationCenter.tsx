@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useMemo, useId } from "react";
 import Link from "next/link";
 import {
@@ -11,17 +10,14 @@ import {
   Target,
   ShieldAlert,
   ArrowRight,
-  Sparkles,
   Inbox,
 } from "lucide-react";
-import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
-import { iconSize } from "@/constants/icons";
+
+
 import { cn } from "@/lib/utils";
 import {
   useNotificationStore,
   type NotificationCategory,
-  type CustomNotification,
 } from "@/store/notificationStore";
 
 function formatRelativeTime(isoString: string): string {

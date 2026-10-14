@@ -1,7 +1,6 @@
 "use client";
-
 import { useState } from "react";
-import { Sparkles, MessageSquareHeart, Heart, Flame, Zap, Crown, Dumbbell } from "lucide-react";
+import { Sparkles, MessageSquareHeart } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { cn } from "@/lib/utils";
 import { playSetComplete, triggerHaptic } from "@/lib/audioEngine";

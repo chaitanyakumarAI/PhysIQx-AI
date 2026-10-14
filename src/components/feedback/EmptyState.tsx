@@ -1,11 +1,9 @@
 import { Dumbbell, type LucideIcon } from "lucide-react";
-import type { MascotPose } from "@/components/mascots/Mascot";
 import { iconSize } from "@/constants/icons";
 import { cn } from "@/lib/utils";
 
 export interface EmptyStateProps extends React.ComponentProps<"div"> {
   icon?: LucideIcon;
-  mascot?: MascotPose;
   title: string;
   description?: string;
   /** Primary CTA — every empty state should offer a next action. */
@@ -15,7 +13,6 @@ export interface EmptyStateProps extends React.ComponentProps<"div"> {
 export function EmptyState({
   className,
   icon: Icon,
-  mascot: _mascot,
   title,
   description,
   action,

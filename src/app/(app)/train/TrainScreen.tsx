@@ -1,7 +1,6 @@
 "use client";
-
 import { useMemo, useState } from "react";
-import { ChevronDown, Dumbbell, HeartPulse, SearchX, Sparkles } from "lucide-react";
+import { ChevronDown, Dumbbell, HeartPulse, SearchX } from "lucide-react";
 import Link from "next/link";
 import { m } from "framer-motion";
 import { useRouter } from "next/navigation";

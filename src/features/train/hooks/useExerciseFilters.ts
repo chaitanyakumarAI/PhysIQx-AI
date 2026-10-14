@@ -5,7 +5,7 @@ import { filterExercises } from "../lib/derive";
 import type { FilterChipOption } from "@/components/ui/FilterChipRow";
 import { muscleGroupLabels, type Exercise, type MuscleGroup } from "@/types/exercise";
 
-/** Static — computed once, shared by every consumer (Train screen, playground). */
+/** Static — computed once, shared by every consumer. */
 export const muscleFilterOptions: FilterChipOption[] = (
   Object.entries(muscleGroupLabels) as [MuscleGroup, string][]
 ).map(([id, label]) => ({ id, label }));
@@ -18,8 +18,7 @@ const PAGE_SIZE = 10;
  * filter (re-selecting a chip clears it), and the derived result list.
  * Results are paged: only the top PAGE_SIZE show until the user asks for
  * more, and paging resets whenever the query or muscle filter changes.
- * Extracted so the screen and its dev-playground harness share one
- * implementation instead of two independently-maintained copies.
+ * Extracted as a hook so the filtering logic lives in one place.
  */
 export function useExerciseFilters(exercises: Exercise[]) {
   const [query, setQueryState] = useState("");

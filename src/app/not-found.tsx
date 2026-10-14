@@ -11,7 +11,6 @@ export default function NotFound() {
     <PageContainer withBottomNav={false}>
       <div className="flex flex-1 items-center">
         <EmptyState
-          mascot="kix-worried"
           title="Page not found"
           description="Even Kix took a wrong turn once. Let's get you back on track."
           action={

@@ -1,7 +1,6 @@
 "use client";
-
 import Link from "next/link";
-import { ChevronRight, HeartPulse, Sparkles, Activity } from "lucide-react";
+import { ChevronRight, HeartPulse, Activity } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { iconSize } from "@/constants/icons";

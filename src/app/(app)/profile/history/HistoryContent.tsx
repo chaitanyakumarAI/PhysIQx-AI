@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Calendar, Clock, Dumbbell, Flame, Search, CheckCircle2, ChevronRight } from "lucide-react";
+import { ArrowLeft, Dumbbell, Search, CheckCircle2, ChevronRight } from "lucide-react";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { Card } from "@/components/ui/Card";
 import { iconSize } from "@/constants/icons";

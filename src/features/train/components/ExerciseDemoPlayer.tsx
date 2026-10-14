@@ -1,7 +1,6 @@
 "use client";
-
 import { useState, useEffect } from "react";
-import { Play, Pause, RotateCcw, FastForward, Activity } from "lucide-react";
+import { Play, Pause, RotateCcw, Activity } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { iconSize } from "@/constants/icons";
 import type { Exercise } from "@/types/exercise";

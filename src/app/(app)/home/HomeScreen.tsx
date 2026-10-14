@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { BookOpen, Dumbbell, History, Trophy } from "lucide-react";
 import { QuickActionGrid } from "@/features/home/components/QuickActionGrid";
 import type { QuickAction } from "@/features/home/types";

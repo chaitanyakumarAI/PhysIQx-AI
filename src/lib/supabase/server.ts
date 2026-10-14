@@ -1,5 +1,30 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { hasSupabaseAuthCookie, isSupabaseReachable } from "./reachability";
+
+type ServerSupabaseClient = ReturnType<typeof createServerClient>;
+
+/**
+ * A no-network stand-in used for guests and when Supabase is unreachable:
+ * it answers "no user, no rows" instantly so offline navigation never waits.
+ */
+function offlineClient(): ServerSupabaseClient {
+  const empty = Promise.resolve({ data: [], error: null });
+  const none = Promise.resolve({ data: null, error: null });
+  const query = {
+    eq: () => query,
+    order: () => empty,
+    maybeSingle: () => none,
+  };
+  return {
+    auth: {
+      getUser: async () => ({ data: { user: null }, error: null }),
+      getSession: async () => ({ data: { session: null }, error: null }),
+      signOut: async () => ({ error: null }),
+    },
+    from: () => ({ select: () => query }),
+  } as unknown as ServerSupabaseClient;
+}
 
 /**
  * Server-side Supabase client — use in Server Components, Route Handlers,
@@ -7,117 +32,35 @@ import { cookies } from "next/headers";
  *
  * Must be called inside a request context (not at module level).
  */
-let isSupabaseReachable: boolean | null = null;
-let lastReachabilityCheck = 0;
-const REACHABILITY_TTL_MS = 300_000;
-
-async function checkSupabaseAvailable(url: string): Promise<boolean> {
-  const now = Date.now();
-  if (isSupabaseReachable !== null && now - lastReachabilityCheck < REACHABILITY_TTL_MS) {
-    return isSupabaseReachable;
-  }
-
-  try {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 2500);
-    const res = await fetch(`${url}/auth/v1/health`, {
-      method: "GET",
-      signal: controller.signal,
-    }).catch(() => null);
-    clearTimeout(timer);
-
-    isSupabaseReachable = Boolean(res && res.status < 500);
-    lastReachabilityCheck = now;
-  } catch {
-    isSupabaseReachable = false;
-    lastReachabilityCheck = now;
-  }
-
-  return isSupabaseReachable;
-}
-
-export async function createServerSupabaseClient() {
+export async function createServerSupabaseClient(): Promise<ServerSupabaseClient> {
   const cookieStore = await cookies();
-  const allCookies = cookieStore.getAll();
-  const hasAuthToken = allCookies.some(
-    (c) => c.name.startsWith("sb-") && (c.name.includes("auth-token") || c.name.endsWith("-token"))
-  );
-
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  // Zero-latency fast path: If there are no Supabase auth cookies in the request
-  // (guest or local offline mode), return an instant offline client immediately
-  // without touching the network.
-  if (!hasAuthToken || !supabaseUrl || !supabaseKey) {
-    return {
-      auth: {
-        getUser: async () => ({ data: { user: null }, error: null }),
-        getSession: async () => ({ data: { session: null }, error: null }),
-        signOut: async () => ({ error: null }),
-      },
-      from: () => ({
-        select: () => ({
-          eq: () => ({
-            eq: () => ({
-              order: () => Promise.resolve({ data: [], error: null }),
-              maybeSingle: () => Promise.resolve({ data: null, error: null }),
-            }),
-            order: () => Promise.resolve({ data: [], error: null }),
-            maybeSingle: () => Promise.resolve({ data: null, error: null }),
-          }),
-          order: () => Promise.resolve({ data: [], error: null }),
-          maybeSingle: () => Promise.resolve({ data: null, error: null }),
-        }),
-      }),
-    } as unknown as ReturnType<typeof createServerClient>;
+  // Zero-latency fast path: guests (no auth cookie) never touch the network.
+  if (!hasSupabaseAuthCookie(cookieStore.getAll()) || !supabaseUrl || !supabaseKey) {
+    return offlineClient();
+  }
+  if (!(await isSupabaseReachable(supabaseUrl))) {
+    return offlineClient();
   }
 
-  const isOnline = await checkSupabaseAvailable(supabaseUrl);
-  if (!isOnline) {
-    return {
-      auth: {
-        getUser: async () => ({ data: { user: null }, error: null }),
-        getSession: async () => ({ data: { session: null }, error: null }),
-        signOut: async () => ({ error: null }),
+  return createServerClient(supabaseUrl, supabaseKey, {
+    cookies: {
+      getAll() {
+        return cookieStore.getAll();
       },
-      from: () => ({
-        select: () => ({
-          eq: () => ({
-            eq: () => ({
-              order: () => Promise.resolve({ data: [], error: null }),
-              maybeSingle: () => Promise.resolve({ data: null, error: null }),
-            }),
-            order: () => Promise.resolve({ data: [], error: null }),
-            maybeSingle: () => Promise.resolve({ data: null, error: null }),
-          }),
-          order: () => Promise.resolve({ data: [], error: null }),
-          maybeSingle: () => Promise.resolve({ data: null, error: null }),
-        }),
-      }),
-    } as unknown as ReturnType<typeof createServerClient>;
-  }
-
-  return createServerClient(
-    supabaseUrl!,
-    supabaseKey!,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options),
-            );
-          } catch {
-            // The `setAll` method is called from a Server Component where
-            // cookies can't be set. This is fine — the middleware will
-            // handle refreshing the session cookie on the next request.
-          }
-        },
+      setAll(cookiesToSet) {
+        try {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            cookieStore.set(name, value, options),
+          );
+        } catch {
+          // The `setAll` method is called from a Server Component where
+          // cookies can't be set. This is fine — the middleware will
+          // handle refreshing the session cookie on the next request.
+        }
       },
     },
-  );
+  });
 }

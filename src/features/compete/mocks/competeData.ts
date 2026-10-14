@@ -100,7 +100,7 @@ const activity: ActivityEvent[] = [
     actorName: "Priya R.",
     actorAvatarSrc: "/avatars/preset-2.png",
     type: "challenge-join",
-    description: "started 30-day hydration challenge",
+    description: "started the 30-day consistency challenge",
     occurredAt: minutesAgo(180),
   },
 ];

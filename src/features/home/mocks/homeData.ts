@@ -1,4 +1,4 @@
-import { BarChart3, Dumbbell, HeartPulse, Droplets } from "lucide-react";
+import { Dumbbell, HeartPulse } from "lucide-react";
 import type { DayStatus } from "@/types/training";
 import { mockTodayMission } from "@/data/mission";
 import { mockLatestPR } from "@/data/personalRecords";
@@ -6,10 +6,8 @@ import { mockPhysIQScore } from "@/data/score";
 import { mockProfile } from "@/data/profile";
 import { mockStreak } from "@/data/streak";
 import { mockLevel } from "@/data/level";
-import type { FuelProgress } from "@/types/nutrition";
 import type { Insight } from "@/types/insight";
 import type { DailyPriority, HomeData, QuickAction } from "../types";
-import { computePercent } from "@/lib/math";
 import { computeCompletionPercent } from "../lib/derive";
 
 /**
@@ -63,7 +61,6 @@ const week: HomeData["week"] = {
   days,
 };
 
-const fuel: FuelProgress[] = [];
 
 // Coach insights only speak from tracked inputs (sessions, cardio logs,
 // weigh-ins) — hydration is a self-serve habit with no coach commentary.
@@ -113,7 +110,6 @@ const priorities: DailyPriority[] = [
 const quickActions: QuickAction[] = [
   { id: "log-cardio", label: "Log cardio", icon: HeartPulse, href: "/train/cardio" },
   { id: "start-workout", label: "Start workout", icon: Dumbbell, href: "/train" },
-  { id: "log-water", label: "Log water", icon: Droplets, href: "/home?log=water" },
 ];
 
 export const mockHomeData: HomeData = {
@@ -122,7 +118,6 @@ export const mockHomeData: HomeData = {
   score,
   mission,
   week,
-  fuel,
   insight,
   level,
   quickActions,

@@ -7,12 +7,7 @@ import {
   Trophy,
   Zap,
   Users,
-  Clock,
-  CheckCircle2,
   Dumbbell,
-  Sparkles,
-  ChevronRight,
-  Flame,
   ShieldCheck,
 } from "lucide-react";
 import { PageContainer } from "@/components/layout/PageContainer";
@@ -20,10 +15,10 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { iconSize } from "@/constants/icons";
-import { cn } from "@/lib/utils";
+
 import { useSessionStore } from "@/store/sessionStore";
 import { mockHistoricalSessions } from "@/features/profile/mocks/historyData";
-import type { Challenge, ChallengeParticipation } from "@/types/challenge";
+import type { Challenge } from "@/types/challenge";
 import { ChallengeCheerWall } from "@/features/compete/components/ChallengeCheerWall";
 
 const CHALLENGE_REGISTRY: Record<string, Challenge> = {

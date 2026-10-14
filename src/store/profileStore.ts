@@ -17,33 +17,8 @@ export interface ProgressPhotoEntry {
   dataUrl: string;
 }
 
-export const SEED_PROGRESS_PHOTOS: ProgressPhotoEntry[] = [
-  {
-    id: "photo-seed-1",
-    date: new Date(Date.now() - 45 * 86400000).toISOString().split("T")[0]!,
-    angle: "front",
-    weightKg: 82.5,
-    notes: "Baseline check-in. Starting new Hypertrophy wave.",
-    dataUrl: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='500' viewBox='0 0 400 500' fill='%23121214'><rect width='400' height='500' rx='16' fill='%2318181b'/><circle cx='200' cy='130' r='45' fill='%2327272a'/><path d='M130,220 C130,170 270,170 270,220 L280,360 C280,380 250,390 200,390 C150,390 120,380 120,360 Z' fill='%2327272a'/><text x='200' y='450' fill='%2371717a' font-family='sans-serif' font-size='14' text-anchor='middle'>Week 0 · Baseline (Front)</text></svg>",
-  },
-  {
-    id: "photo-seed-2",
-    date: new Date(Date.now() - 21 * 86400000).toISOString().split("T")[0]!,
-    angle: "side",
-    weightKg: 80.8,
-    notes: "Mid-phase progress. Posture and shoulder separation improving.",
-    dataUrl: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='500' viewBox='0 0 400 500' fill='%23121214'><rect width='400' height='500' rx='16' fill='%2318181b'/><circle cx='200' cy='130' r='45' fill='%2327272a'/><path d='M160,220 C160,170 250,170 250,220 L240,360 C240,380 220,390 190,390 C160,390 150,380 150,360 Z' fill='%2327272a'/><text x='200' y='450' fill='%2371717a' font-family='sans-serif' font-size='14' text-anchor='middle'>Week 4 · Check-in (Side)</text></svg>",
-  },
-  {
-    id: "photo-seed-3",
-    date: new Date(Date.now() - 3 * 86400000).toISOString().split("T")[0]!,
-    angle: "front",
-    weightKg: 79.2,
-    notes: "Current state. Noticeable core definition and vascularity.",
-    dataUrl: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='500' viewBox='0 0 400 500' fill='%23121214'><rect width='400' height='500' rx='16' fill='%2318181b'/><circle cx='200' cy='130' r='45' fill='%2310b981' fill-opacity='0.25' stroke='%2310b981' stroke-width='2'/><path d='M125,215 C125,165 275,165 275,215 L285,360 C285,380 250,395 200,395 C150,395 115,380 115,360 Z' fill='%2310b981' fill-opacity='0.2' stroke='%2310b981' stroke-width='2'/><text x='200' y='450' fill='%2310b981' font-family='sans-serif' font-size='14' font-weight='bold' text-anchor='middle'>Week 7 · Current (Front)</text></svg>",
-  },
-];
-
+/** Ids of the placeholder photos earlier builds wrote into user data. */
+const LEGACY_SEED_PHOTO_PREFIX = "photo-seed-";
 
 /**
  * User-adjustable profile data — avatar plus body stats (height, dated
@@ -131,7 +106,7 @@ export const useProfileStore = create<ProfileStoreState>()(
       avatarDataUrl: null,
       heightCm: null,
       weightEntries: [],
-      photos: SEED_PROGRESS_PHOTOS,
+      photos: [],
       showcaseAchievementIds: [],
       onboardingProfile: null,
       preferences: DEFAULT_USER_PREFERENCES,
@@ -206,6 +181,18 @@ export const useProfileStore = create<ProfileStoreState>()(
     }),
     {
       name: "physiqx-profile",
+      version: 1,
+      // v0 → v1: drop the placeholder progress photos earlier builds seeded
+      // into the user's own data (they were being exported as theirs).
+      migrate: (persisted, version) => {
+        const state = persisted as Partial<ProfileStoreState>;
+        if (version < 1 && Array.isArray(state.photos)) {
+          state.photos = state.photos.filter(
+            (photo) => !photo.id.startsWith(LEGACY_SEED_PHOTO_PREFIX),
+          );
+        }
+        return state as ProfileStoreState;
+      },
       skipHydration: true,
     },
   ),

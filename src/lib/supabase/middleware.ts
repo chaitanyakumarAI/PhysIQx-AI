@@ -1,43 +1,15 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { hasSupabaseAuthCookie, isSupabaseReachable } from "./reachability";
 
 /**
  * Refreshes the Supabase auth session on every request by reading and
  * writing the session cookie. This must run in middleware so that
  * Server Components always see a fresh session.
  *
- * Returns { supabase, response } — the response carries any updated
+ * Returns { user, supabaseResponse } — the response carries any updated
  * Set-Cookie headers that the caller must forward to the client.
  */
-let isSupabaseReachable: boolean | null = null;
-let lastReachabilityCheck = 0;
-const REACHABILITY_TTL_MS = 300_000; // 5 minutes cache
-
-async function checkSupabaseAvailable(url: string): Promise<boolean> {
-  const now = Date.now();
-  if (isSupabaseReachable !== null && now - lastReachabilityCheck < REACHABILITY_TTL_MS) {
-    return isSupabaseReachable;
-  }
-
-  try {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 2500);
-    const res = await fetch(`${url}/auth/v1/health`, {
-      method: "GET",
-      signal: controller.signal,
-    }).catch(() => null);
-    clearTimeout(timer);
-
-    isSupabaseReachable = Boolean(res && res.status < 500);
-    lastReachabilityCheck = now;
-  } catch {
-    isSupabaseReachable = false;
-    lastReachabilityCheck = now;
-  }
-
-  return isSupabaseReachable;
-}
-
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
@@ -51,17 +23,12 @@ export async function updateSession(request: NextRequest) {
   // Fast path 1: Check if any Supabase auth cookies exist.
   // If the user has no session cookies (guest or local offline mode),
   // skip external network calls completely so navigation is instant (0ms).
-  const allCookies = request.cookies.getAll();
-  const hasAuthToken = allCookies.some(
-    (c) => c.name.startsWith("sb-") && (c.name.includes("auth-token") || c.name.endsWith("-token"))
-  );
-
-  if (!hasAuthToken) {
+  if (!hasSupabaseAuthCookie(request.cookies.getAll())) {
     return { user: null, supabaseResponse };
   }
 
   // Fast path 2: If cookies exist, verify remote host is reachable before attempting auth call.
-  const isOnline = await checkSupabaseAvailable(supabaseUrl);
+  const isOnline = await isSupabaseReachable(supabaseUrl);
   if (!isOnline) {
     return { user: null, supabaseResponse };
   }

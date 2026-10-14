@@ -4,6 +4,16 @@ import type { Exercise } from "@/types/exercise";
 import type { WorkoutTemplate } from "@/types/workoutTemplate";
 import type { ExerciseSet, SessionExercise, WorkoutSession } from "@/types/workoutSession";
 import { computeOverloadSuggestion } from "@/lib/progression";
+import { localIsoFromTimestamp } from "@/lib/dates";
+import {
+  computeEarnedXp,
+  resolveCompletionValues,
+  sanitizeReps,
+  sanitizeRpe,
+  sanitizeWeight,
+  type CompletionResult,
+  type SetValues,
+} from "@/features/session/lib/setValidation";
 
 /**
  * The one piece of genuine offline-durability this mock phase actually
@@ -60,11 +70,22 @@ export interface CompletedSessionSummary {
   status?: "active" | "completed" | "abandoned";
 }
 
-/** Keep the ledger bounded — localStorage, not a database. */
-const HISTORY_LIMIT = 60;
+/**
+ * Bounded so localStorage can't overflow, but generous: a summary is ~1 KB,
+ * so 1,000 workouts (years of training) is ~1 MB. Guests have no server
+ * copy — trimming here would silently delete their PRs and streak history.
+ */
+export const HISTORY_LIMIT = 1000;
 
-function summarize(session: WorkoutSession, completedAt: string): CompletedSessionSummary {
+type FinalStatus = Exclude<CompletedSessionSummary["status"], "active" | undefined>;
+
+export function summarize(
+  session: WorkoutSession,
+  completedAt: string,
+  status: FinalStatus,
+): CompletedSessionSummary {
   let setsCompleted = 0;
+  let totalSets = 0;
   let totalVolumeKg = 0;
   let totalRpe = 0;
   let rpeCount = 0;
@@ -72,10 +93,13 @@ function summarize(session: WorkoutSession, completedAt: string): CompletedSessi
   for (const exercise of session.exercises) {
     let best: TopSet | null = null;
     for (const exerciseSet of exercise.sets) {
+      totalSets += 1;
       if (!exerciseSet.completed) continue;
+      const weight = Math.max(0, exerciseSet.weight ?? 0);
+      const reps = Math.max(0, exerciseSet.reps ?? 0);
+      // A "completed" set with no reps holds no work (legacy data could).
+      if (reps === 0) continue;
       setsCompleted += 1;
-      const weight = exerciseSet.weight ?? 0;
-      const reps = exerciseSet.reps ?? 0;
       totalVolumeKg += weight * reps;
       if (exerciseSet.rpe && exerciseSet.rpe > 0) {
         totalRpe += exerciseSet.rpe;
@@ -102,16 +126,27 @@ function summarize(session: WorkoutSession, completedAt: string): CompletedSessi
     id: session.id,
     missionId: session.missionId,
     title: session.title,
-    date: completedAt.slice(0, 10),
+    date: localIsoFromTimestamp(completedAt),
     completedAt,
     durationSec,
     setsCompleted,
     totalVolumeKg: Math.round(totalVolumeKg),
-    xpEarned: session.xpReward,
+    xpEarned: computeEarnedXp(session.xpReward, setsCompleted, totalSets),
     topSets,
     avgRpe: rpeCount > 0 ? Math.round((totalRpe / rpeCount) * 10) / 10 : undefined,
-    status: session.status,
+    status,
   };
+}
+
+/** Appends a summary to the ledger, replacing any earlier entry for the
+ *  same session id (a re-finish must never double-count). */
+function appendToHistory(
+  history: CompletedSessionSummary[],
+  summary: CompletedSessionSummary,
+): CompletedSessionSummary[] {
+  return [...history.filter((entry) => entry.id !== summary.id), summary].slice(
+    -HISTORY_LIMIT,
+  );
 }
 
 interface SessionStoreState {
@@ -120,7 +155,16 @@ interface SessionStoreState {
   history: CompletedSessionSummary[];
   startSession: (params: StartSessionParams) => void;
   logSet: (exerciseId: string, setId: string, patch: SetPatch) => void;
-  toggleSetCompleted: (exerciseId: string, setId: string) => void;
+  /**
+   * Completes (or un-completes) a set. Empty fields take the `ghost` values
+   * the row was showing. Fails, naming the missing field, when the set
+   * still holds no real work.
+   */
+  toggleSetCompleted: (
+    exerciseId: string,
+    setId: string,
+    ghost?: Partial<SetValues> | null,
+  ) => CompletionResult;
   /** Mid-workout set count is the athlete's call — any number of sets. */
   addSet: (exerciseId: string) => void;
   removeSet: (exerciseId: string, setId: string) => void;
@@ -174,6 +218,7 @@ function buildSessionExercises(
       exerciseId: templateExercise.exerciseId,
       exerciseName: exercise?.name ?? "Exercise",
       restSeconds: templateExercise.restSeconds,
+      equipment: exercise?.equipment,
       sets,
       suggest: computeSuggestion(templateExercise.exerciseId, history, firstTargetReps, exercise),
     };
@@ -222,13 +267,11 @@ export const useSessionStore = create<SessionStoreState>()(
         // current one so its data lands in history rather than being silently
         // overwritten. DATA_MODELS.md: "abandoned work is saved, never discarded."
         if (current && current.status === "active") {
-          const abandonedAt = new Date().toISOString();
-          set((state) => ({
-            history: [
-              ...state.history,
-              summarize(current, abandonedAt),
-            ].slice(-HISTORY_LIMIT),
-          }));
+          const abandoned = summarize(current, new Date().toISOString(), "abandoned");
+          // Nothing logged = nothing to keep; an empty entry is just noise.
+          if (abandoned.setsCompleted > 0) {
+            set((state) => ({ history: appendToHistory(state.history, abandoned) }));
+          }
         }
         set({
           session: {
@@ -296,24 +339,47 @@ export const useSessionStore = create<SessionStoreState>()(
         set((state) => {
           if (!state.session) return state;
           return {
-            session: updateSet(state.session, exerciseId, setId, (exerciseSet) => ({
-              ...exerciseSet,
-              ...patch,
-            })),
+            session: updateSet(state.session, exerciseId, setId, (exerciseSet) => {
+              const next = { ...exerciseSet };
+              if ("weight" in patch) next.weight = sanitizeWeight(patch.weight);
+              if ("reps" in patch) {
+                next.reps = sanitizeReps(patch.reps, Boolean(exerciseSet.durationSeconds));
+              }
+              if ("rpe" in patch) next.rpe = sanitizeRpe(patch.rpe);
+              return next;
+            }),
           };
         });
       },
 
-      toggleSetCompleted: (exerciseId, setId) => {
-        set((state) => {
-          if (!state.session) return state;
-          return {
-            session: updateSet(state.session, exerciseId, setId, (exerciseSet) => ({
+      toggleSetCompleted: (exerciseId, setId, ghost) => {
+        const session = get().session;
+        const owner = session?.exercises.find(
+          (sessionExercise) => sessionExercise.exerciseId === exerciseId,
+        );
+        const target = owner?.sets.find((exerciseSet) => exerciseSet.id === setId);
+        if (!session || !owner || !target) return { ok: false, missing: "reps" };
+
+        if (target.completed) {
+          set({
+            session: updateSet(session, exerciseId, setId, (exerciseSet) => ({
               ...exerciseSet,
-              completed: !exerciseSet.completed,
+              completed: false,
             })),
-          };
+          });
+          return { ok: true, values: { weight: target.weight, reps: target.reps } };
+        }
+
+        const result = resolveCompletionValues(target, ghost, owner.equipment);
+        if (!result.ok) return result;
+        set({
+          session: updateSet(session, exerciseId, setId, (exerciseSet) => ({
+            ...exerciseSet,
+            ...result.values,
+            completed: true,
+          })),
         });
+        return result;
       },
 
       finishSession: () => {
@@ -322,18 +388,27 @@ export const useSessionStore = create<SessionStoreState>()(
           const completedAt = new Date().toISOString();
           return {
             session: { ...state.session, status: "completed", completedAt },
-            history: [
-              ...state.history,
-              summarize(state.session, completedAt),
-            ].slice(-HISTORY_LIMIT),
+            history: appendToHistory(
+              state.history,
+              summarize(state.session, completedAt, "completed"),
+            ),
           };
         });
       },
 
       abandonSession: () => {
-        set((state) =>
-          state.session ? { session: { ...state.session, status: "abandoned" } } : state,
-        );
+        set((state) => {
+          if (!state.session) return state;
+          // "Abandoned work is saved, never discarded" (DATA_MODELS.md).
+          const abandoned = summarize(state.session, new Date().toISOString(), "abandoned");
+          return {
+            session: { ...state.session, status: "abandoned" },
+            history:
+              abandoned.setsCompleted > 0
+                ? appendToHistory(state.history, abandoned)
+                : state.history,
+          };
+        });
       },
 
       clearSession: () => set({ session: null }),

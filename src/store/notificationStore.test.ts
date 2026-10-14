@@ -20,7 +20,7 @@ describe("notificationStore", () => {
   });
 
   it("marks a specific notification as read and decrements unread count", () => {
-    const { markAsRead, getUnreadCount } = useNotificationStore.getState();
+    const { markAsRead } = useNotificationStore.getState();
     const targetId = SEED_NOTIFICATIONS[0]!.id;
 
     markAsRead(targetId);
@@ -31,7 +31,7 @@ describe("notificationStore", () => {
   });
 
   it("marks all notifications as read", () => {
-    const { markAllAsRead, getUnreadCount } = useNotificationStore.getState();
+    const { markAllAsRead } = useNotificationStore.getState();
 
     markAllAsRead();
 
@@ -41,7 +41,7 @@ describe("notificationStore", () => {
   });
 
   it("dismisses a notification and removes it from active list", () => {
-    const { dismissNotification, getAllNotifications } = useNotificationStore.getState();
+    const { dismissNotification } = useNotificationStore.getState();
     const targetId = SEED_NOTIFICATIONS[0]!.id;
 
     dismissNotification(targetId);
@@ -52,7 +52,7 @@ describe("notificationStore", () => {
   });
 
   it("adds and prioritizes a new dynamic notification", () => {
-    const { addNotification, getAllNotifications } = useNotificationStore.getState();
+    const { addNotification } = useNotificationStore.getState();
 
     addNotification({
       id: "notif-pr-test",

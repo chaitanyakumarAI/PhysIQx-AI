@@ -38,12 +38,8 @@ const workoutLoggingPrefs: PreferenceItem[] = [
   },
 ];
 
+// Mascots are hidden app-wide for now (CLAUDE.md), so their toggle is too.
 const coachAtmospherePrefs: PreferenceItem[] = [
-  {
-    id: "showMascots",
-    label: "Mascot Coach Tips & Presence",
-    description: "Display Kix and Nyra mascot illustrations and coaching commentary across the app. Turn off for a silent, minimalist gym utility.",
-  },
   {
     id: "showAiInsights",
     label: "Coach Insights",

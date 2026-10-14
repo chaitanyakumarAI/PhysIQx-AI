@@ -105,7 +105,6 @@ export function SessionScreen({ missionId, setup }: SessionScreenProps) {
       <PageContainer withBottomNav={false}>
         <div className="flex flex-1 flex-col justify-center">
           <EmptyState
-            mascot="kix-asleep"
             title="No active session"
             description="This workout isn't running — start it from your plan on Train."
             action={
@@ -132,15 +131,17 @@ export function SessionScreen({ missionId, setup }: SessionScreenProps) {
             1000,
         )
       : elapsedSeconds;
+    // The ledger entry is the source of truth for what was earned.
+    const summary = history.find((entry) => entry.id === session.id);
 
     return (
       <PageContainer withBottomNav={false}>
         <div className="flex flex-1 flex-col justify-center gap-6">
           <SessionSummaryCard
             durationSeconds={durationSeconds}
-            volume={computeSessionVolume(session)}
+            volume={summary?.totalVolumeKg ?? computeSessionVolume(session)}
             unit="kg"
-            xpReward={session.xpReward}
+            xpReward={summary?.xpEarned ?? 0}
             workoutTitle={session.title}
           />
           <Button size="lg" fullWidth onClick={handleDone}>
@@ -186,7 +187,9 @@ export function SessionScreen({ missionId, setup }: SessionScreenProps) {
             lastTime={lastTimeFor(exercise.exerciseId)}
             suggest={exercise.suggest}
             onLogSet={(setId, patch) => logSet(exercise.exerciseId, setId, patch)}
-            onToggleSetCompleted={(setId) => toggleSetCompleted(exercise.exerciseId, setId)}
+            onToggleSetCompleted={(setId, ghost) =>
+              toggleSetCompleted(exercise.exerciseId, setId, ghost)
+            }
             onAddSet={() => addSet(exercise.exerciseId)}
             onRemoveSet={(setId) => removeSet(exercise.exerciseId, setId)}
           />

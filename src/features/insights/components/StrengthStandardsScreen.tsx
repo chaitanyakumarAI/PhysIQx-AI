@@ -1,8 +1,7 @@
 "use client";
-
 import { useState, useId } from "react";
 import Link from "next/link";
-import { ArrowLeft, Award, Dumbbell, Sparkles, TrendingUp, Info } from "lucide-react";
+import { ArrowLeft, Award, Info } from "lucide-react";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { Card } from "@/components/ui/Card";
 import { ProgressBar } from "@/components/ui/ProgressBar";

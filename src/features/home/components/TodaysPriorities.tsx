@@ -2,7 +2,6 @@ import Link from "next/link";
 import {
   Check,
   ChevronRight,
-  Droplets,
   Dumbbell,
   HeartPulse,
   Scale,
@@ -15,7 +14,6 @@ import type { DailyPriority } from "../types";
 
 const priorityIcon: Record<DailyPriority["iconId"], LucideIcon> = {
   dumbbell: Dumbbell,
-  droplets: Droplets,
   "heart-pulse": HeartPulse,
   scale: Scale,
 };

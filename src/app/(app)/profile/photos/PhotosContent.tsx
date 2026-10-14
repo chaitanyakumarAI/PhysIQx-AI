@@ -1,21 +1,20 @@
 "use client";
+// Progress photos are local data URLs, which next/image cannot optimize.
+/* eslint-disable @next/next/no-img-element */
 
 import { useMemo, useState, useRef } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
   Camera,
-  Plus,
   Trash2,
   Lock,
   Columns,
   Grid,
   Calendar,
   Scale,
-  Sparkles,
   Upload,
   X,
-  CheckCircle2,
 } from "lucide-react";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { Card } from "@/components/ui/Card";
@@ -27,8 +26,10 @@ import { useProfileStore, type ProgressPhotoEntry } from "@/store/profileStore";
 type ViewMode = "timeline" | "compare";
 type AngleFilter = "all" | "front" | "side" | "back";
 
+const NO_PHOTOS: ProgressPhotoEntry[] = [];
+
 export function PhotosContent() {
-  const photos = useProfileStore((state) => state.photos) ?? [];
+  const photos = useProfileStore((state) => state.photos ?? NO_PHOTOS);
   const addPhoto = useProfileStore((state) => state.addPhoto);
   const deletePhoto = useProfileStore((state) => state.deletePhoto);
   const weightEntries = useProfileStore((state) => state.weightEntries);

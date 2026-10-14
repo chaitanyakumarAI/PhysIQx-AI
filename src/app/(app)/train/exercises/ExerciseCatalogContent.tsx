@@ -7,11 +7,8 @@ import {
   Dumbbell,
   Search,
   X,
-  ChevronRight,
-  Filter,
   SlidersHorizontal,
   Layers,
-  Sparkles,
   SearchX,
 } from "lucide-react";
 import { PageContainer } from "@/components/layout/PageContainer";
@@ -52,7 +49,6 @@ const muscleTones: Record<MuscleGroup, string> = {
 const muscleList: MuscleGroup[] = ["chest", "back", "legs", "shoulders", "arms", "core"];
 const equipmentList: Equipment[] = ["barbell", "dumbbell", "cable", "machine", "bodyweight", "kettlebell"];
 const difficultyList: ExerciseDifficulty[] = ["beginner", "intermediate", "advanced"];
-const typeList: ExerciseType[] = ["compound", "isolation", "bodyweight"];
 
 type SortOption = "name-asc" | "hit-desc" | "difficulty-asc";
 

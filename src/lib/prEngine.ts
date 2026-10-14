@@ -2,14 +2,18 @@ import type { PersonalRecord, PersonalRecordTrendPoint } from "@/types/personalR
 import type { CompletedSessionSummary } from "@/store/sessionStore";
 import { mockPersonalRecordBases } from "@/data/personalRecords";
 
+/** Epley loses accuracy past ~10 reps, so higher-rep sets count as 10
+ *  (docs/MASTER_BRIEF.md: "reps capped at 10"). */
+export const E1RM_REP_CAP = 10;
+
 /**
  * Calculates estimated One-Rep Max (e1RM) using the industry-standard Epley formula:
- * e1RM = Weight * (1 + Reps / 30)
+ * e1RM = Weight * (1 + min(Reps, 10) / 30)
  */
 export function calculateEpley1RM(weightKg: number, reps: number): number {
   if (weightKg <= 0 || reps <= 0) return 0;
   if (reps === 1) return Math.round(weightKg * 10) / 10;
-  const e1rm = weightKg * (1 + reps / 30);
+  const e1rm = weightKg * (1 + Math.min(reps, E1RM_REP_CAP) / 30);
   return Math.round(e1rm * 10) / 10;
 }
 

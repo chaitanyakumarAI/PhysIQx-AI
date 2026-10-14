@@ -23,6 +23,10 @@ describe("prEngine", () => {
       expect(calculateEpley1RM(0, 5)).toBe(0);
       expect(calculateEpley1RM(100, 0)).toBe(0);
     });
+
+    it("caps reps at 10 so high-rep sets don't inflate the estimate", () => {
+      expect(calculateEpley1RM(100, 500)).toBe(calculateEpley1RM(100, 10));
+    });
   });
 
   describe("derivePersonalRecords", () => {

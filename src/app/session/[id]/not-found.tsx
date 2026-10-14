@@ -11,7 +11,6 @@ export default function SessionNotFound() {
     <PageContainer withBottomNav={false}>
       <div className="flex flex-1 items-center">
         <EmptyState
-          mascot="kix-sheepish"
           title="No workout to start here"
           description="This mission doesn't exist or hasn't been assigned yet."
           action={
