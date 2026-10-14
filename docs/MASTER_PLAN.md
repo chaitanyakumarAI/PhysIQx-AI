@@ -21,6 +21,50 @@ accepted ones get folded into `docs/TODO.md`, which stays the live checklist.
 | K2 | **Cardio sync pipeline:** a provider adapter interface, one normalised activity model, deduplication across sources (time-overlap matching), an idempotent upload queue with backoff, per-provider status (connected / syncing / error / last synced), and file import (GPX/TCX) as the first real source that works on the web. | L |
 | U | **UI/UX overhaul:** refresh design tokens and typography (mono numerals for hero stats), tighter Home hierarchy (one primary action), bento density where it helps, consistent empty and loading states, motion polish across every screen. | L |
 
+## Progress & replan — after Sprints 1–2 (2026-10-14)
+
+**Verified:** 223 unit tests passing, 0 type errors, 0 lint errors, and a
+clean production build. A full browser run as a new user went through
+first run → onboarding → workout from Home → finish → Insights → Profile
+→ cardio import → demo mode.
+
+### Done
+
+| Sprint | Shipped |
+|---|---|
+| 1 (`75630bb`) | A1–A7, A9, A11 (validated sets, ghost-value completion, local dates, XP by work done, barbell-only plates, e1RM cap, 1,000-workout history), A6 seeded photos removed, G7, I1 CI, I3/I4 dead code + lint |
+| 2 (`a6cf2bd`) | **B1** one local ledger feeding every screen through `lib/athleteState`, **B2** demo mode, **B3** onboarding drives plan/profile/score, **B4** fixture seams deleted, **C1–C3** Score v4, **K1** coach engine, **D1** Training Load, **D2** honest integrations, **D4** strength standards from real data, **E1–E3** plan-day sessions + rotation + personalized starter plan, **F1** About-you + build picker, **F5**, **A8**, **A10** streak, **K2** cardio import/dedup/outbox sync (G5), migration 005 |
+
+### What testing found (still open)
+
+| # | Finding | Fix in |
+|---|---|---|
+| T1 | Body Stats mixes a **seeded fake weight history** with real weigh-ins; the "digital twin" shows the *goal* physique, not the current build; there's no way to update the build later | S3 |
+| T2 | Calendar is hardcoded to "Push Pull Legs" instead of the active plan | S3 |
+| T3 | Notifications are **seeded fakes** (badge shows "4" on a brand-new account) | S3 |
+| T4 | New accounts get a stock-photo avatar instead of initials | S3 |
+| T5 | Guided tour: the first tap after "Skip" is swallowed; several tour stops point at elements Home no longer has | S3 |
+| T6 | Insights: coach cards lose their titles; the PR picker lists every lift (25 in demo); calibration copy ignores "day N of 7" | U |
+| T7 | History: "Time under bar" is really session duration; "377.5k kg"-style formatting (I8) | U |
+| T8 | Accessibility: `Input` labels aren't associated (fields announce their placeholder) | U |
+| T9 | Compete is still entirely fictional (D3) | S3 |
+| T10 | Login/sign-up/sync to Supabase not exercised; migrations 001–005 must be applied to the live project; profile, plans and weigh-ins don't sync yet; a new device can't restore from the cloud | S4 |
+
+### Revised order
+
+1. **Sprint 3 — finish the truth pass (small, no decisions):** T1–T5, T9
+   (Compete → personal weekly challenge from the ledger + "Coming soon"
+   for social), retire the unused Phase-6 overlay components and
+   `GenerateProgramScreen` (content files stay), remove stale docs (I6).
+2. **Track U — UI/UX overhaul (the big one):** design system first, then
+   screen by screen, Home → Session → Train → Insights → Profile/Body →
+   Onboarding → Cardio/Compete → Settings. I'll show Home first before
+   rolling the style out. T6–T8 land here.
+3. **Sprint 4 — cloud:** apply migrations, generated DB types (G2),
+   atomic workout RPC (G4), RLS hardening (G6), sync profile/plans/weigh-ins,
+   restore-on-sign-in, auth flow test (T10).
+4. **Launch track (J)**, image compression (I5), Strava (G8) when you want it.
+
 ## How to use this
 
 - Every item has an ID, an effort size, **my call** (Do / Later / Drop), and a
