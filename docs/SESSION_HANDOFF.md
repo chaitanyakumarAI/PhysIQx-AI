@@ -1,6 +1,6 @@
 # PhysIQx AI — Complete Agent Handover & Architecture Guide
-*Last updated: 2026-10-09 · Comprehensive handover for incoming coding agents.*
-*Latest Directives: See `docs/PRODUCT_DIRECTIVES.md` (Kix & Nyra CoC-style hover dialogue guide, social video series, AI word cleanse, hydration removal, sync-only cardio).*
+*Last updated: 2026-10-14 · Comprehensive handover for incoming coding agents.*
+*Latest Directives: See `docs/PRODUCT_DIRECTIVES.md` and `docs/TODO.md` (Phase 6 Character Overlays data safely preserved, UI rework track active, Phase 7 Media bible upcoming).*
 
 ---
 
@@ -10,13 +10,13 @@
 |---|---|
 | **App Name** | **PhysIQx AI** (Advanced intelligent fitness, strength & physique analytics platform) |
 | **Workspace Path** | `e:\physQIx AI` |
-| **Core Stack** | **Next.js 15** (App Router, Turbopack/Webpack), **TypeScript**, **Tailwind CSS**, **Zustand** (with persistent client-side state & SSR hydration safety), **Framer Motion** (`LazyMotion` with `domMax`), **Lucide React** |
+| **Core Stack** | **Next.js 15.5** (App Router, Turbopack/Webpack), **TypeScript**, **Tailwind CSS v4**, **Zustand** (with persistent client-side state & SSR hydration safety), **Framer Motion**, **Lucide React** |
 | **Backend & Sync** | **Supabase** (`@supabase/supabase-js`, `@supabase/ssr`), offline-first local cache & persistent sync queue (`lib/syncEngine.ts`), PWA Service Worker (`public/sw.js`) |
-| **Test Suite** | **Vitest** → **131 / 131 tests passing** across 20 test files (`npm test`) |
+| **Test Suite** | **Vitest** → **142 / 142 tests passing** across 21 test files (`npx vitest run`) |
 | **Type Check** | `npx tsc --noEmit` → **0 errors** |
 | **Dev Server** | `npm run dev` → `http://localhost:3000` |
-| **Production Build** | `npx next build --no-lint` → 238 static/dynamic routes compiled clean |
-| **Current Git Branch**| `main` |
+| **Production Build** | `npm run build` → 31/31 static routes compiled clean |
+| **Current Git Branch**| `main` (commit `2774096`) |
 
 ---
 
@@ -112,6 +112,16 @@ Navigation follows `docs/ROUTES.md`. Standard 5-tab persistent bottom shell plus
    - Shared base bundle verified clean at **102 KB** (framer-motion + radix + zustand). Zero Recharts leakage (all charts are custom pure SVG).
    - Fixed pre-existing ESLint errors (`no-explicit-any`, `no-unescaped-entities`).
 
+7. **Live Supabase End-to-End Cloud Verification**:
+   - 100% live verified against Seoul Supabase PostgreSQL instance: User signup (`auth.users`), `profiles` auto-creation, onboarding selections persistence, workout logging (`sessions`, `session_exercises`, `exercise_sets`, `xp_transactions`).
+8. **Phase 6: Interactive Character Guide Overlays (Data Preserved, UI Rework Track)**:
+   - Ingested `physiqx_coach_content.json` into typed modules `src/data/coachContent.ts` and `src/types/coach.ts`.
+   - Built low-FPS animated avatar component `CoachAvatar.tsx` and deterministic telemetry recommendation engine `CoachRecommendationWidget.tsx`.
+   - V1 Briefing Modal and V1 Info Sheet cards were unmounted per user feedback (*"i didnt liked the UI at all remove this with the content being stored safe lets rework on this"*).
+   - All underlying content, data models, and logic rules remain 100% safe, tested, and ready for redesign.
+9. **Full Master UI Redesign Specification Created**:
+   - A complete architectural Master Prompt was generated for rebuilding the UI from scratch with full styling freedom while locking down all required screens, metrics, and character interactions.
+
 ---
 
 ## 🧪 5. Testing & Verification Guide
@@ -119,8 +129,8 @@ Navigation follows `docs/ROUTES.md`. Standard 5-tab persistent bottom shell plus
 Running tests and verification takes seconds:
 
 ```bash
-# 1. Run Vitest Unit Tests (all 131 tests should pass)
-npm test
+# 1. Run Vitest Unit Tests (all 142 tests passing across 21 test files)
+npx vitest run
 
 # 2. Check TypeScript Types (must be 0 errors)
 npx tsc --noEmit
@@ -129,8 +139,8 @@ npx tsc --noEmit
 npm run dev
 # Server runs on http://localhost:3000
 
-# 4. Production Build Test
-npx next build --no-lint
+# 4. Production Build Test (all 31 static routes compile clean)
+npm run build
 ```
 
 ---
