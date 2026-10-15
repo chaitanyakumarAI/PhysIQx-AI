@@ -1,152 +1,87 @@
 "use client";
 
 import { useState } from "react";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
+import { useAuthProviders, type AuthProviders } from "../hooks/useAuthProviders";
+import { AuthDivider } from "./AuthDivider";
+
+type Provider = keyof AuthProviders;
+
+const providerLabels: Record<Provider, string> = {
+  google: "Continue with Google",
+  apple: "Continue with Apple",
+};
 
 export interface SocialLoginButtonsProps {
   className?: string;
 }
 
 /**
- * Social login buttons with proper Google SVG brand icon.
- * Apple is shown as disabled until an Apple Developer account is configured.
+ * OAuth sign-in, showing only providers that are switched on in the
+ * Supabase project (Auth → Providers). With none enabled — or while
+ * offline — the whole block, divider included, stays out of the way.
  */
 export function SocialLoginButtons({ className }: SocialLoginButtonsProps) {
-  const [googleLoading, setGoogleLoading] = useState(false);
-  const [oauthError, setOauthError] = useState<string | null>(null);
+  const providers = useAuthProviders();
+  const [pending, setPending] = useState<Provider | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  async function handleGoogleLogin() {
-    setGoogleLoading(true);
-    setOauthError(null);
-    try {
-      const supabase = createClient();
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-          queryParams: {
-            access_type: "offline",
-            prompt: "consent",
-          },
-        },
-      });
-      if (error) {
-        const msg = error.message.includes("provider is not enabled")
-          ? "Google sign-in is not enabled in your Supabase project (Auth → Providers → Google). Please sign up using email & password below, or enable Google in Supabase."
-          : error.message;
-        setOauthError(msg);
-        setGoogleLoading(false);
-      }
-      // If no error, browser is redirecting — keep spinner
-    } catch (e: unknown) {
-      const message = e instanceof Error ? e.message : "OAuth request failed.";
-      setOauthError(message);
-      setGoogleLoading(false);
+  const enabled = (Object.keys(providerLabels) as Provider[]).filter(
+    (provider) => providers?.[provider],
+  );
+  if (enabled.length === 0) return null;
+
+  async function signIn(provider: Provider) {
+    setPending(provider);
+    setError(null);
+    const { error: oauthError } = await createClient().auth.signInWithOAuth({
+      provider,
+      options: { redirectTo: `${window.location.origin}/auth/callback` },
+    });
+    // On success the browser is already navigating away; keep the spinner.
+    if (oauthError) {
+      setError(oauthError.message);
+      setPending(null);
     }
   }
 
   return (
     <div className={cn("flex flex-col gap-3", className)}>
-      {oauthError && (
-        <div className="social-error-banner" role="alert">
-          <AlertCircle size={15} className="flex-shrink-0" aria-hidden />
-          <span>{oauthError}</span>
+      <AuthDivider />
+      {error && (
+        <div
+          role="alert"
+          className="flex items-center gap-2 rounded-xl border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger"
+        >
+          <AlertCircle size={15} className="shrink-0" aria-hidden />
+          <span>{error}</span>
         </div>
       )}
-      <button
-        type="button"
-        onClick={handleGoogleLogin}
-        disabled={googleLoading}
-        className="social-btn"
-      >
-        {googleLoading ? (
-          <span className="social-btn-spinner" aria-hidden />
-        ) : (
-          <GoogleIcon />
-        )}
-        <span>{googleLoading ? "Redirecting…" : "Continue with Google"}</span>
-      </button>
-
-      {/* Apple — placeholder until Apple Dev account is configured */}
-      <button
-        type="button"
-        disabled
-        title="Apple Sign-In coming soon"
-        className="social-btn social-btn--disabled"
-      >
-        <AppleIcon />
-        <span>Continue with Apple</span>
-      </button>
-
-      <style>{`
-        .social-error-banner {
-          display: flex; align-items: center; gap: 0.5rem;
-          padding: 0.75rem 1rem; margin-bottom: 0.25rem;
-          background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2);
-          border-radius: 0.75rem; font-size: 0.8125rem; color: #f87171; line-height: 1.4;
-        }
-        .social-btn {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 0.625rem;
-          width: 100%;
-          height: 3rem;
-          padding: 0 1.25rem;
-          font-size: 0.9375rem;
-          font-weight: 600;
-          color: #fafafa;
-          background: rgba(255, 255, 255, 0.04);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 1rem;
-          cursor: pointer;
-          transition: background 0.15s, border-color 0.15s, transform 0.1s;
-          position: relative;
-          overflow: hidden;
-        }
-        .social-btn::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 60%);
-          pointer-events: none;
-        }
-        .social-btn:hover:not(:disabled) {
-          background: rgba(255, 255, 255, 0.07);
-          border-color: rgba(255, 255, 255, 0.15);
-          transform: translateY(-1px);
-        }
-        .social-btn:active:not(:disabled) {
-          transform: translateY(0) scale(0.98);
-        }
-        .social-btn:disabled {
-          pointer-events: none;
-          opacity: 0.4;
-          cursor: not-allowed;
-        }
-        .social-btn--disabled {
-          cursor: not-allowed;
-        }
-        .social-btn-spinner {
-          width: 18px;
-          height: 18px;
-          border: 2px solid rgba(255,255,255,0.2);
-          border-top-color: #22c55e;
-          border-radius: 50%;
-          animation: spin 0.7s linear infinite;
-          flex-shrink: 0;
-        }
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
+      {enabled.map((provider) => (
+        <button
+          key={provider}
+          type="button"
+          onClick={() => void signIn(provider)}
+          disabled={pending !== null}
+          className="flex h-12 w-full items-center justify-center gap-2.5 rounded-2xl border border-white/10 bg-white/[0.04] px-5 text-[0.9375rem] font-semibold text-foreground transition hover:border-white/15 hover:bg-white/[0.07] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/60 disabled:opacity-60"
+        >
+          {pending === provider ? (
+            <Loader2 size={18} className="animate-spin" aria-hidden />
+          ) : provider === "google" ? (
+            <GoogleIcon />
+          ) : (
+            <AppleIcon />
+          )}
+          <span>{pending === provider ? "Redirecting…" : providerLabels[provider]}</span>
+        </button>
+      ))}
     </div>
   );
 }
 
-/** Official Google brand colors SVG */
+/** Google "G" in brand colors. */
 function GoogleIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden fill="none">
@@ -170,10 +105,11 @@ function GoogleIcon() {
   );
 }
 
+/** Apple logo (Simple Icons, CC0). */
 function AppleIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 814 1000" aria-hidden fill="currentColor">
-      <path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-42.4-150.3-102.1C67.1 716 0 549 0 417.1 0 294.6 40.8 205 125 128.9c64.1-56.7 138.6-89.5 218.8-89.5 80.2 0 138.6 44.9 185.8 44.9 44.9 0 114.9-47 205.2-47c32.2 0 123.5 4.4 190.1 79.6zm-234.3-149c9.6-23.2 13.7-46.4 13.7-69.6 0-3.2-.3-6.4-.6-9.5-26.3 1.3-57.2 17.4-75.8 39.5-17 20-30.2 50.4-30.2 79.5 0 3.2.3 6.4.5 9.4 2 .2 4 .3 6 .3 24.2 0 53.9-14.7 86.4-48.6z" />
+    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden fill="currentColor">
+      <path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701" />
     </svg>
   );
 }

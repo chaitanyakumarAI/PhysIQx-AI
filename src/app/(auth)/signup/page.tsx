@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { AuthDivider } from "@/features/auth/components/AuthDivider";
 import { SignupForm } from "@/features/auth/components/SignupForm";
 import { SocialLoginButtons } from "@/features/auth/components/SocialLoginButtons";
 
@@ -17,7 +16,6 @@ export default function SignupPage() {
       </div>
 
       <SignupForm />
-      <AuthDivider />
       <SocialLoginButtons />
 
       <p className="auth-switch-text">

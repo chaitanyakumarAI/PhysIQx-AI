@@ -45,7 +45,13 @@ export async function createServerSupabaseClient(): Promise<ServerSupabaseClient
     return offlineClient();
   }
 
-  return createServerClient(supabaseUrl, supabaseKey, {
+  return connectedClient(cookieStore, supabaseUrl, supabaseKey);
+}
+
+type CookieStore = Awaited<ReturnType<typeof cookies>>;
+
+function connectedClient(cookieStore: CookieStore, url: string, key: string): ServerSupabaseClient {
+  return createServerClient(url, key, {
     cookies: {
       getAll() {
         return cookieStore.getAll();
@@ -63,4 +69,16 @@ export async function createServerSupabaseClient(): Promise<ServerSupabaseClient
       },
     },
   });
+}
+
+/**
+ * Always a real, connected client — for auth flows (OAuth code exchange)
+ * that must reach Supabase even before a session cookie exists and must
+ * never get the offline stand-in. Null when Supabase isn't configured.
+ */
+export async function createAuthServerClient(): Promise<ServerSupabaseClient | null> {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!supabaseUrl || !supabaseKey) return null;
+  return connectedClient(await cookies(), supabaseUrl, supabaseKey);
 }

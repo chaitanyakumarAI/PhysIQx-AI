@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { AuthDivider } from "@/features/auth/components/AuthDivider";
 import { LoginForm } from "@/features/auth/components/LoginForm";
 import { SocialLoginButtons } from "@/features/auth/components/SocialLoginButtons";
 
@@ -20,9 +19,7 @@ export default function LoginPage() {
       {/* Primary Email/password form */}
       <LoginForm />
 
-      <AuthDivider />
-
-      {/* Social login options */}
+      {/* Social sign-in: only providers enabled in Supabase (none → hidden) */}
       <SocialLoginButtons />
 
       {/* Switch to signup */}

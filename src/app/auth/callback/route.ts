@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { createAuthServerClient } from "@/lib/supabase/server";
 
 /**
  * OAuth callback handler. Supabase redirects here after a successful
@@ -11,12 +11,13 @@ export async function GET(request: Request) {
   const code = searchParams.get("code");
   const next = searchParams.get("next") ?? "/home";
 
-  if (code) {
-    const supabase = await createServerSupabaseClient();
+  // Only same-site paths: never bounce a fresh session to another origin.
+  const safeNext = next.startsWith("/") && !next.startsWith("//") ? next : "/home";
+  const supabase = code ? await createAuthServerClient() : null;
+  if (code && supabase) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
-
     if (!error) {
-      return NextResponse.redirect(new URL(next, origin));
+      return NextResponse.redirect(new URL(safeNext, origin));
     }
   }
 
