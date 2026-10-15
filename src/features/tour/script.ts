@@ -1,28 +1,25 @@
 /**
  * The app tour as a conversation between Kix and Nyra
- * (docs/GAMIFICATION_STUDY.md §3.5). Each beat points at one real element
- * while the two talk about it. Voices follow docs/MASCOTS.md:
+ * (docs/GAMIFICATION_STUDY.md §3.5), staged like Clash of Clans' character
+ * tutorials: the two stand at the screen corners and talk it through while
+ * a spotlight and an arrow point at the real UI. Voices follow
+ * docs/MASCOTS.md:
  * Kix — warm, eager, openly proud, a beat too early to celebrate;
  * Nyra — blunt, precise, never shaming, her slow nod saved for the end.
  */
 
 export type Speaker = "kix" | "nyra";
 
-export type KixExpression =
-  | "default"
-  | "focus"
-  | "joy"
-  | "sheepish"
-  | "worried"
-  | "proud"
-  | "determined"
-  | "asleep";
+/** Expressions with a stage cut in public/mascots/stage/ (scripts/crop_mascot_stage.py). */
+export type KixExpression = "default" | "focus" | "joy" | "sheepish" | "worried" | "proud" | "determined";
 
 export type NyraExpression = "stare" | "narrowed" | "closed" | "nod" | "tilt";
 
-export type TourLine =
-  | { speaker: "kix"; expression: KixExpression; text: string }
-  | { speaker: "nyra"; expression: NyraExpression; text: string };
+export type CastPose =
+  | { speaker: "kix"; expression: KixExpression }
+  | { speaker: "nyra"; expression: NyraExpression };
+
+export type TourLine = CastPose & { text: string };
 
 export interface TourBeat {
   id: string;
@@ -32,13 +29,18 @@ export interface TourBeat {
   lines: TourLine[];
 }
 
+/** Fits one bubble without scrolling (GAMIFICATION_STUDY.md §3.5). */
+export const MAX_LINE_LENGTH = 140;
+
 export const TOUR_SCRIPT: TourBeat[] = [
   {
     id: "intro",
     route: "/home",
     lines: [
       { speaker: "kix", expression: "joy", text: "Hey, you made it! I'm Kix. I'll be in your corner for every single rep." },
-      { speaker: "nyra", expression: "stare", text: "Nyra. I keep the standard around here. Let's show you how this place works." },
+      { speaker: "nyra", expression: "stare", text: "Nyra. I keep the standard around here." },
+      { speaker: "kix", expression: "sheepish", text: "She's nicer than she sounds. Mostly." },
+      { speaker: "nyra", expression: "narrowed", text: "Let me show you how this place works. Quickly." },
     ],
   },
   {
@@ -84,6 +86,7 @@ export const TOUR_SCRIPT: TourBeat[] = [
     lines: [
       { speaker: "kix", expression: "focus", text: "Your plans live on Train. Adopt a program, or build your own split." },
       { speaker: "nyra", expression: "narrowed", text: "Then stay with it for weeks. Programs work when you stop hopping." },
+      { speaker: "kix", expression: "worried", text: "…Was that about me?" },
     ],
   },
   {
@@ -91,8 +94,8 @@ export const TOUR_SCRIPT: TourBeat[] = [
     route: "/train",
     target: '[data-tour="train-cardio"]',
     lines: [
-      { speaker: "nyra", expression: "stare", text: "Cardio is a quarter of your score. Import your runs and rides from your watch." },
-      { speaker: "kix", expression: "joy", text: "Runs count double. Just saying." },
+      { speaker: "nyra", expression: "stare", text: "Cardio is a quarter of your score. Import runs and rides straight from your watch." },
+      { speaker: "kix", expression: "joy", text: "Twenty minutes or more and it pays XP. Kangaroos were built for this." },
     ],
   },
   {
@@ -137,6 +140,19 @@ export const SPEAKERS: Record<Speaker, { name: string; role: string }> = {
   nyra: { name: "Nyra", role: "The Standard" },
 };
 
-export function portraitFor(line: TourLine): string {
-  return `/mascots/${line.speaker}-${line.expression}.webp`;
+/** What each character wears before their first line of a beat. */
+export const RESTING_POSE: Record<Speaker, CastPose> = {
+  kix: { speaker: "kix", expression: "default" },
+  nyra: { speaker: "nyra", expression: "stare" },
+};
+
+export function stageImageFor(pose: CastPose): string {
+  return `/mascots/stage/${pose.speaker}-${pose.expression}.webp`;
 }
+
+/** Every image the tour can show, for preloading. */
+export const TOUR_IMAGES: string[] = [
+  ...new Set(
+    [RESTING_POSE.kix, RESTING_POSE.nyra, ...TOUR_SCRIPT.flatMap((beat) => beat.lines)].map(stageImageFor),
+  ),
+];

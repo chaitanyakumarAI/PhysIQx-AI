@@ -76,6 +76,23 @@
   --shadow-glow-brand: 0 0 24px -6px rgb(34 197 94 / 0.4);
 }
 
+/* Character tour stage cuts (public/mascots/stage/) are renders on
+   near-black: their edges dissolve so the characters rise out of the stage
+   floor. Kix stands on it; Nyra emerges from the dark (MASCOTS.md). */
+@utility cast-fade {
+  mask-image:
+    linear-gradient(to bottom, transparent, #000 16%),
+    linear-gradient(to right, transparent, #000 14%, #000 86%, transparent);
+  mask-composite: intersect;
+}
+
+@utility cast-fade-emerge {
+  mask-image:
+    linear-gradient(to bottom, transparent, #000 16%, #000 68%, transparent),
+    linear-gradient(to right, transparent, #000 14%, #000 86%, transparent);
+  mask-composite: intersect;
+}
+
 @layer base {
   html {
     color-scheme: dark;

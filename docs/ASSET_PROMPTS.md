@@ -30,11 +30,15 @@ its placeholder automatically once registered (see §5).
 
 ---
 
-## 1. Kix & Nyra — tour and celebration poses
+## 1. Kix & Nyra — stage poses and celebration scenes
 
-Used by the character tour (`src/features/tour/`) and future celebrations.
-Waist-up framing so they read at about 100 px on a phone. Transparent
-background.
+The tour (`src/features/tour/`) stages the characters like Clash of Clans:
+big, chest-up, standing at the bottom corners of the screen (Kix left, Nyra
+right) with the speech bubble above them. **Twelve stage cuts already
+exist**, cut from the locked expression grids into `public/mascots/stage/`
+(`scripts/crop_mascot_stage.py`): Kix default · focus · joy · sheepish ·
+worried · proud · determined; Nyra stare · narrowed · closed · nod · tilt.
+Generate only the poses below: the gestures the grids can't give.
 
 ### Character blocks (paste before every pose)
 
@@ -60,28 +64,27 @@ background.
 > sitting upright with near-human posture. Dramatic dark lighting; she
 > emerges from the dark. Same face and markings as the attached reference.
 
-**Framing suffix (always):**
-> Waist-up three-quarter view, centred, character fills 85% of the frame,
-> transparent background, high detail fur, no text.
+**Framing suffix (always) — it must match the existing stage cuts:**
+> Chest-up portrait, facing the viewer, vertical 3:4 frame. The bottom edge
+> of the frame cuts across the chest (across the gloves for Kix). The head
+> sits in the upper half, the tops of the ears about 5% below the top edge.
+> Same scale and position as the attached stage cut. Flat near-black
+> background (#0d0f0c), high detail fur, no text.
 
-### Poses — save to `public/mascots/tour/`
+Attach an existing stage cut (`public/mascots/stage/kix-default.webp` or
+`nyra-stare.webp`) **as the framing reference**, together with the anchor,
+so every pose lines up and expression swaps never make the body jump.
 
-| File | Prompt (character block + framing suffix + this) |
-|---|---|
-| `kix-wave.webp` | Kix raising one glowing glove in a friendly wave hello, warm open half-smile. |
-| `kix-point-left.webp` | Kix pointing to the viewer's left with one glove, eager, mouth slightly open as if explaining. |
-| `kix-point-right.webp` | Kix pointing to the viewer's right with one glove, eager explaining expression. |
-| `kix-glove-up.webp` | Kix holding one glove up in a proud "nice work" gesture, warm proud smile. |
-| `kix-celebrate.webp` | Kix with both gloves raised high in full unguarded joy, eyes bright (rare expression — reserved for milestones). |
-| `kix-sheepish.webp` | Kix rubbing the back of his head with one glove, bent ear tipped forward, sheepish half-smile — caught wanting to train on a rest day. |
-| `kix-thinking.webp` | Kix with one glove at his chin, considering, calm focus. |
-| `kix-guard.webp` | Kix with both gloves up in a relaxed boxing guard, quiet determined focus. |
-| `nyra-teach.webp` | Nyra sitting upright, calm level stare at the viewer — the "pay attention" posture. |
-| `nyra-gesture.webp` | Nyra sitting upright, one front paw lifted slightly as if indicating something beside her, measuring look. |
-| `nyra-narrowed.webp` | Nyra sitting upright, eyes narrowed — measuring the viewer, not angry. |
-| `nyra-tilt.webp` | Nyra sitting upright, head tilted slightly, curious and assessing. |
-| `nyra-nod.webp` | Nyra mid slow nod: head lowered a few degrees, eyes half-closed with approval — her rarest, most valuable expression. |
-| `nyra-rest.webp` | Nyra lying calmly along a low ledge, eyes open, watchful — for rest-day moments. Full body, side view. |
+### Stage poses — save to `public/mascots/stage/` (convert with `--size 720` → 540 × 720)
+
+| File | Used for | Prompt (character block + framing suffix + this) |
+|---|---|---|
+| `kix-wave.webp` | Intro hello | Kix raising one glowing glove in a friendly wave hello, warm open half-smile. |
+| `kix-point-up.webp` | Spotlight beats | Kix pointing up and toward the viewer's right with one glove (the UI he's explaining sits above him), eager, mouth slightly open as if explaining. |
+| `kix-celebrate.webp` | Finale, level-ups | Kix with both gloves raised high in full unguarded joy, eyes bright (rare expression — reserved for milestones). |
+| `kix-thinking.webp` | Questions | Kix with one glove at his chin, considering, calm focus. |
+| `nyra-gesture-up.webp` | Spotlight beats | Nyra in upright teaching posture, one front paw lifted and angled up toward the viewer's left (the UI above her), measuring look. |
+| `nyra-teach.webp` | Explaining rules | Nyra sitting upright with near-human teaching posture, calm level stare at the viewer — the "pay attention" pose. |
 
 ### Duo and celebrations — save to `public/mascots/scenes/`
 
@@ -91,6 +94,7 @@ background.
 | `duo-finale.webp` | Same pair, ending beat: Kix celebrating with both gloves up, Nyra giving her slow nod. Wide 3:2, transparent background, no text. |
 | `kix-level-up.webp` | Kix in full joy, gloves up, a burst of green light particles rising from the gloves — the level-up moment. Square, transparent background. |
 | `nyra-legendary-nod.webp` | Nyra's slow nod, close-up portrait, green eyes half-closed, a single faint violet (#a78bfa) glint reflected in the eyes — for legendary unlocks. Square, transparent background. |
+| `nyra-rest.webp` | Nyra lying calmly along a low ledge, eyes open, watchful — for rest-day moments. Full body, side view, wide 3:2, flat #0d0f0c background, no text. |
 
 ---
 
@@ -190,7 +194,8 @@ Use a **shield crest** instead of a round medal:
 
 ## 4. Already exist (don't regenerate)
 
-- 13 expression crops — `public/mascots/*.webp` (used by the tour today).
+- 12 stage cuts — `public/mascots/stage/*.webp` (the tour) and 13 square
+  expression crops — `public/mascots/*.webp`, all cut from the locked grids.
 - Body-build silhouettes — `public/body-shapes/*` (onboarding and Body Shape).
 - 16 avatar presets — `public/avatars/*`.
 
@@ -206,9 +211,10 @@ Use a **shield crest** instead of a round medal:
    add each id to `AVAILABLE_ART` in
    `src/features/collection/lib/badgeArt.ts`. The medal component switches to
    the art automatically.
-3. **Tour poses:** put them in `public/mascots/tour/` and tell Claude. The
-   tour script (`src/features/tour/script.ts`) will be pointed at the new
-   poses (pointing left or right toward the spotlight, waving on the intro,
-   celebrating on the finale).
-4. **Check at phone size:** each medal must read at 64 px and each portrait
-   at 96 px.
+3. **Stage poses:** convert with `--size 720` into `public/mascots/stage/`
+   and tell Claude. Each new pose gets a name in the expression types
+   (`src/features/tour/script.ts`) and its body language
+   (`src/features/tour/castMotion.ts`), then the script uses it: waving on
+   the intro, pointing up on spotlight beats, celebrating on the finale.
+4. **Check at phone size:** each medal must read at 64 px and each stage
+   pose at about 240 px tall.

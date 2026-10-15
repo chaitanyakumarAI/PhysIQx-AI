@@ -10,8 +10,9 @@ Last audited: **2026-10-15**. Master plan and status: `docs/MASTER_PLAN.md`.
 Everything works today with placeholders (vector medals, expression
 crops). Each asset replaces its placeholder once registered (ASSET_PROMPTS §5).
 
-- [ ] **Tour poses — Kix** (8): wave · point-left · point-right · glove-up · celebrate · sheepish · thinking · guard → `public/mascots/tour/`
-- [ ] **Tour poses — Nyra** (6): teach · gesture · narrowed · tilt · nod · rest → `public/mascots/tour/`
+- [x] **Stage cuts from the locked grids** (12): Kix default · focus · joy · sheepish · worried · proud · determined; Nyra stare · narrowed · closed · nod · tilt → `public/mascots/stage/` (`scripts/crop_mascot_stage.py`)
+- [ ] **Stage poses — Kix** (4): wave · point-up · celebrate · thinking → `public/mascots/stage/`
+- [ ] **Stage poses — Nyra** (3): gesture-up · teach · rest → `public/mascots/stage/`
 - [ ] **Duo & celebration scenes** (4): duo-intro · duo-finale · kix-level-up · nyra-legendary-nod → `public/mascots/scenes/`
 - [ ] **Medals — Training families** (16): iron-ledger · tonnage · explorer · big-session × bronze/silver/gold/platinum
 - [ ] **Medals — Strength families** (8): record-breaker · strength-standard × 4 tiers
@@ -31,6 +32,7 @@ crops). Each asset replaces its placeholder once registered (ASSET_PROMPTS §5).
 - [x] **Collection screen + detail sheets + profile showcase + level card**
 - [x] **Consistency heatmap redesign**: intensity by your own typical day, rest dots, month/weekday labels, tap-a-day detail
 - [x] **App tour with Kix & Nyra in dialogue** (Supercell-style character introductions over the real UI)
+- [x] **Tour stage, Clash of Clans-style**: big chest-up characters at the bottom corners, comic speech bubbles with name tags, a bouncing arrow on the real UI; Kix hops in, Nyra emerges from the dark; speaker steps forward, listener dims; per-line body language
 - [ ] **Celebrations**: level-up / badge-unlock moment after a workout (Kix joy; Nyra's nod for legendary)
 - [ ] **Weekly quests**: 3 personal goals a week from the plan (Fitocracy/Duolingo style)
 - [ ] **Character reactions on Home** to real events (PR → Kix proud; skipped rest → Nyra narrowed)

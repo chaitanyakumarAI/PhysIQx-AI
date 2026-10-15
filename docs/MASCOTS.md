@@ -255,7 +255,10 @@ artist pass over the locked designs is the upgrade path.
 > unlocks). Everywhere else the rules above still hold: silent, emotional
 > moments only, never during input. Tour script:
 > `src/features/tour/script.ts`; new pose prompts:
-> `docs/ASSET_PROMPTS.md` §1.
+> `docs/ASSET_PROMPTS.md` §1. The tour stages them Clash of Clans-style
+> (big, chest-up, at the bottom corners) using `public/mascots/stage/` —
+> 3:4 cuts of the locked grids via `scripts/crop_mascot_stage.py`
+> (kix-asleep is skipped: its panel carries a generator watermark).
 
 ## Shipped surfaces (Phase K1, 2026-07-18)
 
