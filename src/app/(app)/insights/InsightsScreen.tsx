@@ -24,7 +24,6 @@ import type { CoachRecommendation } from "@/lib/coachEngine";
 import { fadeInUp, staggerChildren } from "@/lib/motion";
 import { derivePersonalRecords } from "@/lib/prEngine";
 import { CALIBRATION_DAYS } from "@/lib/scoreEngine";
-import { generateHeatmapWeeks } from "@/lib/streakEngine";
 import { useEntranceOnce } from "@/lib/useEntranceOnce";
 import type { Insight } from "@/types/insight";
 import type { ScoreTrendRange } from "@/types/score";
@@ -63,16 +62,6 @@ export function InsightsScreen() {
   const records = useMemo(
     () => derivePersonalRecords(ledger.sessions, todayIso),
     [ledger.sessions, todayIso],
-  );
-  const heatmap = useMemo(
-    () =>
-      generateHeatmapWeeks({
-        sessions: ledger.sessions,
-        cardio: ledger.cardio,
-        trainingDaysPerWeek: ledger.profile.trainingDaysPerWeek,
-        todayIso,
-      }),
-    [ledger, todayIso],
   );
   const insights = athlete.coach
     .filter((recommendation) => !DATA_INSIGHT_EXCLUDES.has(recommendation.id))
@@ -190,8 +179,8 @@ export function InsightsScreen() {
         </m.div>
 
         <m.div variants={fadeInUp} data-tour="insights-heatmap">
-          <Section title="12-week streak">
-            <StreakHeatmapCard weeks={heatmap} />
+          <Section title="Consistency">
+            <StreakHeatmapCard ledger={ledger} todayIso={todayIso} />
           </Section>
         </m.div>
       </m.div>

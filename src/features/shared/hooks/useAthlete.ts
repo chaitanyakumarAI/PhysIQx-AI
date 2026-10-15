@@ -5,7 +5,7 @@ import { useShallow } from "zustand/react/shallow";
 import { mockExercises } from "@/data/exercises";
 import { deriveAthleteState, type AthleteState } from "@/lib/athleteState";
 import type { ActiveSessionInfo } from "@/lib/coachEngine";
-import { todayIso as readTodayIso } from "@/lib/dates";
+import { localIsoFromTimestamp, todayIso as readTodayIso } from "@/lib/dates";
 import { buildDemoData } from "@/lib/demo/demoLedger";
 import { computeScoreTrend } from "@/lib/scoreEngine";
 import { useCardioStore } from "@/store/cardioStore";
@@ -101,6 +101,7 @@ export function useLedger(): LedgerView {
           experienceLevel: onboarding?.experienceLevel ?? null,
           goalBodyShape: onboarding?.goalBodyShape ?? null,
           trainingDaysPerWeek: onboarding?.trainingDaysPerWeek ?? DEFAULT_TRAINING_DAYS_PER_WEEK,
+          onboardedOn: onboarding?.completedAt ? localIsoFromTimestamp(onboarding.completedAt) : null,
         },
       },
     };

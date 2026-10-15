@@ -9,9 +9,8 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { SettingsPageHeader } from "@/features/profile/components/SettingsPageHeader";
 import { useSessionStore, type CompletedSessionSummary } from "@/store/sessionStore";
 import { useProfileStore } from "@/store/profileStore";
-import { evaluateAchievements } from "@/lib/achievementEngine";
+import { computeProgression } from "@/lib/gamification/progression";
 import { todayIso } from "@/lib/dates";
-import { detectRecentPRs } from "@/lib/prEngine";
 import { computeStreak } from "@/lib/streakEngine";
 import { useCardioStore } from "@/store/cardioStore";
 import { usePlansStore } from "@/store/plansStore";
@@ -57,12 +56,25 @@ export function ExportContent() {
     trainingDaysPerWeek: profileState.onboardingProfile?.trainingDaysPerWeek ?? 3,
     todayIso: todayIso(),
   });
-  const evalResult = evaluateAchievements({
-    history: allSessions,
-    streakDays: streak.longestStreakDays,
-    cardio,
-    prCount: detectRecentPRs(allSessions, "0000-01-01").length,
-  });
+  const progression = computeProgression(
+    {
+      sessions: allSessions,
+      cardio,
+      weighIns: profileState.weightEntries,
+      profile: {
+        displayName: profileState.displayName,
+        sex: profileState.sex,
+        birthYear: profileState.birthYear,
+        heightCm: profileState.heightCm,
+        currentBuild: profileState.currentBuild,
+        goal: profileState.onboardingProfile?.goal ?? null,
+        experienceLevel: profileState.onboardingProfile?.experienceLevel ?? null,
+        goalBodyShape: profileState.onboardingProfile?.goalBodyShape ?? null,
+        trainingDaysPerWeek: profileState.onboardingProfile?.trainingDaysPerWeek ?? 3,
+      },
+    },
+    todayIso(),
+  );
 
   function exportJSON() {
     const timestamp = new Date().toISOString().slice(0, 10);
@@ -95,13 +107,18 @@ export function ExportContent() {
         cardio,
         plans,
       },
-      achievements: evalResult.achievements.map((a) => ({
-        id: a.id,
-        name: a.name,
-        rarity: a.rarity,
-        state: a.state,
-        progress: Math.round(a.progress * 100),
-      })),
+      progression: {
+        totalXp: progression.totalXp,
+        level: progression.level.level,
+        rank: progression.level.rank.name,
+        collection: progression.collectibles.map((item) => ({
+          id: item.id,
+          name: item.tierLabel ? `${item.name} (${item.tierLabel})` : item.name,
+          status: item.status,
+          earnedOn: item.earnedOn,
+          progress: Math.round(item.progress * 100),
+        })),
+      },
     };
 
     triggerDownload(

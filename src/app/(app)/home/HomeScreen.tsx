@@ -107,7 +107,7 @@ export function HomeScreen() {
         </m.div>
 
         {lead && (
-          <m.div variants={fadeInUp}>
+          <m.div variants={fadeInUp} data-tour="coach">
             <CoachCard
               recommendation={
                 leadDuplicatesMission ? { ...lead, action: undefined } : lead

@@ -290,6 +290,20 @@ export function computeScoreTrend(
   return points;
 }
 
+/** Every day's snapshot in [fromIso, toIso] (one shared context — cheap). */
+export function computeSnapshotSeries(
+  ledger: Ledger,
+  fromIso: string,
+  toIso: string,
+): DailySnapshot[] {
+  const context = buildContext(ledger);
+  const series: DailySnapshot[] = [];
+  for (let date = fromIso; date <= toIso; date = addDaysIso(date, 1)) {
+    series.push(snapshotAt(context, date));
+  }
+  return series;
+}
+
 function headlineFor(
   current: DailySnapshot,
   weekAgo: DailySnapshot,

@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { AchievementsContent } from "./AchievementsContent";
+import { CollectionScreen } from "@/features/collection/components/CollectionScreen";
 
 export const metadata: Metadata = {
-  title: "Achievement Collection",
-  description: "Track unlocked milestone badges and feature them in your showcase.",
+  title: "Collection",
+  description: "Badges, milestones and ranks earned by training.",
 };
 
 export default function AchievementsPage() {
-  return <AchievementsContent />;
+  return <CollectionScreen />;
 }

@@ -119,10 +119,11 @@ Still true:
 - Never label a feature "AI" in user-facing copy unless it actually uses a
   model. Rule-based features get plain names (e.g. "PhysIQ Split").
 - The conversational AI Coach (`/coach`) is deferred to a future version:
-  the route returns `notFound()` and has no entry points. Don't re-enable it
-  without the user's go-ahead.
-- Mascots are hidden (`Mascot.tsx` returns `null`) until the user says how
-  to reintroduce them.
+  the route was removed (the Coach is a rule-based engine, `lib/coachEngine.ts`).
+  Don't build a model-backed coach without the user's go-ahead.
+- Mascots appear only in the Kix & Nyra app tour and celebration moments
+  (owner decision 2026-10-15, see docs/MASCOTS.md); elsewhere they stay
+  hidden until the user says otherwise.
 - Use `/design` screenshots as the visual source of truth for existing
   screens. Do not significantly redesign screens without approval.
 

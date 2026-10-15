@@ -34,6 +34,7 @@ first run → onboarding → workout from Home → finish → Insights → Profi
 |---|---|
 | 1 (`75630bb`) | A1–A7, A9, A11 (validated sets, ghost-value completion, local dates, XP by work done, barbell-only plates, e1RM cap, 1,000-workout history), A6 seeded photos removed, G7, I1 CI, I3/I4 dead code + lint |
 | 2 (`a6cf2bd`) | **B1** one local ledger feeding every screen through `lib/athleteState`, **B2** demo mode, **B3** onboarding drives plan/profile/score, **B4** fixture seams deleted, **C1–C3** Score v4, **K1** coach engine, **D1** Training Load, **D2** honest integrations, **D4** strength standards from real data, **E1–E3** plan-day sessions + rotation + personalized starter plan, **F1** About-you + build picker, **F5**, **A8**, **A10** streak, **K2** cardio import/dedup/outbox sync (G5), migration 005 |
+| Gamification v2 (2026-10-15) | Research study (`docs/GAMIFICATION_STUDY.md`), XP from real effort, levels 1–100 + 9 ranks, 70-item collection with level gates, collection UI, heatmap redesign, **Kix & Nyra dialogue tour**, asset prompts (`docs/ASSET_PROMPTS.md`) and TODO checklist |
 
 ### What testing found (still open)
 

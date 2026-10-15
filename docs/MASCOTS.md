@@ -248,6 +248,15 @@ artist pass over the locked designs is the upgrade path.
   30-day streak, score band-up)
 - Nyra never shames. Kix never warns.
 
+> **Owner decision, 2026-10-15:** Kix and Nyra **speak** (in text speech
+> bubbles) in the app tour, as a conversation between the two over the
+> real UI, in the style of Supercell's character introductions. They may
+> share the screen there and in celebration moments (level-ups, legendary
+> unlocks). Everywhere else the rules above still hold: silent, emotional
+> moments only, never during input. Tour script:
+> `src/features/tour/script.ts`; new pose prompts:
+> `docs/ASSET_PROMPTS.md` §1.
+
 ## Shipped surfaces (Phase K1, 2026-07-18)
 
 Assets: `public/mascots/*.webp` — 13 expression crops cut from the

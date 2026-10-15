@@ -2,7 +2,7 @@ import { goalLabels, type ProfileGoal } from "@/types/profile";
 import { programTypeLabels, type ProgramType } from "@/types/training";
 import type { StreakSummary } from "@/types/training";
 import type { StatEntry } from "@/features/shared/components/StatChipRow";
-import type { ProfileAchievement, ProfileStats } from "../types";
+import type { ProfileStats } from "../types";
 
 /**
  * Pure helpers so every derived number/label on Profile is computed from its
@@ -10,10 +10,6 @@ import type { ProfileAchievement, ProfileStats } from "../types";
  * co-located with the shared StatChipRow component that consumes it.
  */
 export type { StatEntry };
-
-export function countUnlockedAchievements(achievements: ProfileAchievement[]): number {
-  return achievements.filter((achievement) => achievement.state === "unlocked").length;
-}
 
 export interface IdentityInput {
   goal: ProfileGoal | null;

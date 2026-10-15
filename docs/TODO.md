@@ -1,19 +1,50 @@
 # PhysIQx — TODO
 
 Living task list. Grouped by urgency, then phase. Update as things land.
-Last audited: **2026-10-10**.
+Last audited: **2026-10-15**. Master plan and status: `docs/MASTER_PLAN.md`.
 
 ---
 
-## 🔴 Current Active Phase: Phase 6 — Interactive Character Guide Overlays
+## 🎨 Asset generation — prompts in `docs/ASSET_PROMPTS.md`
+
+Everything works today with placeholders (vector medals, expression
+crops). Each asset replaces its placeholder once registered (ASSET_PROMPTS §5).
+
+- [ ] **Tour poses — Kix** (8): wave · point-left · point-right · glove-up · celebrate · sheepish · thinking · guard → `public/mascots/tour/`
+- [ ] **Tour poses — Nyra** (6): teach · gesture · narrowed · tilt · nod · rest → `public/mascots/tour/`
+- [ ] **Duo & celebration scenes** (4): duo-intro · duo-finale · kix-level-up · nyra-legendary-nod → `public/mascots/scenes/`
+- [ ] **Medals — Training families** (16): iron-ledger · tonnage · explorer · big-session × bronze/silver/gold/platinum
+- [ ] **Medals — Strength families** (8): record-breaker · strength-standard × 4 tiers
+- [ ] **Medals — Cardio families** (12): cardio-engine · long-haul · double-duty × 4 tiers
+- [ ] **Medals — Consistency families** (8): perfect-week · unbroken × 4 tiers
+- [ ] **Medals — Body & score families** (8): steady-scale · physiq-climber × 4 tiers
+- [ ] **Medals — Milestones** (10): first-rep · calibrated · body-map · first-import · comeback-kid · full-house · perfect-month · iron-year · anniversary · unshakeable
+- [ ] **Rank insignia** (8): iron · bronze · silver · gold · platinum · diamond · obsidian · legend
+- [ ] *(Optional)* Hero art: level-up burst · collection header
+- [ ] **Integrate**: convert with `node scripts/convert-assets.mjs`, register medal ids in `src/features/collection/lib/badgeArt.ts`, point the tour script at the new poses
+
+## 🎮 Gamification v2 — see `docs/GAMIFICATION_STUDY.md`
+
+- [x] **XP from real effort**: workouts (by work done), PRs, cardio, weigh-ins, perfect weeks, setup bonus, collection — derived from the ledger, with anti-grind caps
+- [x] **Levels 1–100** on a polynomial curve (each level costs more) + **9 ranks** (Rookie → Legend)
+- [x] **Collection: 70 items** — 13 families × 4 tiers, 10 milestones, 8 rank insignia; Gold/Platinum and legendary items gated by level; real earned dates
+- [x] **Collection screen + detail sheets + profile showcase + level card**
+- [x] **Consistency heatmap redesign**: intensity by your own typical day, rest dots, month/weekday labels, tap-a-day detail
+- [x] **App tour with Kix & Nyra in dialogue** (Supercell-style character introductions over the real UI)
+- [ ] **Celebrations**: level-up / badge-unlock moment after a workout (Kix joy; Nyra's nod for legendary)
+- [ ] **Weekly quests**: 3 personal goals a week from the plan (Fitocracy/Duolingo style)
+- [ ] **Character reactions on Home** to real events (PR → Kix proud; skipped rest → Nyra narrowed)
+- [ ] **Leagues** once Compete has real users
+
+## 🔴 Phase 6 — Interactive Character Guide Overlays
 
 - [ ] **Phase 6: Interactive Character Guide Overlays (UI Rework Track)**
   - [x] **Core Content & Data Store (SAFELY PRESERVED)**:
     Ingested `physiqx_coach_content.json` with strict type contracts (`src/types/coach.ts`), character profile mappings (`COACH_PROFILES`), and accessor APIs (`src/data/coachContent.ts`).
   - [x] **Telemetry & Rules Logic Engine**:
     Deterministic recommendation logic (`deriveActiveRecommendation`), briefing state storage, and comprehensive tests in `coachLogic.test.ts` (142/142 tests passing).
-  - [ ] **Rework Briefing UI (Dialogue Walkthrough)**:
-    Replace clunky stacked-card bottom sheet with a premium, sleek presentation (e.g. cinematic floating speech HUD, translucent dynamic comms island, or Apple/Nike-style conversational card flow).
+  - [x] **Rework Briefing UI (Dialogue Walkthrough)** *(2026-10-15)*:
+    Rebuilt as the Kix & Nyra character tour (`src/features/tour/`) — the two slide in from the screen edges and talk it through while the real UI is spotlit. New script; the old JSON dialogue described removed features.
   - [ ] **Rework Feature Explainer UI (On-Demand Info Cards)**:
     Replace generic modal sheet with an ultra-polished popover or contextual micro-drawer that feels integrated, native, and high-end.
   - [x] **Screens Cleaned of Disliked V1 Cards**:

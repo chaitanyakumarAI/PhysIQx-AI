@@ -5,7 +5,8 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { Section } from "@/components/layout/Section";
 import { ScreenHeader } from "@/components/navigation/ScreenHeader";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { CollectionShowcase } from "@/features/profile/components/CollectionShowcase";
+import { CollectionShowcase } from "@/features/collection/components/CollectionShowcase";
+import { LevelCard } from "@/features/collection/components/LevelCard";
 import { ProfileHeaderCard } from "@/features/profile/components/ProfileHeaderCard";
 import { SettingsRow } from "@/features/profile/components/SettingsRow";
 import { useProfileView } from "@/features/profile/hooks/useProfileView";
@@ -20,7 +21,7 @@ import { useProfileStore } from "@/store/profileStore";
 
 /** The athlete's identity and lifetime progress, derived from the ledger. */
 export function ProfileScreen() {
-  const { athlete, achievements, stats, level } = useProfileView();
+  const { athlete, progression, stats } = useProfileView();
   const split = useProfileStore((state) => state.onboardingProfile?.activeSplit ?? null);
   const entrance = useEntranceOnce("profile");
   const { profile } = athlete.ledger;
@@ -56,7 +57,7 @@ export function ProfileScreen() {
           <ProfileHeaderCard
             name={profile.displayName ?? "Athlete"}
             archetype={archetype}
-            level={level.level}
+            level={progression.level.level}
             score={score}
           />
           <StatChipRow
@@ -69,8 +70,12 @@ export function ProfileScreen() {
           <StatChipRow stats={buildProgressStats(stats, athlete.streak)} />
         </m.div>
 
+        <m.div variants={fadeInUp} data-tour="profile-level">
+          <LevelCard level={progression.level} />
+        </m.div>
+
         <m.div variants={fadeInUp}>
-          <CollectionShowcase achievements={achievements} />
+          <CollectionShowcase progression={progression} usePins={!athlete.demo} />
         </m.div>
 
         <m.div variants={fadeInUp}>

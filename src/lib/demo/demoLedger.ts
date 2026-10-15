@@ -156,6 +156,7 @@ export function buildDemoData(todayIso: string): DemoData {
         experienceLevel: "intermediate",
         goalBodyShape: "muscular",
         trainingDaysPerWeek: 4,
+        onboardedOn: firstDay,
       },
     },
   };

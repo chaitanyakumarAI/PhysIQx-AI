@@ -40,6 +40,8 @@ export interface AthleteProfile {
   goalBodyShape: GoalBodyShape | null;
   /** Planned training days per week (rest days are the rest of the week). */
   trainingDaysPerWeek: number;
+  /** Local day setup (onboarding) was completed; null if never. */
+  onboardedOn?: string | null;
 }
 
 /**
