@@ -30,6 +30,7 @@ crops). Each asset replaces its placeholder once registered (ASSET_PROMPTS §5).
 - [x] **Levels 1–100** on a polynomial curve (each level costs more) + **9 ranks** (Rookie → Legend)
 - [x] **Collection: 70 items** — 13 families × 4 tiers, 10 milestones, 8 rank insignia; Gold/Platinum and legendary items gated by level; real earned dates
 - [x] **Collection screen + detail sheets + profile showcase + level card**
+- [x] **Stylised vector medals** (2026-10-16): the rim levels up with the tier (coin → beaded → rosette + laurels → gem-cut + jewel → violet star crest), metal shading and raised emblems; unearned pieces are unminted iron in their tier's shape (green ring in progress, padlock + level when sealed); 8 distinct rank crests (chevrons, wings, crown, diamond, obsidian core, Legend regalia)
 - [x] **Consistency heatmap redesign**: intensity by your own typical day, rest dots, month/weekday labels, tap-a-day detail
 - [x] **App tour with Kix & Nyra in dialogue** (Supercell-style character introductions over the real UI)
 - [x] **Tour stage, Clash of Clans-style**: big chest-up characters at the bottom corners, comic speech bubbles with name tags, a bouncing arrow on the real UI; Kix hops in, Nyra emerges from the dark; speaker steps forward, listener dims; per-line body language

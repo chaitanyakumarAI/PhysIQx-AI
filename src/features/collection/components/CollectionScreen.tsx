@@ -13,10 +13,11 @@ import { categoryLabels, type CollectionCategory } from "@/lib/gamification/cata
 import type { CollectibleState } from "@/lib/gamification/progression";
 import { cn } from "@/lib/utils";
 import { useProgression } from "../hooks/useProgression";
-import { groupFamilies, medalState, type FamilyGroup } from "../lib/groups";
+import { groupFamilies, type FamilyGroup } from "../lib/groups";
 import { CollectibleSheet, type SheetSubject } from "./CollectibleSheet";
 import { LevelCard } from "./LevelCard";
-import { GRADE_STYLE, Medal } from "./Medal";
+import { accentFor } from "../lib/materials";
+import { CollectibleBadge } from "./CollectibleBadge";
 
 type Filter = "all" | CollectionCategory;
 
@@ -33,7 +34,7 @@ function TierPips({ group }: { group: FamilyGroup }) {
           key={tier.id}
           className="size-1.5 rounded-full"
           style={{
-            background: tier.status === "earned" ? GRADE_STYLE[tier.grade].stops[1] : "rgba(255,255,255,0.12)",
+            background: tier.status === "earned" ? accentFor(tier) : "rgba(255,255,255,0.12)",
           }}
         />
       ))}
@@ -142,12 +143,10 @@ export function CollectionScreen() {
                   footer={<TierPips group={group} />}
                   onClick={() => setSubject({ kind: "family", group })}
                   medal={
-                    <Medal
-                      grade={group.shown.grade}
-                      icon={group.shown.icon}
-                      state={group.earnedCount > 0 ? "earned" : medalState(group.shown)}
+                    <CollectibleBadge
+                      item={group.shown}
+                      state={group.earnedCount > 0 ? "earned" : undefined}
                       progress={group.next?.progress ?? 1}
-                      artId={group.shown.id}
                       size={64}
                     />
                   }
@@ -168,7 +167,7 @@ export function CollectionScreen() {
                   sublabel={itemSublabel(item)}
                   onClick={() => setSubject({ kind: "item", item })}
                   medal={
-                    <Medal grade={item.grade} icon={item.icon} state={medalState(item)} progress={item.progress} artId={item.id} size={64} />
+                    <CollectibleBadge item={item} size={64} />
                   }
                 />
               </li>
@@ -187,7 +186,7 @@ export function CollectionScreen() {
                   sublabel={item.status === "earned" ? "Reached" : `Level ${item.rankLevel}`}
                   onClick={() => setSubject({ kind: "item", item })}
                   medal={
-                    <Medal grade={item.grade} icon="shield" shape="shield" state={medalState(item)} progress={item.progress} artId={item.id} size={52} />
+                    <CollectibleBadge item={item} size={58} />
                   }
                 />
               </li>

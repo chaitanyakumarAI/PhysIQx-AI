@@ -30,7 +30,7 @@ export function groupFamilies(collectibles: CollectibleState[]): FamilyGroup[] {
   });
 }
 
-export function medalState(item: CollectibleState): MedalState {
+export function medalState(item: Pick<CollectibleState, "status">): MedalState {
   if (item.status === "earned") return "earned";
   if (item.status === "sealed") return "sealed";
   return item.status === "in-progress" ? "progress" : "locked";

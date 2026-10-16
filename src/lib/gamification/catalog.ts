@@ -297,6 +297,8 @@ export interface CollectibleDef {
   metric?: MetricKey;
   target?: number;
   rankLevel?: number;
+  /** Set on rank insignia only. */
+  rankId?: RankId;
 }
 
 export const COLLECTIBLES: CollectibleDef[] = [
@@ -347,6 +349,7 @@ export const COLLECTIBLES: CollectibleDef[] = [
       // Rank insignia mark a level reached; they don't pay XP themselves.
       xp: 0,
       rankLevel: rank.minLevel,
+      rankId: rank.id,
     }),
   ),
 ];

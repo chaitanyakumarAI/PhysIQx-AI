@@ -102,8 +102,8 @@ so every pose lines up and expression swaps never make the body jump.
 
 ### Medal style guide (paste into every medal prompt)
 
-> Premium 3D game medal icon, straight-on front view, a circular medallion
-> with a thick beveled rim in **{MATERIAL}**. The inner face is dark obsidian
+> Premium 3D game medal icon, straight-on front view, a medallion with
+> **{SHAPE}**, thick and beveled, in **{MATERIAL}**. The inner face is dark obsidian
 > enamel (#0b0e0c), with a raised emblem in **{MATERIAL}**: **{EMBLEM}**. The
 > emblem edges catch a soft rim light; a faint glow pools around the emblem.
 > Crisp, clean, readable at 64 px. Soft studio light from the top-left.
@@ -111,18 +111,20 @@ so every pose lines up and expression swaps never make the body jump.
 > badges. Isolated on a transparent background, centred, the medal fills 90%
 > of the frame. No text, no letters, no numbers.
 
-**{MATERIAL} by tier:**
+**{MATERIAL} and {SHAPE} by tier.** The rim grows more elaborate with each
+tier, exactly like the vector medals in the app
+(`src/features/collection/components/Medal.tsx`), so art and fallback match:
 
-| Tier | Material |
-|---|---|
-| Bronze | warm polished bronze with copper highlights |
-| Silver | bright brushed sterling silver with cool white highlights |
-| Gold | rich polished 24k gold with warm highlights |
-| Platinum | cool platinum with a pale cyan sheen |
-| Legendary | glossy black obsidian inlaid with glowing violet amethyst (#a78bfa) veins |
+| Tier | Material | Shape (the rim) |
+|---|---|---|
+| Bronze | warm polished bronze with copper highlights | a plain round coin rim with a finely reeded edge |
+| Silver | bright brushed sterling silver with cool white highlights | a round rim ringed with small polished beads |
+| Gold | rich polished 24k gold with warm highlights | a scalloped rosette rim (18 scallops) with a small laurel wreath along the lower edge |
+| Platinum | cool platinum with a pale cyan sheen | a 12-sided gem-cut faceted rim, a small cut jewel at the top, laurels along the lower edge |
+| Legendary | glossy black obsidian inlaid with glowing violet amethyst (#a78bfa) veins | an 8-point star crest behind a round rim, a violet jewel at the top, faint violet rays behind |
 
 Generate Bronze → attach it → Silver → Gold → Platinum (same emblem, new
-metal).
+metal and rim).
 
 ### 2a. Families (13 × 4 tiers) — files `public/badges/<family>-<tier>.webp`
 

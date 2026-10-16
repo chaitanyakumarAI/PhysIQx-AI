@@ -8,8 +8,9 @@ import { gradeLabels } from "@/lib/gamification/catalog";
 import type { CollectibleState } from "@/lib/gamification/progression";
 import { cn } from "@/lib/utils";
 import { useProfileStore } from "@/store/profileStore";
-import { formatEarned, medalState, type FamilyGroup } from "../lib/groups";
-import { GRADE_STYLE, Medal } from "./Medal";
+import { formatEarned, type FamilyGroup } from "../lib/groups";
+import { accentFor } from "../lib/materials";
+import { CollectibleBadge } from "./CollectibleBadge";
 
 export type SheetSubject = { kind: "family"; group: FamilyGroup } | { kind: "item"; item: CollectibleState };
 
@@ -49,20 +50,12 @@ export function CollectibleSheet({ subject, onClose, canPin }: CollectibleSheetP
       {hero && subject && (
         <div className="flex flex-col gap-5 pb-2">
           <div className="flex flex-col items-center gap-3 text-center">
-            <Medal
-              grade={hero.grade}
-              icon={hero.icon}
-              state={medalState(hero)}
-              progress={hero.progress}
-              shape={hero.category === "rank" ? "shield" : "round"}
-              artId={hero.id}
-              size={120}
-            />
+            <CollectibleBadge item={hero} size={128} />
             <div>
               <h2 className="font-display text-2xl font-bold">{hero.name}</h2>
               <p
                 className="mt-0.5 text-xs font-semibold uppercase tracking-[0.16em]"
-                style={{ color: hero.status === "earned" ? GRADE_STYLE[hero.grade].stops[1] : undefined }}
+                style={{ color: hero.status === "earned" ? accentFor(hero) : undefined }}
               >
                 {subject.kind === "family"
                   ? `${subject.group.earnedCount} of 4 tiers`
@@ -84,7 +77,7 @@ export function CollectibleSheet({ subject, onClose, canPin }: CollectibleSheetP
                     tier.status === "earned" ? "border-white/[0.1] bg-white/[0.04]" : "border-white/[0.05]",
                   )}
                 >
-                  <Medal grade={tier.grade} icon={tier.icon} state={medalState(tier)} progress={tier.progress} artId={tier.id} size={44} />
+                  <CollectibleBadge item={tier} size={46} />
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-semibold">
                       {tier.tierLabel} <span className="font-normal text-foreground-secondary">· {tier.description}</span>

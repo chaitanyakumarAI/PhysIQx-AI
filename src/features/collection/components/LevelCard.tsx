@@ -2,7 +2,8 @@ import { Card } from "@/components/ui/Card";
 import { RANK_GRADES } from "@/lib/gamification/catalog";
 import type { LevelStatus } from "@/lib/gamification/levels";
 import { cn } from "@/lib/utils";
-import { GRADE_STYLE, Medal } from "./Medal";
+import { accentFor } from "../lib/materials";
+import { RankInsignia } from "./RankInsignia";
 
 export interface LevelCardProps {
   level: LevelStatus;
@@ -13,14 +14,12 @@ export interface LevelCardProps {
 export function LevelCard({ level, className }: LevelCardProps) {
   const grade = RANK_GRADES[level.rank.id];
   const rookie = level.rank.id === "rookie";
-  const accent = GRADE_STYLE[grade].stops[1];
+  const accent = accentFor({ grade, rankId: level.rank.id });
 
   return (
     <Card padding="md" className={cn("flex items-center gap-4", className)}>
-      <Medal
-        grade={grade}
-        icon="shield"
-        shape="shield"
+      <RankInsignia
+        rank={level.rank.id}
         state={rookie ? "progress" : "earned"}
         artId={rookie ? undefined : `rank-${level.rank.id}`}
         size={64}

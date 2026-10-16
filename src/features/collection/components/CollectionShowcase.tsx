@@ -5,6 +5,7 @@ import { Section } from "@/components/layout/Section";
 import type { ProgressionState } from "@/lib/gamification/progression";
 import { useProfileStore } from "@/store/profileStore";
 import { formatEarned } from "../lib/groups";
+import { CollectibleBadge } from "./CollectibleBadge";
 import { Medal } from "./Medal";
 
 const SHOWCASE_SIZE = 3;
@@ -58,14 +59,7 @@ export function CollectionShowcase({ progression, usePins }: CollectionShowcaseP
                 href="/profile/achievements"
                 className="flex h-full flex-col items-center gap-2 rounded-2xl border border-white/[0.06] bg-white/[0.02] px-2 pb-3 pt-4 text-center hover:bg-white/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/60"
               >
-                <Medal
-                  grade={item.grade}
-                  icon={item.icon}
-                  state="earned"
-                  shape={item.category === "rank" ? "shield" : "round"}
-                  artId={item.id}
-                  size={64}
-                />
+                <CollectibleBadge item={item} state="earned" size={64} />
                 <span className="text-[13px] font-semibold leading-tight">{item.name}</span>
                 <span className="text-[11px] text-foreground-secondary">
                   {item.tierLabel ? `${item.tierLabel} · ` : ""}
