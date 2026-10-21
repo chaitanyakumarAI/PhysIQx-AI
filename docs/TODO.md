@@ -36,6 +36,15 @@ crops). Each asset replaces its placeholder once registered (ASSET_PROMPTS §5).
 - [x] **Tour stage, Clash of Clans-style**: big chest-up characters at the bottom corners, comic speech bubbles with name tags, a bouncing arrow on the real UI; Kix hops in, Nyra emerges from the dark; speaker steps forward, listener dims; per-line body language
 - [x] **Celebrations** (2026-10-21): the workout-complete screen counts up the XP by source, fills the level bar (level-up pop + sparks + chime), strikes each new badge (flip, shine, sparks, rarity-pitched chime), lists new records, and Kix or Nyra reacts (Nyra's nod for legendary). Skippable; reduced motion shows it all at once; sparks and sounds follow Preferences → Celebration Fanfare (`src/features/celebration/`)
 - [x] **Living medals**: shine sweep on earned pieces, tilt-to-turn on the badge sheet, progress rings that fill as they appear
+
+## 🖌 Figma design system — https://www.figma.com/design/Py9qoiT5srEZTnuX8PqMBj
+
+Free Starter team: build with write tools (`use_figma`, `upload_assets`); reads (`get_design_context`, `get_screenshot`…) are capped at ~20 a month — save them for turning finished frames into code.
+
+- [x] **Tokens** (2026-10-21): 66 variables mirroring `globals.css` (Primitives → semantic Color with CSS-variable code syntax, Radius, Spacing/sizes), 13 text styles (Space Grotesk display, Inter body), 4 effect styles (card shadows, brand glow)
+- [x] **v1 components**: Button (Style × Size × State), Chip, Card (Default / Elevated / Accent), Stat Chip, Progress Bar (Tone × Size), Medal (Tier × State, vectors exported from the app), Rank Insignia (Rank × State), plus a review frame
+- [ ] **Key screens** composed from the components: Home, Collection, Workout Complete — the starting point for the redesign
+- [ ] **Speech bubble + cast** components for the tour and celebrations
 - [ ] **Weekly quests**: 3 personal goals a week from the plan (Fitocracy/Duolingo style)
 - [ ] **Character reactions on Home** to real events (PR → Kix proud; skipped rest → Nyra narrowed)
 - [ ] **Leagues** once Compete has real users
