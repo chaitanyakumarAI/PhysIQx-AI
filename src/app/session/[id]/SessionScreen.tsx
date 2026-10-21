@@ -9,8 +9,8 @@ import { Button } from "@/components/ui/Button";
 import { IconButton } from "@/components/ui/IconButton";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { iconSize } from "@/constants/icons";
+import { WorkoutComplete } from "@/features/celebration/components/WorkoutComplete";
 import { ExerciseSessionCard } from "@/features/session/components/ExerciseSessionCard";
-import { SessionSummaryCard } from "@/features/session/components/SessionSummaryCard";
 import { SessionTimer } from "@/features/session/components/SessionTimer";
 import { useElapsedSeconds } from "@/features/session/hooks/useElapsedSeconds";
 import { computeSessionProgress, computeSessionVolume } from "@/features/session/lib/derive";
@@ -159,18 +159,13 @@ export function SessionScreen({ missionId, setup }: SessionScreenProps) {
 
     return (
       <PageContainer withBottomNav={false}>
-        <div className="flex flex-1 flex-col justify-center gap-6">
-          <SessionSummaryCard
-            durationSeconds={durationSeconds}
-            volume={summary?.totalVolumeKg ?? computeSessionVolume(session)}
-            unit="kg"
-            xpReward={summary?.xpEarned ?? 0}
-            workoutTitle={session.title}
-          />
-          <Button size="lg" fullWidth onClick={handleDone}>
-            Done
-          </Button>
-        </div>
+        <WorkoutComplete
+          title={session.title}
+          summary={summary}
+          durationSeconds={durationSeconds}
+          volumeKg={summary?.totalVolumeKg ?? computeSessionVolume(session)}
+          onDone={handleDone}
+        />
       </PageContainer>
     );
   }

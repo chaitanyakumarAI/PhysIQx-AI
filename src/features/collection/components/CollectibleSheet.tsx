@@ -4,6 +4,7 @@ import { Pin } from "lucide-react";
 import { BottomSheet } from "@/components/ui/BottomSheet";
 import { Button } from "@/components/ui/Button";
 import { ProgressBar } from "@/components/ui/ProgressBar";
+import { Tilt } from "@/components/ui/Tilt";
 import { gradeLabels } from "@/lib/gamification/catalog";
 import type { CollectibleState } from "@/lib/gamification/progression";
 import { cn } from "@/lib/utils";
@@ -50,7 +51,9 @@ export function CollectibleSheet({ subject, onClose, canPin }: CollectibleSheetP
       {hero && subject && (
         <div className="flex flex-col gap-5 pb-2">
           <div className="flex flex-col items-center gap-3 text-center">
-            <CollectibleBadge item={hero} size={128} />
+            <Tilt>
+              <CollectibleBadge item={hero} shine={hero.status === "earned" ? "loop" : undefined} size={128} />
+            </Tilt>
             <div>
               <h2 className="font-display text-2xl font-bold">{hero.name}</h2>
               <p

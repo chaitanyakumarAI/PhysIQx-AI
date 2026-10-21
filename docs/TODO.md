@@ -34,10 +34,25 @@ crops). Each asset replaces its placeholder once registered (ASSET_PROMPTS §5).
 - [x] **Consistency heatmap redesign**: intensity by your own typical day, rest dots, month/weekday labels, tap-a-day detail
 - [x] **App tour with Kix & Nyra in dialogue** (Supercell-style character introductions over the real UI)
 - [x] **Tour stage, Clash of Clans-style**: big chest-up characters at the bottom corners, comic speech bubbles with name tags, a bouncing arrow on the real UI; Kix hops in, Nyra emerges from the dark; speaker steps forward, listener dims; per-line body language
-- [ ] **Celebrations**: level-up / badge-unlock moment after a workout (Kix joy; Nyra's nod for legendary)
+- [x] **Celebrations** (2026-10-21): the workout-complete screen counts up the XP by source, fills the level bar (level-up pop + sparks + chime), strikes each new badge (flip, shine, sparks, rarity-pitched chime), lists new records, and Kix or Nyra reacts (Nyra's nod for legendary). Skippable; reduced motion shows it all at once; sparks and sounds follow Preferences → Celebration Fanfare (`src/features/celebration/`)
+- [x] **Living medals**: shine sweep on earned pieces, tilt-to-turn on the badge sheet, progress rings that fill as they appear
 - [ ] **Weekly quests**: 3 personal goals a week from the plan (Fitocracy/Duolingo style)
 - [ ] **Character reactions on Home** to real events (PR → Kix proud; skipped rest → Nyra narrowed)
 - [ ] **Leagues** once Compete has real users
+
+## 🛠 Hardening — from the 2026-10-17 code audit
+
+- [ ] **Transactional workout save**: one Postgres function (RPC) for session + exercises + sets + XP; fail the outbox job on any child error (today child errors are logged and the job reports success)
+- [ ] **Validate Server Action input** with the same Zod schemas (`saveWorkoutSession`, `saveCardioActivity`, `saveOnboardingProfile`); recompute XP and volume server-side
+- [ ] **`xp_transactions`**: SELECT-only for owners; append through a server-side function (owners can currently insert their own XP)
+- [ ] **`sessions.client_ref`**: unique per user `(user_id, client_ref)` like cardio (005), and `upsert … onConflict` instead of check-then-insert
+- [ ] **Cross-tab safety**: rehydrate stores on `storage` events (or a `BroadcastChannel`) so two tabs can't overwrite each other's history
+- [ ] **Queue abandoned workouts** for upload too (only Finish queues today)
+- [ ] **RPE in top sets** so `computeOverloadSuggestion`'s RPE auto-regulation can run on real data
+- [ ] **Photos and avatar** out of `localStorage` (data URLs) into IndexedDB / Supabase Storage
+- [ ] **Pull / restore** for signed-in users on a new device (sync is push-only today)
+- [ ] **Stale docs**: middleware comment claims route guarding; `PHYSIQ_SCORE.md` describes stored snapshots and other behaviour the engine doesn't have
+- [ ] **Tests**: RLS cross-user tests (pgTAP / Supabase CLI) and one Playwright flow (log offline → online → rows exist)
 
 ## 🔴 Phase 6 — Interactive Character Guide Overlays
 

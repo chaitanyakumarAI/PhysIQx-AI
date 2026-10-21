@@ -125,14 +125,16 @@ export function playWaterDrop() {
   }
 }
 
+/** True when the athlete turned celebration effects off (Preferences). */
+function celebrationsMuted(): boolean {
+  if (typeof window === "undefined") return true;
+  const prefs = useProfileStore.getState().preferences;
+  return Boolean(prefs && !prefs.celebrationEffects);
+}
+
 export function playCelebrationFanfare() {
   try {
-    if (typeof window !== "undefined") {
-      const prefs = useProfileStore.getState().preferences;
-      if (prefs && !prefs.celebrationEffects) {
-        return;
-      }
-    }
+    if (celebrationsMuted()) return;
 
     const ctx = getAudioContext();
     if (!ctx) return;
@@ -157,10 +159,38 @@ export function playCelebrationFanfare() {
 }
 
 /**
+ * Level-up: a quick rising run that resolves high, plus a firm buzz.
+ * Respects `celebrationEffects`.
+ */
+export function playLevelUp() {
+  if (celebrationsMuted()) return;
+  [392, 523.25, 659.25, 783.99, 1046.5, 1318.51].forEach((freq, index) => {
+    setTimeout(() => playTone(freq, index === 5 ? 0.7 : 0.22, "triangle", 0.16), index * 70);
+  });
+  triggerHaptic("heavy");
+}
+
+/**
+ * Badge unlock: a bright two-note chime, pitched up for rarer badges
+ * (`rarity` 0 = bronze … 4 = legendary). Respects `celebrationEffects`.
+ */
+export function playBadgeUnlock(rarity = 0) {
+  if (celebrationsMuted()) return;
+  const lift = 2 ** (Math.min(4, Math.max(0, rarity)) / 12);
+  playTone(1318.51 * lift, 0.18, "sine", 0.14);
+  setTimeout(() => playTone(1760 * lift, 0.5, "sine", 0.12), 90);
+  triggerHaptic("medium");
+}
+
+/**
  * Vibration feedback using the Web Vibration API when available on mobile devices.
  */
 export function triggerHaptic(type: "light" | "medium" | "heavy" | "success" = "light") {
   if (typeof navigator === "undefined" || !navigator.vibrate) {
+    return;
+  }
+  // Browsers block (and log) vibration before the first tap on the page.
+  if (navigator.userActivation && !navigator.userActivation.hasBeenActive) {
     return;
   }
 

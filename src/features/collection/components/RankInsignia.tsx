@@ -7,7 +7,7 @@ import { artFor } from "../lib/badgeArt";
 import { MATERIALS, RANK_MATERIAL } from "../lib/materials";
 import { chevronPath, starPath } from "../lib/medalGeometry";
 import type { MedalState } from "./Medal";
-import { Aura, Gloss, MaterialDefs, medalBoxClass } from "./medal/parts";
+import { Aura, Gloss, MaterialDefs, medalBoxClass, ShineSweep, type ShineMode } from "./medal/parts";
 
 const SHIELD = "M50 6L80 15.5V44C80 66.5 67.5 82.5 50 93C32.5 82.5 20 66.5 20 44V15.5Z";
 /** The inner field: the shield, scaled about the centre. */
@@ -57,6 +57,8 @@ export interface RankInsigniaProps {
   state: MedalState;
   /** Collectible id — looks up generated art when it exists. */
   artId?: string;
+  /** A sweep of light across an earned insignia: on reveal, or looping. */
+  shine?: ShineMode;
   size?: number;
   className?: string;
 }
@@ -67,7 +69,7 @@ export interface RankInsigniaProps {
  * unminted dark iron with the same crest, so the next one is something to
  * look at.
  */
-export function RankInsignia({ rank, state, artId, size = 64, className }: RankInsigniaProps) {
+export function RankInsignia({ rank, state, artId, shine, size = 64, className }: RankInsigniaProps) {
   const id = useId().replace(/:/g, "");
   const earned = state === "earned";
   const art = earned && artId ? artFor(artId) : null;
@@ -135,6 +137,7 @@ export function RankInsignia({ rank, state, artId, size = 64, className }: RankI
             />
           )}
           {earned && <Gloss id={id} outline={<path d={SHIELD} />} sheen={false} />}
+          {earned && shine && <ShineSweep id={id} outline={<path d={SHIELD} />} mode={shine} />}
         </svg>
       )}
     </div>

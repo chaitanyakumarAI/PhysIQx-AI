@@ -16,7 +16,18 @@ import {
   sunburstPath,
 } from "../lib/medalGeometry";
 import { collectionIcons } from "./medal/icons";
-import { Aura, Emblem, Gloss, MaterialDefs, medalBoxClass, ProgressRing, SealedTag, TopGem } from "./medal/parts";
+import {
+  Aura,
+  Emblem,
+  Gloss,
+  MaterialDefs,
+  medalBoxClass,
+  ProgressRing,
+  SealedTag,
+  ShineSweep,
+  TopGem,
+  type ShineMode,
+} from "./medal/parts";
 
 export type MedalState = "earned" | "progress" | "sealed" | "locked";
 
@@ -30,6 +41,8 @@ export interface MedalProps {
   sealedLevel?: number;
   /** Collectible id — looks up generated art when it exists. */
   artId?: string;
+  /** A sweep of light across an earned medal: on reveal, or looping on a showcase. */
+  shine?: ShineMode;
   size?: number;
   className?: string;
 }
@@ -191,6 +204,7 @@ export function Medal({
   progress = 0,
   sealedLevel,
   artId,
+  shine,
   size = 72,
   className,
 }: MedalProps) {
@@ -231,6 +245,7 @@ export function Medal({
             {size >= STARS_MIN_SIZE && earned && <TierStars id={id} count={TIER_STARS[grade]} material={material} />}
             {earned && (grade === "platinum" || grade === "legendary") && <TopGem id={id} y={grade === "legendary" ? 4.5 : 5.5} />}
             {earned && <Gloss id={id} outline={outlineFor(shape)} />}
+            {earned && shine && <ShineSweep id={id} outline={outlineFor(shape)} mode={shine} />}
           </g>
           {state === "sealed" && <SealedTag level={sealedLevel} compact={size < COMPACT_TAG_BELOW} />}
         </svg>

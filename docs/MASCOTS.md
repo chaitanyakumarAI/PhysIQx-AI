@@ -269,7 +269,7 @@ explicit dimensions, lazy, circle/portrait shapes).
 
 | Surface | Pose |
 |---|---|
-| Workout Complete (SessionSummaryCard) | kix-proud in the glow ring |
+| Workout Complete (`WorkoutCelebration`, 2026-10-21) | Kix or Nyra react with one line (`features/celebration/lib/celebration.ts` → `celebrationLine`): Nyra's nod for legendary, Kix for ranks, levels, badges and records |
 | Root 404 | kix-worried |
 | Session not-found | kix-sheepish |
 | "No active session" | kix-asleep |

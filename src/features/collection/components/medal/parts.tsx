@@ -1,3 +1,7 @@
+"use client";
+
+import type { ReactElement } from "react";
+import { m, useReducedMotion } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Material } from "../../lib/materials";
@@ -106,14 +110,15 @@ export function TopGem({ id, y = 5.5 }: { id: string; y?: number }) {
 
 /** The green track around a medal that's in progress (Apple Fitness-style). */
 export function ProgressRing({ value }: { value: number }) {
+  const reducedMotion = useReducedMotion() ?? false;
   const radius = 47.5;
-  const circumference = 2 * Math.PI * radius;
   const arc = Math.max(0, Math.min(1, value));
   return (
     <g>
       <circle cx="50" cy="50" r={radius} fill="none" stroke="#ffffff" strokeOpacity="0.08" strokeWidth="3.4" />
       {arc > 0 && (
-        <circle
+        // Fills in as the medal appears, so progress reads as motion.
+        <m.circle
           cx="50"
           cy="50"
           r={radius}
@@ -121,10 +126,55 @@ export function ProgressRing({ value }: { value: number }) {
           stroke="#22c55e"
           strokeWidth="3.4"
           strokeLinecap="round"
-          strokeDasharray={`${circumference * arc} ${circumference}`}
           transform="rotate(-90 50 50)"
+          initial={reducedMotion ? false : { pathLength: 0 }}
+          animate={{ pathLength: arc }}
+          transition={{ duration: 0.9, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
         />
       )}
+    </g>
+  );
+}
+
+export type ShineMode = "once" | "loop";
+
+/**
+ * A band of light sweeping across an earned piece, clipped to its outline:
+ * once when it's revealed, or every few seconds on a showcase.
+ */
+export function ShineSweep({ id, outline, mode }: { id: string; outline: ReactElement; mode: ShineMode }) {
+  const reducedMotion = useReducedMotion() ?? false;
+  if (reducedMotion) return null;
+  return (
+    <g aria-hidden pointerEvents="none">
+      <defs>
+        <clipPath id={`${id}-shine-clip`}>{outline}</clipPath>
+        <linearGradient id={`${id}-shine`} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stopColor="#ffffff" stopOpacity="0" />
+          <stop offset="0.5" stopColor="#ffffff" stopOpacity="0.6" />
+          <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <g clipPath={`url(#${id}-shine-clip)`}>
+        <g transform="rotate(20 50 50)">
+          <m.rect
+            x="-34"
+            y="-30"
+            width="28"
+            height="160"
+            fill={`url(#${id}-shine)`}
+            initial={{ x: 0 }}
+            animate={{ x: 168 }}
+            transition={{
+              duration: 1.1,
+              ease: "easeInOut",
+              delay: mode === "once" ? 0.2 : 1.4,
+              repeat: mode === "loop" ? Infinity : 0,
+              repeatDelay: 3.4,
+            }}
+          />
+        </g>
+      </g>
     </g>
   );
 }

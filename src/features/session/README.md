@@ -66,7 +66,7 @@ correct regardless of the global hydrator's timing. `rehydrate()` types as
 | `RestTimer` | Self-contained countdown between sets. Deliberately not persisted (a refresh mid-rest just restarts it — low stakes) unlike the session timer. |
 | `SetRow` | Weight × reps inline inputs + complete toggle. Not built on `ui/Input` — compact, label-less row fields, same reasoning as `ExerciseListItem`/`LeaderboardRow` not reusing it either. |
 | `ExerciseSessionCard` | One exercise's set list; owns local "which set just finished, show rest timer" state — ephemeral UI state, doesn't belong in the persisted store. |
-| `SessionSummaryCard` | Completed-session celebration. Reuses `CircularProgress`'s glow and the shared `StatChipRow` — same pattern as Onboarding's DNA Result, not a new celebratory effect. |
+| *(completed state)* | Lives in `features/celebration/` — `WorkoutComplete` → `WorkoutCelebration` (XP count-up, level bar, badge reveals, records, Kix/Nyra reaction). |
 | `ResumeSessionBanner` | Cross-screen "workout in progress" banner (rendered by `AppBottomNav`, visible on all five tabs while a session is active). Positioned with a spacing-scale offset (`bottom-24`) that clears `BottomNavigation` with headroom, deliberately not a pixel-matched `calc()` coupled to that component's exact height. |
 
 ## Known limitation
