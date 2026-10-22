@@ -43,6 +43,7 @@ Free Starter team: build with write tools (`use_figma`, `upload_assets`); reads 
 
 - [x] **Tokens** (2026-10-21): 66 variables mirroring `globals.css` (Primitives → semantic Color with CSS-variable code syntax, Radius, Spacing/sizes), 13 text styles (Space Grotesk display, Inter body), 4 effect styles (card shadows, brand glow)
 - [x] **v1 components**: Button (Style × Size × State), Chip, Card (Default / Elevated / Accent), Stat Chip, Progress Bar (Tone × Size), Medal (Tier × State, vectors exported from the app), Rank Insignia (Rank × State), plus a review frame
+- [ ] **Second pass, planned** — `docs/FIGMA_PLAN.md`: Phase 0 (inventory + scope) done 2026-10-22, **awaiting approval**; then structure → foundations pages → pilot (Buttons & Controls + 74 icons) → remaining families → screens → QA, with a review gate after each
 - [ ] **Key screens** composed from the components: Home, Collection, Workout Complete — the starting point for the redesign
 - [ ] **Speech bubble + cast** components for the tour and celebrations
 - [ ] **Weekly quests**: 3 personal goals a week from the plan (Fitocracy/Duolingo style)
