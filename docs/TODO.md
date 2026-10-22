@@ -43,9 +43,12 @@ Free Starter team: build with write tools (`use_figma`, `upload_assets`); reads 
 
 - [x] **Tokens** (2026-10-21): 66 variables mirroring `globals.css` (Primitives → semantic Color with CSS-variable code syntax, Radius, Spacing/sizes), 13 text styles (Space Grotesk display, Inter body), 4 effect styles (card shadows, brand glow)
 - [x] **v1 components**: Button (Style × Size × State), Chip, Card (Default / Elevated / Accent), Stat Chip, Progress Bar (Tone × Size), Medal (Tier × State, vectors exported from the app), Rank Insignia (Rank × State), plus a review frame
-- [ ] **Second pass** — `docs/FIGMA_PLAN.md`: Phase 0 (inventory + scope) approved 2026-10-22; Phase 1 (structure: 3 pages of sections, Cover, Getting Started, documentation kit, a placeholder section for every foundation, family and screen) built, **awaiting review**; then foundations pages → pilot (Buttons & Controls + 74 icons) → remaining families → screens → QA, with a review gate after each
-- [ ] **Key screens** composed from the components: Home, Collection, Workout Complete — the starting point for the redesign
-- [ ] **Speech bubble + cast** components for the tour and celebrations
+- [x] **Second pass** (2026-10-22, `docs/FIGMA_PLAN.md` §8): structure, foundations pages, all 100 Lucide icons, 8 component families + Patterns documented to the definition of done, audits clean (no raw fills or strokes, every text styled, no detached instances), 0 metered reads
+- [x] **Key screens** composed from the components: Home, Collection (+ badge sheet), Workout Complete (quiet day + illustrative big day), checked side by side with the app
+- [x] **Speech bubble + cast** components for the tour and celebrations (Kix & Nyra stage cuts with the app's edge fades)
+- [ ] **v2 screens** in Figma: Train, Insights, Profile, Session (placeholders ready on the Screens page)
+- [ ] **Delete the Archive** section in Figma once the second pass is approved (superseded first-pass components)
+- [ ] **Code a11y**: 11–12 px labels in `text-foreground-muted` fail AA (CoachCard kicker, badge-sheet XP, heatmap labels) — use foreground-secondary
 - [ ] **Weekly quests**: 3 personal goals a week from the plan (Fitocracy/Duolingo style)
 - [ ] **Character reactions on Home** to real events (PR → Kix proud; skipped rest → Nyra narrowed)
 - [ ] **Leagues** once Compete has real users

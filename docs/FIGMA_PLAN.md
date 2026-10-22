@@ -1,7 +1,8 @@
 # PhysIQx — Figma Design System Plan
 
-*Approved 2026-10-22 (Gate 0). Phase 1 (structure) built 2026-10-22 —
-**awaiting your review (Gate 1).***
+*Approved 2026-10-22 (Gate 0). **All phases complete 2026-10-22** — after
+Gate 1 the owner asked for the remaining phases without further input, so
+gates 2–5 were self-reviewed against §5. Outcome and deviations: §8.*
 
 File: [PhysIQx Design System](https://www.figma.com/design/Py9qoiT5srEZTnuX8PqMBj)
 
@@ -69,7 +70,7 @@ Until its phase, each section lists what it will hold.
 | Motion | — | **Durations** press .12 · fast .2 · dialog .25 · sheet .3 · progress .6 · count .8 s, **easing** `[0.16, 1, 0.3, 1]` (`lib/motion.ts`) |
 | Layout | — | 390 × 844 frame, 20 px gutters, 448 px max column (`PageContainer`) |
 
-### Icons — all 74 Lucide icons the app uses
+### Icons — all Lucide icons the app uses (100; the first count of 74 missed multi-line imports)
 
 Imported as editable vectors (SVG upload), one component each (`Icon/Name`),
 stroke bound to a colour variable, sized by instance. Used by every component
@@ -134,3 +135,43 @@ Metered reads planned: **0**. AI image credits planned: **0**.
 - Dark mode only.
 - Icons are the Lucide set the code uses.
 - Kix and Nyra appear as their stage-cut images, not redrawn.
+
+## 8. Outcome (2026-10-22)
+
+**Built.** 217 variables (Primitives, Color, Radius, Spacing, Motion), 44 text
+styles, 5 paint styles, 20 effect styles, 1 grid style; 48 component sets and
+683 components including variants; 101 icon components (100 Lucide + Play
+Filled); documentation for every component (purpose, variants, properties,
+anatomy or usage, code path); screens Home, Collection (default + badge sheet)
+and Workout Complete (quiet day from the sample data + an illustrative big
+day). Metered reads used: 0.
+
+**Checked.** Scripted audits over all three pages: 0 raw solid fills, 0 raw
+strokes, 0 text layers without a style, 0 generic layer names, 0 components
+without a description, 0 detached instances. The three screens were compared
+side by side with the running app (sample data).
+
+**Deviations from the plan, and why.**
+- Three pages with sections (Starter plan limit), as the fallback in §3.
+- 100 icons, not 74 — the first inventory missed multi-line imports.
+- Translucent colours are their own tokens (e.g. `color/bg/brand-subtle`):
+  Figma drops paint opacity on token-linked fills.
+- Display text styles use Tailwind's size names (Display/2XL = `text-2xl`);
+  Label/Overline corrected to the app's 12 px; missing sizes added.
+- Progress values are variants (ProgressBar, Level Bar): Figma can't resize
+  layers inside an instance.
+- Character images are PNG copies of the WebP stage cuts (Figma doesn't decode
+  WebP here); Space Grotesk SemiBold isn't available, so Bold stands in for
+  speech bubbles.
+- "XP chip" isn't a component in code (XP shows inline in labels); Field is
+  built into Input and TextArea, as in code; RadarChart is documented but no
+  screen uses it yet.
+- Patterns use the Card styles directly rather than nesting a Card instance.
+
+**Found in code while mirroring it.** Small labels in `text-foreground-muted`
+(CoachCard kicker, badge-sheet XP, heatmap labels) are below AA at 11–12 px;
+the Figma components mirror them and their descriptions flag it.
+
+**Next.** v2 screens (Train, Insights, Profile, Session); delete the Archive
+section after approval; set the Cover as the file thumbnail (right-click ›
+Set as thumbnail — the API can't).
