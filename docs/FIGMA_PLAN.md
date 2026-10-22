@@ -1,7 +1,7 @@
 # PhysIQx — Figma Design System Plan
 
-*Phase 0 (brief & inventory) — 2026-10-22. Status: **awaiting your approval
-(Gate 0).** Nothing in Figma changes until you approve.*
+*Approved 2026-10-22 (Gate 0). Phase 1 (structure) built 2026-10-22 —
+**awaiting your review (Gate 1).***
 
 File: [PhysIQx Design System](https://www.figma.com/design/Py9qoiT5srEZTnuX8PqMBj)
 
@@ -39,19 +39,22 @@ stop for your review after every phase.
 
 ## 3. File structure
 
+The Starter plan allows **3 pages per file** (Figma refused a fourth), so the
+planned pages became named **sections** on three pages. Sections act as
+sub-pages: jump between them from the Layers panel.
+
 | Page | Sections |
 |---|---|
-| **Cover** | Name, version, status, last update, links to the app and this plan |
-| **Getting Started** | How to use tokens and components, naming, raw-value exceptions, how a component maps to code |
-| **Foundations** | Color · Typography · Spacing & Radius · Elevation & Effects · Motion · Layout grid · Iconography |
-| **Components** | Buttons & Controls · Inputs · Surfaces · Feedback · Navigation · Data display · Gamification · Characters |
-| **Patterns** | Home cards · Session · Insights cards · Collection tiles · Celebration blocks |
-| **Screens** | Home · Collection · Workout Complete (v1); Train · Insights · Profile · Session (v2) |
-| **Archive** | The first-pass page, until its replacements are approved |
+| **Guide & Foundations** | Cover · Getting Started · Documentation kit; below them, **Foundations**: Color · Typography · Spacing & Radius · Elevation & Effects · Motion · Layout grid · Iconography |
+| **Components** | Overview · Buttons & Controls · Inputs · Surfaces · Feedback · Navigation · Data display · Gamification · Characters · Patterns · Archive — first pass (left to right, in build order) |
+| **Screens** | Overview · Home · Collection · Workout Complete (v1) · Train · Insights · Profile · Session (v2) — one section per screen, top to bottom, its states left to right |
 
-*Fallback:* the plans page doesn't say whether pages per file are capped. If
-Figma refuses new pages, the same structure becomes named **sections** on three
-pages (Foundations, Components, Screens).
+Every section holds one documentation frame built from the **documentation
+kit**: Doc/Page Header (overline, title, description, code path), Doc/Section
+Title, Doc/Row (name + description), Doc/Usage (Do / Don't) and Doc/Status
+(Done / In review / Planned / Neutral, with its own label). The frames
+themselves are plain auto-layout frames, so no instance ever needs detaching.
+Until its phase, each section lists what it will hold.
 
 ## 4. Inventory and v1 scope
 
