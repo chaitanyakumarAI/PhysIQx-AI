@@ -116,7 +116,7 @@ export function StrengthStandardsCard({ ledger }: StrengthStandardsCardProps) {
                   </span>
                 </>
               ) : (
-                <p className="mt-2 text-xs text-foreground-muted">Not logged yet</p>
+                <p className="mt-2 text-xs text-foreground-secondary">Not logged yet</p>
               )}
             </div>
           ))}

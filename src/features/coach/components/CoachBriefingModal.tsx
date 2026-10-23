@@ -147,7 +147,7 @@ export function CoachBriefingModal({
                         <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider font-mono">
                           {kixProfile.name}
                         </span>
-                        <span className="text-[10px] text-foreground-muted font-mono">
+                        <span className="text-[10px] text-foreground-secondary font-mono">
                           [{kixProfile.callsign}]
                         </span>
                       </div>
@@ -192,7 +192,7 @@ export function CoachBriefingModal({
                         <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider font-mono">
                           {nyraProfile.name}
                         </span>
-                        <span className="text-[10px] text-foreground-muted font-mono">
+                        <span className="text-[10px] text-foreground-secondary font-mono">
                           [{nyraProfile.callsign}]
                         </span>
                       </div>

@@ -48,7 +48,7 @@ Free Starter team: build with write tools (`use_figma`, `upload_assets`); reads 
 - [x] **Speech bubble + cast** components for the tour and celebrations (Kix & Nyra stage cuts with the app's edge fades)
 - [ ] **v2 screens** in Figma: Train, Insights, Profile, Session (placeholders ready on the Screens page)
 - [ ] **Delete the Archive** section in Figma once the second pass is approved (superseded first-pass components)
-- [ ] **Code a11y**: 11–12 px labels in `text-foreground-muted` fail AA (CoachCard kicker, badge-sheet XP, heatmap labels) — use foreground-secondary
+- [x] **Code a11y**: 11–12 px labels in `text-foreground-muted` fail AA (CoachCard kicker, badge-sheet XP, heatmap labels) — done 2026-10-23: all 22 small-text usages across 12 files switched to `text-foreground-secondary`; muted kept only for large text and icons. Figma mirrors (CoachCard kicker, Tier Row XP) still need `color/text/secondary`
 - [ ] **Weekly quests**: 3 personal goals a week from the plan (Fitocracy/Duolingo style)
 - [ ] **Character reactions on Home** to real events (PR → Kix proud; skipped rest → Nyra narrowed)
 - [ ] **Leagues** once Compete has real users

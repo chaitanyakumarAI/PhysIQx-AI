@@ -58,7 +58,7 @@ export function CardioContent() {
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-foreground-secondary">
             Last 7 days
           </p>
-          <p className="text-xs text-foreground-muted">Goal {WHO_WEEKLY_CARDIO_MIN} min</p>
+          <p className="text-xs text-foreground-secondary">Goal {WHO_WEEKLY_CARDIO_MIN} min</p>
         </div>
         <p className="font-display text-4xl font-bold tabular-nums">
           {weekMinutes}

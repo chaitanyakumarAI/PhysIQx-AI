@@ -91,7 +91,7 @@ function DayDetail({ cell }: { cell: CalendarCell }) {
         </p>
       )}
       {cell.sessions.length > 1 && (
-        <p className="mt-1.5 text-xs text-foreground-muted">{tonnes.toLocaleString("en-US")} kg across the day</p>
+        <p className="mt-1.5 text-xs text-foreground-secondary">{tonnes.toLocaleString("en-US")} kg across the day</p>
       )}
     </div>
   );
@@ -121,7 +121,7 @@ export function StreakHeatmapCard({ ledger, todayIso, className }: StreakHeatmap
       <dl className="grid grid-cols-3 gap-2">
         {stats.map((stat) => (
           <div key={stat.label} className="rounded-2xl bg-white/[0.03] px-3 py-2.5">
-            <dt className="text-[11px] text-foreground-muted">{stat.label}</dt>
+            <dt className="text-[11px] text-foreground-secondary">{stat.label}</dt>
             <dd className="mt-0.5 flex items-baseline gap-1">
               {stat.icon && calendar.currentStreak > 0 && (
                 <Flame size={14} className="self-center text-brand" aria-hidden />
@@ -134,7 +134,7 @@ export function StreakHeatmapCard({ ledger, todayIso, className }: StreakHeatmap
       </dl>
 
       <div className="flex gap-2">
-        <div aria-hidden className="grid w-7 shrink-0 grid-rows-[14px_repeat(7,1fr)] gap-[3px] text-[9px] text-foreground-muted">
+        <div aria-hidden className="grid w-7 shrink-0 grid-rows-[14px_repeat(7,1fr)] gap-[3px] text-[9px] text-foreground-secondary">
           <span />
           {WEEKDAY_LABELS.map((label, index) => (
             <span key={index} className="flex items-center">
@@ -149,7 +149,7 @@ export function StreakHeatmapCard({ ledger, todayIso, className }: StreakHeatmap
         >
           {calendar.weeks.map((week, weekIndex) => (
             <div key={week[0]!.date} className="grid grid-rows-[14px_repeat(7,1fr)] gap-[3px]">
-              <span aria-hidden className="whitespace-nowrap text-[9px] leading-[14px] text-foreground-muted">
+              <span aria-hidden className="whitespace-nowrap text-[9px] leading-[14px] text-foreground-secondary">
                 {monthLabel(week, weekIndex)}
               </span>
               {week.map((cell) => (
@@ -176,7 +176,7 @@ export function StreakHeatmapCard({ ledger, todayIso, className }: StreakHeatmap
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-foreground-muted">
+      <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-foreground-secondary">
         <span className="flex items-center gap-1.5">
           Lighter
           {[1, 2, 3, 4].map((level) => (

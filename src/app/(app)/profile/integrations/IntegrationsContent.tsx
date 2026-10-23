@@ -52,7 +52,7 @@ export function IntegrationsContent() {
                 </div>
                 <p className="text-sm text-foreground-secondary">{provider.summary}</p>
                 {provider.howTo && (
-                  <p className="text-xs text-foreground-muted">{provider.howTo}</p>
+                  <p className="text-xs text-foreground-secondary">{provider.howTo}</p>
                 )}
               </div>
             );
@@ -60,7 +60,7 @@ export function IntegrationsContent() {
         </Card>
       </Section>
 
-      <p className="px-1 text-xs text-foreground-muted">
+      <p className="px-1 text-xs text-foreground-secondary">
         Imported activities stay on this device and sync to your account when you&apos;re signed in.
         Same workout from two sources? It&apos;s counted once.
       </p>
