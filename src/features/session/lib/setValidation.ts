@@ -75,6 +75,12 @@ export function resolveCompletionValues(
 }
 
 /**
+ * The largest reward any workout offers (planDayXp caps plan days at 400;
+ * the seeded mission is 320). The server rejects anything above it.
+ */
+export const MAX_SESSION_XP = 400;
+
+/**
  * XP scales with the work actually done: the full reward for every planned
  * set, proportionally less for a cut-short session.
  */

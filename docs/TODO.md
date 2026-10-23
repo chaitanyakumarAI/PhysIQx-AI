@@ -55,10 +55,10 @@ Free Starter team: build with write tools (`use_figma`, `upload_assets`); reads 
 
 ## 🛠 Hardening — from the 2026-10-17 code audit
 
-- [ ] **Transactional workout save**: one Postgres function (RPC) for session + exercises + sets + XP; fail the outbox job on any child error (today child errors are logged and the job reports success)
-- [ ] **Validate Server Action input** with the same Zod schemas (`saveWorkoutSession`, `saveCardioActivity`, `saveOnboardingProfile`); recompute XP and volume server-side
-- [ ] **`xp_transactions`**: SELECT-only for owners; append through a server-side function (owners can currently insert their own XP)
-- [ ] **`sessions.client_ref`**: unique per user `(user_id, client_ref)` like cardio (005), and `upsert … onConflict` instead of check-then-insert
+- [x] **Transactional workout save** (2026-10-23, migration 006 — **apply in the SQL Editor**): `save_workout_session` RPC writes session + exercises + sets + XP in one transaction; any error fails the outbox job. Was: one Postgres function (RPC) for session + exercises + sets + XP; fail the outbox job on any child error (today child errors are logged and the job reports success)
+- [ ] **Validate Server Action input** with Zod — `saveWorkoutSession` done 2026-10-23 (`finishedSessionSchema`, XP and volume recomputed server-side); `saveCardioActivity` and `saveOnboardingProfile` still open
+- [x] **`xp_transactions`** (migration 006): SELECT-only for owners; append through a server-side function (owners can currently insert their own XP)
+- [x] **`sessions.client_ref`** (migration 006): unique per user `(user_id, client_ref)` like cardio (005), and `upsert … onConflict` instead of check-then-insert
 - [ ] **Cross-tab safety**: rehydrate stores on `storage` events (or a `BroadcastChannel`) so two tabs can't overwrite each other's history
 - [ ] **Queue abandoned workouts** for upload too (only Finish queues today)
 - [ ] **RPE in top sets** so `computeOverloadSuggestion`'s RPE auto-regulation can run on real data
