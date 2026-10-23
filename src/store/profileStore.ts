@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { DEFAULT_NOTIFICATION_PREFERENCES } from "@/lib/notifications";
+import { emitSyncEvent } from "@/lib/sync/syncEvents";
 import type { BodyBuild, Sex, WeighIn } from "@/types/ledger";
 import type {
   ExperienceLevel,
@@ -118,91 +119,102 @@ const SHOWCASE_LIMIT = 3;
 
 export const useProfileStore = create<ProfileStoreState>()(
   persist(
-    (set) => ({
-      displayName: null,
-      sex: null,
-      birthYear: null,
-      currentBuild: null,
-      avatarPresetId: null,
-      avatarDataUrl: null,
-      heightCm: null,
-      weightEntries: [],
-      photos: [],
-      showcaseAchievementIds: [],
-      onboardingProfile: null,
-      demoMode: false,
-      preferences: DEFAULT_USER_PREFERENCES,
-      notificationPreferences: DEFAULT_NOTIFICATION_PREFERENCES,
-      setPresetAvatar: (presetId) =>
-        set({ avatarPresetId: presetId, avatarDataUrl: null }),
-      setUploadedAvatar: (dataUrl) =>
-        set({ avatarDataUrl: dataUrl, avatarPresetId: null }),
-      clearAvatar: () => set({ avatarPresetId: null, avatarDataUrl: null }),
-      setHeight: (heightCm) => set({ heightCm }),
-      logWeight: (weightKg, date) =>
-        set((state) => ({
-          weightEntries: [
-            ...state.weightEntries.filter((entry) => entry.date !== date),
-            { date, weightKg },
-          ].sort((a, b) => a.date.localeCompare(b.date)),
-        })),
-      setAthleteDetails: (patch) => set(patch),
-      addPhoto: (entry) =>
-        set((state) => ({
-          photos: [
-            {
-              ...entry,
-              id: "photo-" + Date.now(),
-            },
-            ...state.photos,
-          ],
-        })),
-      deletePhoto: (id) =>
-        set((state) => ({
-          photos: state.photos.filter((p) => p.id !== id),
-        })),
-      toggleShowcaseAchievement: (id) =>
-        set((state) => {
-          if (state.showcaseAchievementIds.includes(id)) {
+    (set) => {
+      /** Writes a field that syncs (see lib/sync/profileSnapshot) and announces it. */
+      const changeProfile = (
+        partial: Partial<ProfileStoreState> | ((state: ProfileStoreState) => Partial<ProfileStoreState>),
+      ) => {
+        set(partial);
+        emitSyncEvent({ type: "profileChanged" });
+      };
+      return {
+        displayName: null,
+        sex: null,
+        birthYear: null,
+        currentBuild: null,
+        avatarPresetId: null,
+        avatarDataUrl: null,
+        heightCm: null,
+        weightEntries: [],
+        photos: [],
+        showcaseAchievementIds: [],
+        onboardingProfile: null,
+        demoMode: false,
+        preferences: DEFAULT_USER_PREFERENCES,
+        notificationPreferences: DEFAULT_NOTIFICATION_PREFERENCES,
+        setPresetAvatar: (presetId) =>
+          changeProfile({ avatarPresetId: presetId, avatarDataUrl: null }),
+        setUploadedAvatar: (dataUrl) =>
+          changeProfile({ avatarDataUrl: dataUrl, avatarPresetId: null }),
+        clearAvatar: () => changeProfile({ avatarPresetId: null, avatarDataUrl: null }),
+        setHeight: (heightCm) => changeProfile({ heightCm }),
+        logWeight: (weightKg, date) => {
+          set((state) => ({
+            weightEntries: [
+              ...state.weightEntries.filter((entry) => entry.date !== date),
+              { date, weightKg },
+            ].sort((a, b) => a.date.localeCompare(b.date)),
+          }));
+          emitSyncEvent({ type: "weighInLogged", weighIn: { date, weightKg } });
+        },
+        setAthleteDetails: (patch) => changeProfile(patch),
+        addPhoto: (entry) =>
+          set((state) => ({
+            photos: [
+              {
+                ...entry,
+                id: "photo-" + Date.now(),
+              },
+              ...state.photos,
+            ],
+          })),
+        deletePhoto: (id) =>
+          set((state) => ({
+            photos: state.photos.filter((p) => p.id !== id),
+          })),
+        toggleShowcaseAchievement: (id) =>
+          changeProfile((state) => {
+            if (state.showcaseAchievementIds.includes(id)) {
+              return {
+                showcaseAchievementIds: state.showcaseAchievementIds.filter(
+                  (selected) => selected !== id,
+                ),
+              };
+            }
+            // At the limit, the oldest pick rotates out.
             return {
-              showcaseAchievementIds: state.showcaseAchievementIds.filter(
-                (selected) => selected !== id,
-              ),
+              showcaseAchievementIds: [
+                ...state.showcaseAchievementIds,
+                id,
+              ].slice(-SHOWCASE_LIMIT),
             };
-          }
-          // At the limit, the oldest pick rotates out.
-          return {
-            showcaseAchievementIds: [
-              ...state.showcaseAchievementIds,
-              id,
-            ].slice(-SHOWCASE_LIMIT),
-          };
-        }),
-      setOnboardingProfile: (data) =>
-        set((state) => ({
-          onboardingProfile: {
-            ...state.onboardingProfile,
-            ...data,
-            completedAt: new Date().toISOString(),
-          },
-        })),
-      setDemoMode: (enabled) => set({ demoMode: enabled }),
-      updatePreferences: (patch) =>
-        set((state) => ({
-          preferences: {
-            ...(state.preferences ?? DEFAULT_USER_PREFERENCES),
-            ...patch,
-          },
-        })),
-      updateNotificationPreferences: (patch) =>
-        set((state) => ({
-          notificationPreferences: {
-            ...(state.notificationPreferences ?? DEFAULT_NOTIFICATION_PREFERENCES),
-            ...patch,
-          },
-        })),
-      resetPreferences: () => set({ preferences: DEFAULT_USER_PREFERENCES }),
-    }),
+          }),
+        setOnboardingProfile: (data) =>
+          changeProfile((state) => ({
+            onboardingProfile: {
+              ...state.onboardingProfile,
+              ...data,
+              completedAt: new Date().toISOString(),
+            },
+          })),
+        setDemoMode: (enabled) => set({ demoMode: enabled }),
+        updatePreferences: (patch) =>
+          changeProfile((state) => ({
+            preferences: {
+              ...(state.preferences ?? DEFAULT_USER_PREFERENCES),
+              ...patch,
+            },
+          })),
+        updateNotificationPreferences: (patch) =>
+          changeProfile((state) => ({
+            notificationPreferences: {
+              ...(state.notificationPreferences ?? DEFAULT_NOTIFICATION_PREFERENCES),
+              ...patch,
+            },
+          })),
+        resetPreferences: () => changeProfile({ preferences: DEFAULT_USER_PREFERENCES }),
+      };
+    },
     {
       name: "physiqx-profile",
       version: 2,

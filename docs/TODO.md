@@ -63,7 +63,12 @@ Free Starter team: build with write tools (`use_figma`, `upload_assets`); reads 
 - [x] **Queue abandoned workouts** for upload too (2026-10-23: the store emits every archived workout — finished, abandoned, or replaced — and the sync client queues it)
 - [ ] **RPE in top sets** so `computeOverloadSuggestion`'s RPE auto-regulation can run on real data
 - [ ] **Photos and avatar** out of `localStorage` (data URLs) into IndexedDB / Supabase Storage
-- [ ] **Pull / restore** for signed-in users on a new device (sync is push-only today)
+- [ ] **Pull / restore** for signed-in users on a new device (sync is push-only today) — plan: `docs/SYNC_RESTORE_PLAN.md`
+  - [x] Phase A: migration 007 (profile columns, `weigh_ins`, `plans`, tombstones, cursor triggers, `get_ledger_changes`) — *apply in the SQL Editor*
+  - [x] Phase B (2026-10-23): weigh-ins, the profile snapshot (details, onboarding, active plan, settings), plans and deletes go through the outbox; one-time backfill; a flush no longer overwrites entries queued while it ran
+  - [ ] Phase C: pull client, mappers, merge rules, triggers, per-account cursor
+  - [ ] Phase D: ownership, sign-in / sign-out behaviour (decisions 2 and 3), restore state, Settings Sync row
+  - [ ] Phase E: two-browser verification
 - [ ] **Stale docs**: middleware comment claims route guarding; `PHYSIQ_SCORE.md` describes stored snapshots and other behaviour the engine doesn't have
 - [ ] **Tests**: RLS cross-user tests (pgTAP / Supabase CLI) and one Playwright flow (log offline → online → rows exist)
 

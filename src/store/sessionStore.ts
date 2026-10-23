@@ -11,7 +11,7 @@ import type {
 } from "@/types/workoutSession";
 import { computeOverloadSuggestion } from "@/lib/progression";
 import { summarize } from "@/features/session/lib/summarize";
-import { emitWorkoutArchived } from "@/lib/sync/archiveEvents";
+import { emitSyncEvent } from "@/lib/sync/syncEvents";
 import {
   resolveCompletionValues,
   sanitizeReps,
@@ -190,7 +190,7 @@ export const useSessionStore = create<SessionStoreState>()(
           // Nothing logged = nothing to keep; an empty entry is just noise.
           if (abandoned.setsCompleted > 0) {
             set((state) => ({ history: appendToHistory(state.history, abandoned) }));
-            emitWorkoutArchived({ ...current, status: "abandoned", completedAt: abandoned.completedAt }, abandoned);
+            emitSyncEvent({ type: "workoutArchived", session: { ...current, status: "abandoned", completedAt: abandoned.completedAt }, summary: abandoned });
           }
         }
         set({
@@ -309,7 +309,7 @@ export const useSessionStore = create<SessionStoreState>()(
         const finished: WorkoutSession = { ...current, status: "completed", completedAt };
         const summary = summarize(current, completedAt, "completed");
         set((state) => ({ session: finished, history: appendToHistory(state.history, summary) }));
-        emitWorkoutArchived(finished, summary);
+        emitSyncEvent({ type: "workoutArchived", session: finished, summary });
       },
 
       abandonSession: () => {
@@ -323,7 +323,7 @@ export const useSessionStore = create<SessionStoreState>()(
           session: archived,
           history: kept ? appendToHistory(state.history, abandoned) : state.history,
         }));
-        if (kept) emitWorkoutArchived(archived, abandoned);
+        if (kept) emitSyncEvent({ type: "workoutArchived", session: archived, summary: abandoned });
       },
 
       clearSession: () => set({ session: null }),

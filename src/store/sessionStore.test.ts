@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import type { Exercise } from "@/types/exercise";
 import type { WorkoutTemplate } from "@/types/workoutTemplate";
-import { onWorkoutArchived } from "@/lib/sync/archiveEvents";
+import { onSyncEvent } from "@/lib/sync/syncEvents";
 import { useSessionStore } from "./sessionStore";
 
 const bench: Exercise = {
@@ -135,7 +135,9 @@ describe("sessionStore", () => {
 
   it("hands every finished or abandoned workout with work to the uploader", () => {
     const archived: string[] = [];
-    onWorkoutArchived((session, summary) => archived.push(`${session.status}:${summary.status}:${session.completedAt ? "dated" : "undated"}`));
+    onSyncEvent((event) => {
+      if (event.type === "workoutArchived") archived.push(`${event.session.status}:${event.summary.status}:${event.session.completedAt ? "dated" : "undated"}`);
+    });
     try {
       start();
       useSessionStore.getState().abandonSession(); // nothing logged: not uploaded
@@ -149,7 +151,7 @@ describe("sessionStore", () => {
       useSessionStore.getState().finishSession();
       expect(archived).toEqual(["abandoned:abandoned:dated", "completed:completed:dated"]);
     } finally {
-      onWorkoutArchived(null);
+      onSyncEvent(null);
     }
   });
 });

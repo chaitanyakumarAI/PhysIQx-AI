@@ -48,6 +48,8 @@ export async function saveCardioActivity(input: CardioActivity): Promise<SaveCar
     max_heart_rate: activity.maxHeartRate ?? null,
     calories_burned: activity.calories ?? null,
     synced_at: new Date().toISOString(),
+    // A re-import brings back an activity deleted earlier.
+    deleted_at: null,
   };
 
   const { data, error } = await supabase

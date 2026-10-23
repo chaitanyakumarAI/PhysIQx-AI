@@ -1,4 +1,7 @@
+import type { ProfileSnapshot } from "@/features/profile/lib/profileSnapshot";
 import type { CardioActivity } from "@/types/cardio";
+import type { WeighIn } from "@/types/ledger";
+import type { UserPlan } from "@/types/plan";
 import type { CompletedSessionSummary, WorkoutSession } from "@/types/workoutSession";
 
 /**
@@ -15,7 +18,14 @@ import type { CompletedSessionSummary, WorkoutSession } from "@/types/workoutSes
 
 export type SyncJob =
   | { kind: "workout"; id: string; session: WorkoutSession; summary: CompletedSessionSummary }
-  | { kind: "cardio"; id: string; activity: CardioActivity };
+  | { kind: "cardio"; id: string; activity: CardioActivity }
+  | { kind: "cardioDelete"; id: string }
+  /** id = the weigh-in's date (one per day). */
+  | { kind: "weighIn"; id: string; weighIn: WeighIn }
+  /** One snapshot of the whole profile; the newest replaces any pending one. */
+  | { kind: "profile"; id: "me"; profile: ProfileSnapshot }
+  | { kind: "plan"; id: string; plan: UserPlan }
+  | { kind: "planDelete"; id: string };
 
 export interface OutboxEntry {
   /** kind:id — one entry per record; re-queueing replaces the payload. */
@@ -37,8 +47,14 @@ export type JobHandler = (job: SyncJob) => Promise<JobResult>;
 const BASE_BACKOFF_MS = 30_000;
 const MAX_BACKOFF_MS = 6 * 60 * 60_000;
 
+/** A delete shares its record's key, so it replaces a save still waiting (and vice versa). */
+const RECORD_OF: Partial<Record<SyncJob["kind"], string>> = {
+  cardioDelete: "cardio",
+  planDelete: "plan",
+};
+
 export function outboxKey(job: SyncJob): string {
-  return `${job.kind}:${job.id}`;
+  return `${RECORD_OF[job.kind] ?? job.kind}:${job.id}`;
 }
 
 /** Delay before retry number `attempts` (1-based). */
@@ -114,6 +130,31 @@ export async function processOutbox(
     }
   }
   return { queue: remaining, synced, failed, blockedByAuth };
+}
+
+/**
+ * Folds a finished flush back into the outbox as it is now. A flush works on
+ * the snapshot it loaded; anything queued, refreshed or removed while it ran
+ * (by this tab or another) must survive it rather than be overwritten.
+ *
+ * - Entries the flush never saw, or that changed meanwhile: kept as they are.
+ * - Entries still exactly as the flush saw them: replaced by its result
+ *   (gone if delivered, rescheduled if they failed).
+ * - Entries gone meanwhile (another tab delivered them): stay gone.
+ */
+export function reconcileOutbox(
+  latest: OutboxEntry[],
+  flushed: OutboxEntry[],
+  result: OutboxEntry[],
+): OutboxEntry[] {
+  const seen = new Map(flushed.map((entry) => [entry.key, JSON.stringify(entry)]));
+  const after = new Map(result.map((entry) => [entry.key, entry]));
+  return latest.flatMap((entry) => {
+    const snapshot = seen.get(entry.key);
+    if (snapshot === undefined || snapshot !== JSON.stringify(entry)) return [entry];
+    const next = after.get(entry.key);
+    return next ? [next] : [];
+  });
 }
 
 export interface OutboxSummary {

@@ -21,7 +21,6 @@ import { todayIso } from "@/lib/dates";
 import { buildStarterPlan } from "@/lib/workoutPlan";
 import { usePlansStore } from "@/store/plansStore";
 import { useProfileStore } from "@/store/profileStore";
-import { saveOnboardingProfile } from "../actions/saveOnboardingProfile";
 import { AboutYouStep } from "./steps/AboutYouStep";
 import { BodyShapeStep } from "./steps/BodyShapeStep";
 import { CurrentBuildStep } from "./steps/CurrentBuildStep";
@@ -196,9 +195,8 @@ export function OnboardingFlow() {
         setActivePlan(plan.id);
       }
 
-      // Cloud copy for signed-in athletes, in the background: the local
-      // ledger already has everything, so nobody waits on the network.
-      void saveOnboardingProfile(values).catch(() => undefined);
+      // The store calls above queue the cloud copy (lib/sync): it uploads in
+      // the background now, or the day a guest signs in.
       router.push("/home?tour=1");
       return;
     }

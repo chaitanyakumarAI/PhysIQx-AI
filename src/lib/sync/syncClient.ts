@@ -1,20 +1,30 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import { saveProfileSnapshot } from "@/features/profile/actions/saveProfileSnapshot";
+import { saveWeighIn } from "@/features/profile/actions/saveWeighIn";
+import { buildProfileSnapshot } from "@/features/profile/lib/profileSnapshot";
 import { saveWorkoutSession } from "@/features/session/actions/saveWorkoutSession";
+import { deleteCardioActivity } from "@/features/train/actions/deleteCardioActivity";
 import { saveCardioActivity } from "@/features/train/actions/saveCardioActivity";
+import { deleteUserPlan, saveUserPlan } from "@/features/train/actions/syncPlan";
+import { usePlansStore } from "@/store/plansStore";
+import { useProfileStore } from "@/store/profileStore";
 import type { CardioActivity } from "@/types/cardio";
 import type { CompletedSessionSummary, WorkoutSession } from "@/types/workoutSession";
+import { backfillJobs, jobForEvent } from "./jobs";
 import {
   enqueue,
   processOutbox,
+  reconcileOutbox,
   summarizeOutbox,
   type JobResult,
   type OutboxEntry,
   type OutboxSummary,
   type SyncJob,
 } from "./outbox";
-import { onWorkoutArchived } from "./archiveEvents";
+import type { SyncWriteResult } from "./signedInWrite";
+import { onSyncEvent } from "./syncEvents";
 
 /**
  * Browser wiring for the outbox: localStorage persistence, delivery through
@@ -26,6 +36,8 @@ const STORAGE_KEY = "physiqx-outbox";
 const LEGACY_WORKOUT_KEY = "physiqx-sync-queue";
 const LEGACY_CARDIO_KEY = "physiqx-cardio-sync-queue";
 const CHANGE_EVENT = "physiqx-outbox-change";
+/** Set once this device has queued what it recorded before everything synced. */
+const BACKFILL_KEY = "physiqx-sync-backfill-v1";
 
 interface LegacyWorkoutItem {
   session: WorkoutSession;
@@ -91,17 +103,35 @@ function saveOutbox(queue: OutboxEntry[]): void {
   window.dispatchEvent(new Event(CHANGE_EVENT));
 }
 
+function send(job: SyncJob): Promise<SyncWriteResult> {
+  switch (job.kind) {
+    case "workout":
+      return saveWorkoutSession(job.session, job.summary);
+    case "cardio":
+      return saveCardioActivity(job.activity);
+    case "cardioDelete":
+      return deleteCardioActivity(job.id);
+    case "weighIn":
+      return saveWeighIn(job.weighIn);
+    case "profile":
+      return saveProfileSnapshot(job.profile);
+    case "plan":
+      return saveUserPlan(job.plan);
+    case "planDelete":
+      return deleteUserPlan(job.id);
+  }
+}
+
 async function deliver(job: SyncJob): Promise<JobResult> {
-  const result =
-    job.kind === "workout"
-      ? await saveWorkoutSession(job.session, job.summary)
-      : await saveCardioActivity(job.activity);
+  const result = await send(job);
   if (result.success) return { status: "synced" };
   if (result.reason === "unauthenticated") return { status: "unauthenticated" };
   return { status: "failed", error: result.error ?? "Sync failed" };
 }
 
 let flushing: Promise<SyncReport> | null = null;
+/** Something asked for a flush while one ran: run again once it ends. */
+let flushAgain = false;
 let blockedByAuth = false;
 
 export interface SyncReport {
@@ -112,17 +142,26 @@ export interface SyncReport {
 
 /** Delivers everything due (or everything, when forced). */
 export function syncNow(options: { force?: boolean } = {}): Promise<SyncReport> {
-  if (flushing) return flushing;
+  if (flushing) {
+    flushAgain = true;
+    return flushing;
+  }
   flushing = (async () => {
     if (typeof navigator !== "undefined" && !navigator.onLine) {
       return { synced: 0, failed: 0, blockedByAuth };
     }
-    const report = await processOutbox(loadOutbox(), deliver, new Date().toISOString(), options);
+    const flushed = loadOutbox();
+    const report = await processOutbox(flushed, deliver, new Date().toISOString(), options);
     blockedByAuth = report.blockedByAuth;
-    saveOutbox(report.queue);
+    // Entries queued while this flush ran are in storage, not in `flushed`.
+    saveOutbox(reconcileOutbox(loadOutbox(), flushed, report.queue));
     return { synced: report.synced, failed: report.failed, blockedByAuth: report.blockedByAuth };
   })().finally(() => {
     flushing = null;
+    if (flushAgain) {
+      flushAgain = false;
+      void syncNow();
+    }
   });
   return flushing;
 }
@@ -134,17 +173,46 @@ function queue(jobs: SyncJob[]): void {
   void syncNow();
 }
 
-export function queueWorkout(session: WorkoutSession, summary: CompletedSessionSummary): void {
-  queue([{ kind: "workout", id: summary.id, session, summary }]);
-}
-
 export function queueCardio(activities: CardioActivity[]): void {
   queue(activities.map((activity) => ({ kind: "cardio" as const, id: activity.id, activity })));
+}
+
+function profileSnapshotNow() {
+  return buildProfileSnapshot(
+    useProfileStore.getState(),
+    usePlansStore.getState().activePlanId,
+    new Date().toISOString(),
+  );
+}
+
+/** Runs `then` once the stores the backfill reads have loaded from storage. */
+function afterHydration(then: () => void): void {
+  const pending = [useProfileStore, usePlansStore].filter((store) => !store.persist.hasHydrated());
+  if (pending.length === 0) return then();
+  let left = pending.length;
+  const stop = pending.map((store) =>
+    store.persist.onFinishHydration(() => {
+      left -= 1;
+      if (left > 0) return;
+      stop.forEach((unsubscribe) => unsubscribe());
+      then();
+    }),
+  );
+}
+
+/** Queues, once per device, what was recorded before these kinds synced. */
+function backfillOnce(): void {
+  const store = storage();
+  if (!store || store.getItem(BACKFILL_KEY)) return;
+  const plans = usePlansStore.getState();
+  queue(backfillJobs({ profile: useProfileStore.getState(), plans: plans.plans, activePlanId: plans.activePlanId }));
+  store.setItem(BACKFILL_KEY, new Date().toISOString());
 }
 
 /** Retries due entries when the browser comes back online and periodically. */
 export function startBackgroundSync(): () => void {
   if (typeof window === "undefined") return () => {};
+  afterHydration(backfillOnce);
   const run = () => void syncNow();
   window.addEventListener("online", run);
   const timer = window.setInterval(run, 60_000);
@@ -194,5 +262,6 @@ export function useOutboxStatus(): OutboxStatus {
   return useSyncExternalStore(subscribe, readStatus, () => EMPTY);
 }
 
-// Every workout the store archives (finished, abandoned, replaced) is uploaded.
-onWorkoutArchived(queueWorkout);
+// Every change the stores announce (workouts archived, weigh-ins, profile,
+// plans, deletes) is queued for upload.
+onSyncEvent((event) => queue([jobForEvent(event, profileSnapshotNow)]));

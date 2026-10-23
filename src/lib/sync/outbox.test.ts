@@ -4,6 +4,7 @@ import {
   backoffMs,
   enqueue,
   processOutbox,
+  reconcileOutbox,
   summarizeOutbox,
   type JobResult,
   type SyncJob,
@@ -22,6 +23,64 @@ describe("enqueue", () => {
     queue = enqueue(queue, cardioJob("a"), NOW);
     queue = enqueue(queue, cardioJob("b"), NOW);
     expect(queue.map((entry) => entry.key)).toEqual(["cardio:a", "cardio:b"]);
+  });
+});
+
+describe("outbox keys", () => {
+  it("lets a delete replace a save still waiting for the same record, and back", () => {
+    const plan = { id: "p1", name: "Push Pull", days: [] };
+    let queue = enqueue([], { kind: "plan", id: "p1", plan }, NOW);
+    queue = enqueue(queue, { kind: "planDelete", id: "p1" }, NOW);
+    expect(queue.map((entry) => entry.job.kind)).toEqual(["planDelete"]);
+    queue = enqueue(queue, cardioJob("c1"), NOW);
+    queue = enqueue(queue, { kind: "cardioDelete", id: "c1" }, NOW);
+    queue = enqueue(queue, cardioJob("c1"), NOW); // re-imported
+    expect(queue.map((entry) => entry.key)).toEqual(["plan:p1", "cardio:c1"]);
+    expect(queue.map((entry) => entry.job.kind)).toEqual(["planDelete", "cardio"]);
+  });
+});
+
+describe("reconcileOutbox", () => {
+  const LATER = "2026-10-14T12:00:05.000Z";
+  const synced = async (): Promise<JobResult> => ({ status: "synced" });
+
+  it("keeps what was queued while a flush ran", async () => {
+    const flushed = enqueue([], cardioJob("a"), NOW);
+    const report = await processOutbox(flushed, synced, NOW);
+    const latest = enqueue(flushed, cardioJob("b"), LATER);
+    expect(reconcileOutbox(latest, flushed, report.queue).map((entry) => entry.key)).toEqual(["cardio:b"]);
+  });
+
+  it("keeps a record refreshed while its old copy was being delivered", async () => {
+    const flushed = enqueue([], cardioJob("a"), NOW);
+    const report = await processOutbox(flushed, synced, NOW);
+    const refreshed = enqueue(flushed, cardioJob("a"), LATER);
+    const result = reconcileOutbox(refreshed, flushed, report.queue);
+    expect(result).toHaveLength(1);
+    expect(result[0]?.nextAttemptAt).toBe(LATER);
+  });
+
+  it("applies the flush's result to untouched entries", async () => {
+    const flushed = enqueue(enqueue([], cardioJob("a"), NOW), cardioJob("b"), NOW);
+    const report = await processOutbox(
+      flushed,
+      async (job): Promise<JobResult> =>
+        job.id === "a" ? { status: "synced" } : { status: "failed", error: "500" },
+      NOW,
+    );
+    const reread = JSON.parse(JSON.stringify(flushed)) as typeof flushed; // as loaded from storage
+    const result = reconcileOutbox(reread, flushed, report.queue);
+    expect(result.map((entry) => [entry.key, entry.attempts])).toEqual([["cardio:b", 1]]);
+  });
+
+  it("doesn't bring back what another tab delivered meanwhile", async () => {
+    const flushed = enqueue([], cardioJob("a"), NOW);
+    const report = await processOutbox(
+      flushed,
+      async (): Promise<JobResult> => ({ status: "failed", error: "timeout" }),
+      NOW,
+    );
+    expect(reconcileOutbox([], flushed, report.queue)).toEqual([]);
   });
 });
 

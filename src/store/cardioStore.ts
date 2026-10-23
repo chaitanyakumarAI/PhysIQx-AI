@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { ingestActivities, type IncomingActivity, type IngestResult } from "@/lib/cardio/ingest";
+import { emitSyncEvent } from "@/lib/sync/syncEvents";
 import type { CardioActivity, CardioActivityType, CardioSource } from "@/types/cardio";
 
 export { cardioActivityLabels } from "@/types/cardio";
@@ -66,10 +67,12 @@ export const useCardioStore = create<CardioStoreState>()(
         set({ activities });
         return summary;
       },
-      removeActivity: (id) =>
+      removeActivity: (id) => {
         set((state) => ({
           activities: state.activities.filter((activity) => activity.id !== id),
-        })),
+        }));
+        emitSyncEvent({ type: "cardioRemoved", activityId: id });
+      },
     }),
     {
       name: "physiqx-cardio",
