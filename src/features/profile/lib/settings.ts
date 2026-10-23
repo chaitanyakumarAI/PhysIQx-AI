@@ -10,8 +10,11 @@ export const PROFILE_SETTINGS: SettingsItem[] = [
   { id: "notifications", label: "Notifications", iconId: "bell", href: "/profile/settings/notifications" },
   { id: "appearance", label: "Appearance", iconId: "moon", href: "/profile/settings/appearance" },
   { id: "privacy", label: "Privacy", iconId: "shield", href: "/profile/settings/privacy" },
+  // Rendered by SyncRow: last synced + Sync now, or "Sign in" for guests.
+  { id: "sync", label: "Cloud sync", iconId: "cloud", href: "/login" },
   { id: "export-data", label: "Export data", iconId: "download", href: "/profile/settings/export" },
   // The guided walkthrough teaches on the live interface.
   { id: "tour", label: "Replay app tour", iconId: "play", href: "/home?tour=1", accent: true },
+  // Rendered by LogoutRow (uploads first, then clears this device).
   { id: "logout", label: "Log out", iconId: "log-out", href: "/login" },
 ];

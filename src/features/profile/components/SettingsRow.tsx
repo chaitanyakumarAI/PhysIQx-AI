@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import {
   Bell,
   ChevronRight,
   CircleUserRound,
+  Cloud,
   Download,
   LogOut,
   Moon,
@@ -19,8 +19,9 @@ import {
 } from "lucide-react";
 import { iconSize } from "@/constants/icons";
 import { cn } from "@/lib/utils";
-import { createClient } from "@/lib/supabase/client";
 import type { SettingsIconId, SettingsItem } from "../types";
+import { LogoutRow } from "./LogoutRow";
+import { SyncRow } from "./SyncRow";
 
 export interface SettingsRowProps {
   item: SettingsItem;
@@ -39,35 +40,15 @@ const settingsIcon: Record<SettingsIconId, LucideIcon> = {
   camera: Camera,
   activity: Activity,
   "log-out": LogOut,
+  cloud: Cloud,
 };
 
 export function SettingsRow({ item, className }: SettingsRowProps) {
-  const router = useRouter();
   const Icon = settingsIcon[item.iconId];
 
-  async function handleLogout(e: React.MouseEvent) {
-    e.preventDefault();
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    router.push("/login");
-    router.refresh();
-  }
-
-  if (item.id === "logout") {
-    return (
-      <button
-        type="button"
-        onClick={handleLogout}
-        className={cn(
-          "flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-surface-elevated text-red-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/60",
-          className,
-        )}
-      >
-        <Icon size={iconSize.sm} aria-hidden className="shrink-0 text-red-400" />
-        <span className="flex-1 font-semibold">{item.label}</span>
-      </button>
-    );
-  }
+  // Rows with behaviour, not just a destination.
+  if (item.id === "logout") return <LogoutRow item={item} className={className} />;
+  if (item.id === "sync") return <SyncRow item={item} className={className} />;
 
   return (
     <Link

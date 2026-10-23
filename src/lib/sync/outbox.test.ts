@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { makeCardio } from "@/test/fixtures";
 import {
   backoffMs,
+  claimGuestEntries,
   enqueue,
   processOutbox,
   reconcileOutbox,
@@ -37,6 +38,47 @@ describe("outbox keys", () => {
     queue = enqueue(queue, cardioJob("c1"), NOW); // re-imported
     expect(queue.map((entry) => entry.key)).toEqual(["plan:p1", "cardio:c1"]);
     expect(queue.map((entry) => entry.job.kind)).toEqual(["planDelete", "cardio"]);
+  });
+});
+
+describe("accounts", () => {
+  it("keeps the same record separately for each account", () => {
+    let queue = enqueue([], cardioJob("a"), NOW, "user-a");
+    queue = enqueue(queue, cardioJob("a"), NOW, "user-b");
+    queue = enqueue(queue, cardioJob("a"), NOW, "user-a");
+    expect(queue.map((entry) => entry.owner)).toEqual(["user-b", "user-a"]);
+  });
+
+  it("only uploads an account's own changes, and guest changes to anyone", async () => {
+    let queue = enqueue([], cardioJob("mine"), NOW, "user-a");
+    queue = enqueue(queue, cardioJob("theirs"), NOW, "user-b");
+    queue = enqueue(queue, cardioJob("guest"), NOW, null);
+    const delivered: string[] = [];
+    const report = await processOutbox(
+      queue,
+      async (job): Promise<JobResult> => {
+        delivered.push(job.id);
+        return { status: "synced" };
+      },
+      NOW,
+      { account: "user-a" },
+    );
+    expect(delivered.sort()).toEqual(["guest", "mine"]);
+    expect(report.queue.map((entry) => entry.job.id)).toEqual(["theirs"]);
+    expect(summarizeOutbox(report.queue).failing).toBe(0);
+  });
+
+  it("hands guest changes to the first account, replacing its older copy", () => {
+    let queue = enqueue([], cardioJob("a"), NOW, "user-a");
+    queue = enqueue(queue, cardioJob("a"), NOW, null);
+    queue = enqueue(queue, cardioJob("b"), NOW, null);
+    queue = enqueue(queue, cardioJob("c"), NOW, "user-b");
+    const claimed = claimGuestEntries(queue, "user-a");
+    expect(claimed.map((entry) => `${entry.owner}:${entry.job.id}`)).toEqual([
+      "user-a:a",
+      "user-a:b",
+      "user-b:c",
+    ]);
   });
 });
 

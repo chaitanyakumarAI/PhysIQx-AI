@@ -67,7 +67,7 @@ Free Starter team: build with write tools (`use_figma`, `upload_assets`); reads 
   - [x] Phase A: migration 007 (profile columns, `weigh_ins`, `plans`, tombstones, cursor triggers, `get_ledger_changes`) — applied 2026-10-23
   - [x] Phase B (2026-10-23): weigh-ins, the profile snapshot (details, onboarding, active plan, settings), plans and deletes go through the outbox; one-time backfill; a flush no longer overwrites entries queued while it ran
   - [x] Phase C (2026-10-23): pull client, mappers, merge rules, triggers (sign-in, start, online, back in view), per-account cursor, owner guard
-  - [ ] Phase D: ownership, sign-in / sign-out behaviour (decisions 2 and 3), restore state, Settings Sync row
+  - [x] Phase D (2026-10-24): account-tagged outbox, account switch, sign-out (upload, confirm, clear), restore state on Home, Cloud sync row
   - [ ] Phase E: two-browser verification
 - [ ] **Stale docs**: middleware comment claims route guarding; `PHYSIQ_SCORE.md` describes stored snapshots and other behaviour the engine doesn't have
 - [ ] **Tests**: RLS cross-user tests (pgTAP / Supabase CLI) and one Playwright flow (log offline → online → rows exist)

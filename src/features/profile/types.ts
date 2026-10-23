@@ -15,7 +15,8 @@ export type SettingsIconId =
   | "sliders"
   | "camera"
   | "activity"
-  | "log-out";
+  | "log-out"
+  | "cloud";
 
 export interface SettingsItem {
   id: string;

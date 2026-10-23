@@ -14,6 +14,9 @@ import type { CompletedSessionSummary, WorkoutSession } from "@/types/workoutSes
  * - Backoff: failures retry after 30 s, doubling to a 6-hour ceiling.
  * - Guests: "not signed in" pauses delivery without counting as a failure,
  *   so a guest's history uploads the day they create an account.
+ * - Accounts: an entry belongs to the account that owned the device when it
+ *   was queued and only ever uploads as that account. Guest entries (no
+ *   owner) go to the first account that signs in (owner decision 2026-10-23).
  */
 
 export type SyncJob =
@@ -35,6 +38,13 @@ export interface OutboxEntry {
   attempts: number;
   nextAttemptAt: string;
   lastError?: string;
+  /** The account this change belongs to; null/absent = logged as a guest. */
+  owner?: string | null;
+}
+
+/** An entry's identity: the same record can wait for two accounts. */
+function entryId(entry: Pick<OutboxEntry, "key" | "owner">): string {
+  return `${entry.owner ?? ""}|${entry.key}`;
 }
 
 export type JobResult =
@@ -63,17 +73,41 @@ export function backoffMs(attempts: number): number {
 }
 
 /** Adds or refreshes a job; a refreshed job is due immediately. */
-export function enqueue(queue: OutboxEntry[], job: SyncJob, nowIso: string): OutboxEntry[] {
-  const key = outboxKey(job);
-  const existing = queue.find((entry) => entry.key === key);
+export function enqueue(
+  queue: OutboxEntry[],
+  job: SyncJob,
+  nowIso: string,
+  owner: string | null = null,
+): OutboxEntry[] {
+  const id = entryId({ key: outboxKey(job), owner });
+  const existing = queue.find((entry) => entryId(entry) === id);
   const entry: OutboxEntry = {
-    key,
+    key: outboxKey(job),
     job,
     queuedAt: existing?.queuedAt ?? nowIso,
     attempts: existing?.attempts ?? 0,
     nextAttemptAt: nowIso,
+    owner,
   };
-  return [...queue.filter((item) => item.key !== key), entry];
+  return [...queue.filter((item) => entryId(item) !== id), entry];
+}
+
+/** Whether `account` (null = guest) may upload this entry. */
+export function belongsTo(entry: OutboxEntry, account: string | null): boolean {
+  return !entry.owner || entry.owner === account;
+}
+
+/**
+ * The first account to sign in on a device takes over what was logged as a
+ * guest. If it already had the same record waiting, the guest copy (the
+ * device's latest) replaces it.
+ */
+export function claimGuestEntries(queue: OutboxEntry[], owner: string): OutboxEntry[] {
+  const guestKeys = new Set(queue.filter((entry) => !entry.owner).map((entry) => entry.key));
+  if (guestKeys.size === 0) return queue;
+  return queue
+    .filter((entry) => !(entry.owner === owner && guestKeys.has(entry.key)))
+    .map((entry) => (entry.owner ? entry : { ...entry, owner }));
 }
 
 export interface ProcessReport {
@@ -92,7 +126,7 @@ export async function processOutbox(
   queue: OutboxEntry[],
   handler: JobHandler,
   nowIso: string,
-  options: { force?: boolean } = {},
+  options: { force?: boolean; account?: string | null } = {},
 ): Promise<ProcessReport> {
   const now = Date.parse(nowIso);
   const remaining: OutboxEntry[] = [];
@@ -103,7 +137,8 @@ export async function processOutbox(
   const ordered = [...queue].sort((a, b) => a.queuedAt.localeCompare(b.queuedAt));
   for (const entry of ordered) {
     const due = options.force || Date.parse(entry.nextAttemptAt) <= now;
-    if (blockedByAuth || !due) {
+    // Another account's change waits for that account (not a failure).
+    if (blockedByAuth || !due || !belongsTo(entry, options.account ?? null)) {
       remaining.push(entry);
       continue;
     }
@@ -149,12 +184,12 @@ export function reconcileOutbox(
   flushed: OutboxEntry[],
   result: OutboxEntry[],
 ): OutboxEntry[] {
-  const seen = new Map(flushed.map((entry) => [entry.key, JSON.stringify(entry)]));
-  const after = new Map(result.map((entry) => [entry.key, entry]));
+  const seen = new Map(flushed.map((entry) => [entryId(entry), JSON.stringify(entry)]));
+  const after = new Map(result.map((entry) => [entryId(entry), entry]));
   return latest.flatMap((entry) => {
-    const snapshot = seen.get(entry.key);
+    const snapshot = seen.get(entryId(entry));
     if (snapshot === undefined || snapshot !== JSON.stringify(entry)) return [entry];
-    const next = after.get(entry.key);
+    const next = after.get(entryId(entry));
     return next ? [next] : [];
   });
 }

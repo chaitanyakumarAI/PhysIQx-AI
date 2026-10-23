@@ -21,6 +21,7 @@ import { generateArchetype } from "@/features/onboarding/lib/generateArchetype";
 import { DemoBanner } from "@/features/shared/components/DemoBanner";
 import { useActiveSessionInfo, useAthleteState } from "@/features/shared/hooks/useAthlete";
 import { fadeInUp, staggerChildren } from "@/lib/motion";
+import { useSyncState } from "@/lib/sync/pullClient";
 import { useEntranceOnce } from "@/lib/useEntranceOnce";
 import { missionFromPlanDay } from "@/lib/workoutPlan";
 import { useProfileStore } from "@/store/profileStore";
@@ -42,6 +43,7 @@ export function HomeScreen() {
   // server-computed greeting would freeze at build time.
   const [greeting] = useState(() => getGreeting(new Date().getHours()));
   const entrance = useEntranceOnce("home");
+  const { restoring } = useSyncState();
 
   const { todaysWorkout, coach, ledger, demo } = athlete;
   const mission = useMemo(() => {
@@ -56,7 +58,10 @@ export function HomeScreen() {
   }, [todaysWorkout, activeSession, demo]);
 
   if (!athlete.hydrated) return <HomeSkeleton />;
-  if (!onboarded && !demo && ledger.sessions.length === 0) return <FirstRun />;
+  if (!onboarded && !demo && ledger.sessions.length === 0) {
+    // Signed in on a new device: the history is on its way, not missing.
+    return restoring ? <HomeSkeleton message="Restoring your training…" /> : <FirstRun />;
+  }
 
   // The mission card already offers "start"; the coach card shouldn't repeat it.
   const missionHref = mission ? `/session/${mission.id}` : null;
@@ -146,9 +151,14 @@ export function HomeScreen() {
   );
 }
 
-function HomeSkeleton() {
+function HomeSkeleton({ message }: { message?: string }) {
   return (
     <PageContainer aria-busy="true">
+      {message && (
+        <p role="status" className="text-sm font-medium text-foreground-secondary">
+          {message}
+        </p>
+      )}
       <Skeleton className="h-16 w-2/3" />
       <Skeleton className="h-44 w-full" />
       <Skeleton className="h-28 w-full" />

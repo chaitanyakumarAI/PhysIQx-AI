@@ -1,8 +1,8 @@
 # PhysIQx — Pull / Restore Plan
 
-*Drafted 2026-10-23. Decision 1 confirmed by the owner 2026-10-23; decisions 2
-and 3 (only needed in Phase D) still open. Phases A–C done 2026-10-23
-(007 applied); Phase D needs decisions 2 and 3.*
+*Drafted 2026-10-23. All three decisions confirmed by the owner (1 on
+2026-10-23, 2 and 3 on 2026-10-24). Phases A–D done; Phase E (two-browser
+check) is yours.*
 
 ## 1. The problem
 
@@ -125,11 +125,23 @@ imported from two sources on two devices can appear twice.
 1. **Guest data on first sign-in.** ✅ *Confirmed 2026-10-23:* data logged as a guest
    (never signed in) merges into the first account that signs in on that
    device — it's yours, so you shouldn't lose it.
-2. **Switching accounts on one device.** *Recommended:* local data belongs to
+2. **Switching accounts on one device.** ✅ *Confirmed 2026-10-24:* local data belongs to
    the account it came from. Signing in as a different account first uploads
    anything the previous account still has queued, then replaces the local
    data with the new account's.
-3. **Signing out.** *Recommended:* after the outbox has emptied, remove the
+3. **Signing out.** ✅ *Confirmed 2026-10-24:* after the outbox has emptied, remove the
    account's data from the device — it's safe in the cloud, and a shared phone
    shouldn't show it. If uploads are still pending (offline), warn and offer
    "Stay signed in" or "Sign out anyway".
+
+*As built (Phase D):* every outbox entry records the account that owned the
+device when it was queued and only uploads as that account; guest entries
+(no owner) go to the first account that signs in, which takes them over.
+Because the previous account is already signed out when someone else signs
+in, its waiting changes can't upload right away — they stay queued under
+its name and upload the next time it signs in on this device. Signing out
+first uploads what's waiting, asks if anything couldn't go, then clears the
+ledger, notifications and restore cursors and leaves the device unowned.
+Profile › Settings has a Cloud sync row (last synced, Sync now; "Sign in"
+for guests) and Log out reads "Sign in" for guests. Home shows "Restoring
+your training…" during a first restore on an empty device.

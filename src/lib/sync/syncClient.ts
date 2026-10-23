@@ -14,6 +14,8 @@ import type { CardioActivity } from "@/types/cardio";
 import type { CompletedSessionSummary, WorkoutSession } from "@/types/workoutSession";
 import { backfillJobs, jobForEvent } from "./jobs";
 import {
+  belongsTo,
+  claimGuestEntries,
   enqueue,
   processOutbox,
   reconcileOutbox,
@@ -39,6 +41,8 @@ const LEGACY_CARDIO_KEY = "physiqx-cardio-sync-queue";
 const CHANGE_EVENT = "physiqx-outbox-change";
 /** Set once this device has queued what it recorded before everything synced. */
 const BACKFILL_KEY = "physiqx-sync-backfill-v1";
+/** The account this device's local data belongs to (set by its first restore). */
+const OWNER_KEY = "physiqx-sync-owner";
 
 interface LegacyWorkoutItem {
   session: WorkoutSession;
@@ -152,7 +156,10 @@ export function syncNow(options: { force?: boolean } = {}): Promise<SyncReport> 
       return { synced: 0, failed: 0, blockedByAuth };
     }
     const flushed = loadOutbox();
-    const report = await processOutbox(flushed, deliver, new Date().toISOString(), options);
+    const report = await processOutbox(flushed, deliver, new Date().toISOString(), {
+      ...options,
+      account: signedInAccount,
+    });
     blockedByAuth = report.blockedByAuth;
     // Entries queued while this flush ran are in storage, not in `flushed`.
     saveOutbox(reconcileOutbox(loadOutbox(), flushed, report.queue));
@@ -170,8 +177,44 @@ export function syncNow(options: { force?: boolean } = {}): Promise<SyncReport> 
 function queue(jobs: SyncJob[]): void {
   if (jobs.length === 0) return;
   const now = new Date().toISOString();
-  saveOutbox(jobs.reduce((entries, job) => enqueue(entries, job, now), loadOutbox()));
+  const owner = deviceOwner();
+  saveOutbox(jobs.reduce((entries, job) => enqueue(entries, job, now, owner), loadOutbox()));
   void syncNow();
+}
+
+// --- Accounts ----------------------------------------------------------------
+
+/** Who is signed in, per the browser session (pullClient keeps it current). */
+let signedInAccount: string | null = null;
+
+export function setSignedInAccount(account: string | null): void {
+  if (account === signedInAccount) return;
+  signedInAccount = account;
+  window.dispatchEvent(new Event(CHANGE_EVENT));
+}
+
+export function deviceOwner(): string | null {
+  return storage()?.getItem(OWNER_KEY) ?? null;
+}
+
+/**
+ * Hands the device's local data to `owner` (null: nobody — after sign-out).
+ * Taking ownership also takes over what was queued as a guest.
+ */
+export function setDeviceOwner(owner: string | null): void {
+  const store = storage();
+  if (!store) return;
+  if (!owner) {
+    store.removeItem(OWNER_KEY);
+    return;
+  }
+  store.setItem(OWNER_KEY, owner);
+  saveOutbox(claimGuestEntries(loadOutbox(), owner));
+}
+
+/** Changes still waiting to upload that `account` may send. */
+export function pendingUploadsFor(account: string | null): OutboxEntry[] {
+  return loadOutbox().filter((entry) => belongsTo(entry, account));
 }
 
 export function queueCardio(activities: CardioActivity[]): void {
@@ -219,10 +262,12 @@ export interface OutboxStatus extends OutboxSummary {
 const EMPTY: OutboxStatus = { pending: 0, failing: 0, lastError: null, blockedByAuth: false };
 let cachedRaw: string | null = null;
 let cachedStatus: OutboxStatus = EMPTY;
+let cachedAccount: string | null = null;
 
 function readStatus(): OutboxStatus {
   const raw = storage()?.getItem(STORAGE_KEY) ?? "[]";
-  if (raw !== cachedRaw || cachedStatus.blockedByAuth !== blockedByAuth) {
+  if (raw !== cachedRaw || cachedStatus.blockedByAuth !== blockedByAuth || cachedAccount !== signedInAccount) {
+    cachedAccount = signedInAccount;
     cachedRaw = raw;
     let entries: OutboxEntry[] = [];
     try {
@@ -230,7 +275,12 @@ function readStatus(): OutboxStatus {
     } catch {
       entries = [];
     }
-    cachedStatus = { ...summarizeOutbox(entries), blockedByAuth };
+    // Only what this account (or a guest) can upload: another account's
+    // waiting changes aren't this person's problem.
+    cachedStatus = {
+      ...summarizeOutbox(entries.filter((entry) => belongsTo(entry, signedInAccount))),
+      blockedByAuth,
+    };
   }
   return cachedStatus;
 }
