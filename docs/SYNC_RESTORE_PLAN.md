@@ -1,8 +1,8 @@
 # PhysIQx — Pull / Restore Plan
 
 *Drafted 2026-10-23. Decision 1 confirmed by the owner 2026-10-23; decisions 2
-and 3 (only needed in Phase D) still open. Phases A and B done 2026-10-23
-(007 awaiting the SQL Editor); Phase C next.*
+and 3 (only needed in Phase D) still open. Phases A–C done 2026-10-23
+(007 applied); Phase D needs decisions 2 and 3.*
 
 ## 1. The problem
 
@@ -83,6 +83,17 @@ a profile nobody filled in.
   - Profile and settings: the newer `updated_at` wins.
 - **Ownership:** each store records the account it belongs to. That is what
   makes the rules in §6 enforceable.
+
+*As built (Phase C):* workouts and cardio are append-only, so a copy already
+on the device is kept (it's the original; the server's cardio minutes are
+rounded) and only missing ones are added. Weigh-ins, plans and the profile
+follow "server wins". Abandoned workouts now upload the XP the ledger
+credits them (sessions uploaded before this keep 0 on the server).
+Pulls also run when the app comes back into view (at most once a minute).
+Until Phase D, the device records the first account that restores on it
+(`physiqx-sync-owner`) and skips restoring for any other account.
+Restored cardio isn't re-checked against other sources, so a workout
+imported from two sources on two devices can appear twice.
 
 ### 3.4 What the athlete sees
 - First sign-in on an empty device: Home shows its skeleton with "Restoring

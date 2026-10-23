@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { startBackgroundPull } from "@/lib/sync/pullClient";
 import { startBackgroundSync } from "@/lib/sync/syncClient";
 
 /**
@@ -9,8 +10,10 @@ import { startBackgroundSync } from "@/lib/sync/syncClient";
  */
 export function ServiceWorkerRegister() {
   useEffect(() => {
-    // 1. Deliver queued cloud writes now, on reconnect, and periodically.
+    // 1. Deliver queued cloud writes now, on reconnect, and periodically —
+    //    and, when signed in, restore what other devices recorded.
     const cleanupSync = startBackgroundSync();
+    const cleanupPull = startBackgroundPull();
 
     // 2. Register Service Worker in production
     if (
@@ -39,6 +42,7 @@ export function ServiceWorkerRegister() {
 
     return () => {
       cleanupSync();
+      cleanupPull();
     };
   }, []);
 

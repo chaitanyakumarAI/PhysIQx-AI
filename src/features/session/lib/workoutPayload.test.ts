@@ -47,8 +47,8 @@ describe("toWorkoutPayload", () => {
     expect(payload.exercises[1]!.sets[0]!.is_pr).toBe(false);
   });
 
-  it("awards no XP for an abandoned workout", () => {
+  it("keeps the XP an abandoned workout earned, so a restore matches the ledger", () => {
     const abandoned = toWorkoutPayload(finishedSessionSchema.parse({ ...session, status: "abandoned" }), session.completedAt);
-    expect(abandoned.xp_earned).toBe(0);
+    expect(abandoned.xp_earned).toBe(payload.xp_earned);
   });
 });

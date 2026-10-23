@@ -25,6 +25,7 @@ import {
 } from "./outbox";
 import type { SyncWriteResult } from "./signedInWrite";
 import { onSyncEvent } from "./syncEvents";
+import { whenHydrated } from "./whenHydrated";
 
 /**
  * Browser wiring for the outbox: localStorage persistence, delivery through
@@ -185,21 +186,6 @@ function profileSnapshotNow() {
   );
 }
 
-/** Runs `then` once the stores the backfill reads have loaded from storage. */
-function afterHydration(then: () => void): void {
-  const pending = [useProfileStore, usePlansStore].filter((store) => !store.persist.hasHydrated());
-  if (pending.length === 0) return then();
-  let left = pending.length;
-  const stop = pending.map((store) =>
-    store.persist.onFinishHydration(() => {
-      left -= 1;
-      if (left > 0) return;
-      stop.forEach((unsubscribe) => unsubscribe());
-      then();
-    }),
-  );
-}
-
 /** Queues, once per device, what was recorded before these kinds synced. */
 function backfillOnce(): void {
   const store = storage();
@@ -212,7 +198,7 @@ function backfillOnce(): void {
 /** Retries due entries when the browser comes back online and periodically. */
 export function startBackgroundSync(): () => void {
   if (typeof window === "undefined") return () => {};
-  afterHydration(backfillOnce);
+  void whenHydrated([useProfileStore, usePlansStore]).then(backfillOnce);
   const run = () => void syncNow();
   window.addEventListener("online", run);
   const timer = window.setInterval(run, 60_000);

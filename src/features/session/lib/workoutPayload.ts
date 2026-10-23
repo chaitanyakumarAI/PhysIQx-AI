@@ -36,7 +36,9 @@ export function toWorkoutPayload(session: FinishedSessionInput, fallbackComplete
     started_at: session.startedAt,
     completed_at: completedAt,
     total_volume_kg: summary.totalVolumeKg,
-    xp_earned: session.status === "completed" ? summary.xpEarned : 0,
+    // The ledger credits work done, abandoned or not; a restore must match it.
+    // Only completions become xp_transactions (save_workout_session).
+    xp_earned: summary.xpEarned,
     exercises: session.exercises.map((exercise) => {
       const done = exercise.sets.filter((set) => set.completed && (set.reps ?? 0) > 0);
       const heaviest = Math.max(0, ...done.map((set) => set.weight ?? 0));
