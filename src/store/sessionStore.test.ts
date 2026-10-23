@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import type { Exercise } from "@/types/exercise";
 import type { WorkoutTemplate } from "@/types/workoutTemplate";
+import { onWorkoutArchived } from "@/lib/sync/archiveEvents";
 import { useSessionStore } from "./sessionStore";
 
 const bench: Exercise = {
@@ -130,5 +131,25 @@ describe("sessionStore", () => {
     const [entry] = useSessionStore.getState().history;
     expect(entry?.status).toBe("abandoned");
     expect(entry?.setsCompleted).toBe(1);
+  });
+
+  it("hands every finished or abandoned workout with work to the uploader", () => {
+    const archived: string[] = [];
+    onWorkoutArchived((session, summary) => archived.push(`${session.status}:${summary.status}:${session.completedAt ? "dated" : "undated"}`));
+    try {
+      start();
+      useSessionStore.getState().abandonSession(); // nothing logged: not uploaded
+      useSessionStore.setState({ session: null });
+      let session = start();
+      useSessionStore.getState().toggleSetCompleted("bench", session.exercises[0]!.sets[0]!.id, { weight: 80, reps: 5 });
+      useSessionStore.getState().abandonSession();
+      useSessionStore.setState({ session: null });
+      session = start();
+      useSessionStore.getState().toggleSetCompleted("bench", session.exercises[0]!.sets[0]!.id, { weight: 80, reps: 5 });
+      useSessionStore.getState().finishSession();
+      expect(archived).toEqual(["abandoned:abandoned:dated", "completed:completed:dated"]);
+    } finally {
+      onWorkoutArchived(null);
+    }
   });
 });

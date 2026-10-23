@@ -11,6 +11,7 @@ import type {
 } from "@/types/workoutSession";
 import { computeOverloadSuggestion } from "@/lib/progression";
 import { summarize } from "@/features/session/lib/summarize";
+import { emitWorkoutArchived } from "@/lib/sync/archiveEvents";
 import {
   resolveCompletionValues,
   sanitizeReps,
@@ -189,6 +190,7 @@ export const useSessionStore = create<SessionStoreState>()(
           // Nothing logged = nothing to keep; an empty entry is just noise.
           if (abandoned.setsCompleted > 0) {
             set((state) => ({ history: appendToHistory(state.history, abandoned) }));
+            emitWorkoutArchived({ ...current, status: "abandoned", completedAt: abandoned.completedAt }, abandoned);
           }
         }
         set({
@@ -301,32 +303,27 @@ export const useSessionStore = create<SessionStoreState>()(
       },
 
       finishSession: () => {
-        set((state) => {
-          if (!state.session) return state;
-          const completedAt = new Date().toISOString();
-          return {
-            session: { ...state.session, status: "completed", completedAt },
-            history: appendToHistory(
-              state.history,
-              summarize(state.session, completedAt, "completed"),
-            ),
-          };
-        });
+        const current = get().session;
+        if (!current) return;
+        const completedAt = new Date().toISOString();
+        const finished: WorkoutSession = { ...current, status: "completed", completedAt };
+        const summary = summarize(current, completedAt, "completed");
+        set((state) => ({ session: finished, history: appendToHistory(state.history, summary) }));
+        emitWorkoutArchived(finished, summary);
       },
 
       abandonSession: () => {
-        set((state) => {
-          if (!state.session) return state;
-          // "Abandoned work is saved, never discarded" (DATA_MODELS.md).
-          const abandoned = summarize(state.session, new Date().toISOString(), "abandoned");
-          return {
-            session: { ...state.session, status: "abandoned" },
-            history:
-              abandoned.setsCompleted > 0
-                ? appendToHistory(state.history, abandoned)
-                : state.history,
-          };
-        });
+        const current = get().session;
+        if (!current) return;
+        // "Abandoned work is saved, never discarded" (DATA_MODELS.md).
+        const abandoned = summarize(current, new Date().toISOString(), "abandoned");
+        const archived: WorkoutSession = { ...current, status: "abandoned", completedAt: abandoned.completedAt };
+        const kept = abandoned.setsCompleted > 0;
+        set((state) => ({
+          session: archived,
+          history: kept ? appendToHistory(state.history, abandoned) : state.history,
+        }));
+        if (kept) emitWorkoutArchived(archived, abandoned);
       },
 
       clearSession: () => set({ session: null }),

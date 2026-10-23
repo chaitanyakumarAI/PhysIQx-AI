@@ -15,7 +15,7 @@ import { SessionTimer } from "@/features/session/components/SessionTimer";
 import { useElapsedSeconds } from "@/features/session/hooks/useElapsedSeconds";
 import { computeSessionProgress, computeSessionVolume } from "@/features/session/lib/derive";
 import type { SessionSetup } from "@/features/session/api/getSessionSetup";
-import { queueWorkout } from "@/lib/sync/syncClient";
+import "@/lib/sync/syncClient";
 import { mockExercises } from "@/data/exercises";
 import { todayIso } from "@/lib/dates";
 import { buildDemoData } from "@/lib/demo/demoLedger";
@@ -223,12 +223,9 @@ export function SessionScreen({ missionId, setup }: SessionScreenProps) {
           fullWidth
           disabled={progress.completedSets === 0}
           onClick={() => {
-            // Local ledger first (works offline); the outbox delivers a copy
-            // to the cloud whenever it can — never blocking the athlete.
+            // Local ledger first (works offline); the store hands the workout
+            // to the outbox, which uploads a copy whenever it can.
             finishSession();
-            const snapshot = useSessionStore.getState();
-            const summary = snapshot.history.find((entry) => entry.id === snapshot.session?.id);
-            if (snapshot.session && summary) queueWorkout(snapshot.session, summary);
           }}
         >
           Finish workout

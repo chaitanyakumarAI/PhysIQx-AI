@@ -1,6 +1,7 @@
 "use server";
 
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { cardioActivitySchema } from "@/lib/cardio/cardioSchema";
 import type { CardioActivity } from "@/types/cardio";
 
 export interface SaveCardioResult {
@@ -8,7 +9,7 @@ export interface SaveCardioResult {
   cardioDbId?: string;
   error?: string;
   /** "unauthenticated" = guest: keep the copy local, it's not a failure. */
-  reason?: "unauthenticated" | "error";
+  reason?: "unauthenticated" | "invalid" | "error";
 }
 
 /**
@@ -16,7 +17,7 @@ export interface SaveCardioResult {
  * Idempotent on (user_id, client_ref): the activity's stable id, so a
  * re-import or re-sync updates the same row instead of duplicating it.
  */
-export async function saveCardioActivity(activity: CardioActivity): Promise<SaveCardioResult> {
+export async function saveCardioActivity(input: CardioActivity): Promise<SaveCardioResult> {
   const supabase = await createServerSupabaseClient();
   const {
     data: { user },
@@ -25,6 +26,14 @@ export async function saveCardioActivity(activity: CardioActivity): Promise<Save
   if (userError || !user) {
     return { success: false, reason: "unauthenticated", error: "Not signed in." };
   }
+
+  // The outbox sends whatever is in localStorage — validate before writing.
+  const parsed = cardioActivitySchema.safeParse(input);
+  if (!parsed.success) {
+    const issue = parsed.error.issues[0];
+    return { success: false, reason: "invalid", error: `Invalid activity: ${issue?.path.join(".") ?? "input"} ${issue?.message ?? ""}`.trim() };
+  }
+  const activity = parsed.data;
 
   const row = {
     user_id: user.id,

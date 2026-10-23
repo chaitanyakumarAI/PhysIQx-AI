@@ -1,7 +1,7 @@
 "use server";
 
 import { createServerSupabaseClient } from "@/lib/supabase/server";
-import type { OnboardingValues } from "../schemas";
+import { onboardingSchema, type OnboardingValues } from "../schemas";
 
 export interface SaveOnboardingResult {
   success: boolean;
@@ -16,7 +16,7 @@ export interface SaveOnboardingResult {
  * update is the normal path — but upsert protects against any race).
  */
 export async function saveOnboardingProfile(
-  values: OnboardingValues
+  input: OnboardingValues
 ): Promise<SaveOnboardingResult> {
   const supabase = await createServerSupabaseClient();
 
@@ -28,6 +28,13 @@ export async function saveOnboardingProfile(
   if (userError || !user) {
     return { success: false, error: "Not authenticated. Please log in again." };
   }
+
+  // Server Actions are public endpoints: re-check the same schema the form uses.
+  const parsed = onboardingSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, error: "Some answers are out of range. Please check them and try again." };
+  }
+  const values = parsed.data;
 
   // 1. Try updating existing profile row created by signup trigger
   const { error: updateError } = await supabase

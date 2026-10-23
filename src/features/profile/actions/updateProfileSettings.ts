@@ -1,6 +1,17 @@
 "use server";
 
+import { z } from "zod";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { ABOUT_YOU_LIMITS, onboardingSchema } from "@/features/onboarding/schemas";
+
+/** Same rules as onboarding, every field optional (a settings screen sends one). */
+const settingsSchema = onboardingSchema
+  .pick({ goal: true, experienceLevel: true, activeSplit: true, goalBodyShape: true })
+  .extend({
+    name: z.string().trim().min(1).max(ABOUT_YOU_LIMITS.nameMax).optional(),
+    trainingDaysPerWeek: z.number().int().min(3).max(6).optional(),
+  })
+  .strict();
 
 export interface UpdateProfileSettingsParams {
   name?: string;
@@ -20,7 +31,7 @@ export interface UpdateProfileResult {
  * Server Action — updates user settings and preferences in the Supabase profiles table.
  */
 export async function updateProfileSettings(
-  params: UpdateProfileSettingsParams
+  input: UpdateProfileSettingsParams
 ): Promise<UpdateProfileResult> {
   const supabase = await createServerSupabaseClient();
 
@@ -32,6 +43,12 @@ export async function updateProfileSettings(
   if (userError || !user) {
     return { success: false, error: "Not authenticated. Please log in again." };
   }
+
+  const parsed = settingsSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, error: "That setting isn't valid. Please try again." };
+  }
+  const params = parsed.data;
 
   const payload: Record<string, unknown> = {};
 

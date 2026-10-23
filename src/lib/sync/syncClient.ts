@@ -14,6 +14,7 @@ import {
   type OutboxSummary,
   type SyncJob,
 } from "./outbox";
+import { onWorkoutArchived } from "./archiveEvents";
 
 /**
  * Browser wiring for the outbox: localStorage persistence, delivery through
@@ -192,3 +193,6 @@ function subscribe(onChange: () => void) {
 export function useOutboxStatus(): OutboxStatus {
   return useSyncExternalStore(subscribe, readStatus, () => EMPTY);
 }
+
+// Every workout the store archives (finished, abandoned, replaced) is uploaded.
+onWorkoutArchived(queueWorkout);

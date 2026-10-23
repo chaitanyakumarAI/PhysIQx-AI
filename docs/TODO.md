@@ -56,11 +56,11 @@ Free Starter team: build with write tools (`use_figma`, `upload_assets`); reads 
 ## 🛠 Hardening — from the 2026-10-17 code audit
 
 - [x] **Transactional workout save** (2026-10-23, migration 006 — **apply in the SQL Editor**): `save_workout_session` RPC writes session + exercises + sets + XP in one transaction; any error fails the outbox job. Was: one Postgres function (RPC) for session + exercises + sets + XP; fail the outbox job on any child error (today child errors are logged and the job reports success)
-- [ ] **Validate Server Action input** with Zod — `saveWorkoutSession` done 2026-10-23 (`finishedSessionSchema`, XP and volume recomputed server-side); `saveCardioActivity` and `saveOnboardingProfile` still open
+- [x] **Validate Server Action input** with Zod (2026-10-23): workouts (`finishedSessionSchema`, XP and volume recomputed server-side), cardio (`cardioActivitySchema`), onboarding and profile settings (`onboardingSchema`)
 - [x] **`xp_transactions`** (migration 006): SELECT-only for owners; append through a server-side function (owners can currently insert their own XP)
 - [x] **`sessions.client_ref`** (migration 006): unique per user `(user_id, client_ref)` like cardio (005), and `upsert … onConflict` instead of check-then-insert
-- [ ] **Cross-tab safety**: rehydrate stores on `storage` events (or a `BroadcastChannel`) so two tabs can't overwrite each other's history
-- [ ] **Queue abandoned workouts** for upload too (only Finish queues today)
+- [x] **Cross-tab safety** (2026-10-23, StoreHydrator): rehydrate stores on `storage` events (or a `BroadcastChannel`) so two tabs can't overwrite each other's history
+- [x] **Queue abandoned workouts** for upload too (2026-10-23: the store emits every archived workout — finished, abandoned, or replaced — and the sync client queues it)
 - [ ] **RPE in top sets** so `computeOverloadSuggestion`'s RPE auto-regulation can run on real data
 - [ ] **Photos and avatar** out of `localStorage` (data URLs) into IndexedDB / Supabase Storage
 - [ ] **Pull / restore** for signed-in users on a new device (sync is push-only today)
