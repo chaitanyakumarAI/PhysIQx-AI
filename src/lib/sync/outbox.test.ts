@@ -129,6 +129,15 @@ describe("processOutbox", () => {
     expect(report.queue.every((entry) => entry.attempts === 0)).toBe(true);
   });
 
+  it("clears earlier failures once the server says nobody is signed in", async () => {
+    const queue = enqueue([], cardioJob("a"), NOW);
+    const failed = await processOutbox(queue, async (): Promise<JobResult> => ({ status: "failed", error: "Failed to fetch" }), NOW);
+    expect(summarizeOutbox(failed.queue).failing).toBe(1);
+    const guest = await processOutbox(failed.queue, async (): Promise<JobResult> => ({ status: "unauthenticated" }), NOW, { force: true });
+    expect(summarizeOutbox(guest.queue)).toEqual({ pending: 1, failing: 0, lastError: null });
+    expect(guest.queue[0]?.nextAttemptAt).toBe(NOW);
+  });
+
   it("treats thrown errors as failures", async () => {
     const report = await processOutbox(
       enqueue([], cardioJob("a"), NOW),

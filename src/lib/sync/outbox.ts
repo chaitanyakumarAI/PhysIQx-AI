@@ -117,7 +117,9 @@ export async function processOutbox(
       synced += 1;
     } else if (result.status === "unauthenticated") {
       blockedByAuth = true;
-      remaining.push(entry);
+      // Waiting for sign-in isn't failing: forget earlier failures (a server
+      // outage) so a guest sees no warning, and retry as soon as asked.
+      remaining.push({ ...entry, attempts: 0, lastError: undefined, nextAttemptAt: nowIso });
     } else {
       failed += 1;
       const attempts = entry.attempts + 1;
