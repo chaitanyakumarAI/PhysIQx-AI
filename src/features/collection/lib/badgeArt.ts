@@ -8,7 +8,9 @@
  * "iron-ledger-gold.webp", "first-rep.webp", "rank-silver.webp".
  */
 const AVAILABLE_ART = new Set<string>([
-  // e.g. "iron-ledger-bronze",
+  // Pilot (Weave, Nano Banana 2 Lite), 2026-10-24.
+  "iron-ledger-bronze",
+  "iron-ledger-silver",
 ]);
 
 export function artFor(collectibleId: string): string | null {
