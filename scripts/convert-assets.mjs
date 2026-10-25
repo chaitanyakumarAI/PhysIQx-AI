@@ -162,6 +162,9 @@ async function removeBackground(file) {
   const { width, height } = info;
   const count = width * height;
   const corners = [0, width - 1, (height - 1) * width, count - 1].map((p) => p * 4);
+  // Already transparent (a model that outputs alpha): nothing to key, only
+  // trim and centre.
+  if (corners.every((i) => data[i + 3] === 0)) return finish(data, info);
   const bg = [0, 1, 2].map((c) => corners.reduce((sum, i) => sum + data[i + c], 0) / 4);
   const distance = (p) => Math.hypot(data[p * 4] - bg[0], data[p * 4 + 1] - bg[1], data[p * 4 + 2] - bg[2]);
 

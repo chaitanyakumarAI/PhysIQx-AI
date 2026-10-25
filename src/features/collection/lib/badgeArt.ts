@@ -11,6 +11,10 @@ const AVAILABLE_ART = new Set<string>([
   // Pilot (Weave, Nano Banana 2 Lite), 2026-10-24.
   "iron-ledger-bronze",
   "iron-ledger-silver",
+  // Blueprint Studio "PhysIQx Medal" Style (native transparent PNG), 2026-10-25.
+  "iron-ledger-gold",
+  "iron-ledger-platinum",
+  "tonnage-bronze",
 ]);
 
 export function artFor(collectibleId: string): string | null {
