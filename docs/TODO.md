@@ -14,15 +14,15 @@ crops). Each asset replaces its placeholder once registered (ASSET_PROMPTS §5).
 - [ ] **Stage poses — Kix** (4): wave · point-up · celebrate · thinking → `public/mascots/stage/`
 - [ ] **Stage poses — Nyra** (3): gesture-up · teach · rest → `public/mascots/stage/`
 - [ ] **Duo & celebration scenes** (4): duo-intro · duo-finale · kix-level-up · nyra-legendary-nod → `public/mascots/scenes/`
-- [ ] **Medals — Training families** (16): iron-ledger · tonnage · explorer · big-session × bronze/silver/gold/platinum
-- [ ] **Medals — Strength families** (8): record-breaker · strength-standard × 4 tiers
-- [ ] **Medals — Cardio families** (12): cardio-engine · long-haul · double-duty × 4 tiers
-- [ ] **Medals — Consistency families** (8): perfect-week · unbroken × 4 tiers
-- [ ] **Medals — Body & score families** (8): steady-scale · physiq-climber × 4 tiers
-- [ ] **Medals — Milestones** (10): first-rep · calibrated · body-map · first-import · comeback-kid · full-house · perfect-month · iron-year · anniversary · unshakeable
-- [ ] **Rank insignia** (8): iron · bronze · silver · gold · platinum · diamond · obsidian · legend
+- [x] **Medals — Training families** (16): iron-ledger · tonnage · explorer · big-session × bronze/silver/gold/platinum
+- [x] **Medals — Strength families** (8): record-breaker · strength-standard × 4 tiers
+- [x] **Medals — Cardio families** (12): cardio-engine · long-haul · double-duty × 4 tiers
+- [x] **Medals — Consistency families** (8): perfect-week · unbroken × 4 tiers
+- [x] **Medals — Body & score families** (8): steady-scale · physiq-climber × 4 tiers
+- [x] **Medals — Milestones** (10): first-rep · calibrated · body-map · first-import · comeback-kid · full-house · perfect-month · iron-year · anniversary · unshakeable
+- [x] **Rank insignia** (8): iron · bronze · silver · gold · platinum · diamond · obsidian · legend
 - [ ] *(Optional)* Hero art: level-up burst · collection header
-- [ ] **Integrate**: convert with `node scripts/convert-assets.mjs`, register medal ids in `src/features/collection/lib/badgeArt.ts`, point the tour script at the new poses
+- [ ] **Integrate**: ~~medals: converted and registered (all 70, 2026-10-25; Blueprint Studio "PhysIQx Medal" Style, test in `badgeArt.test.ts`)~~ — still to do: point the tour script at the new poses
 
 ## 🎮 Gamification v2 — see `docs/GAMIFICATION_STUDY.md`
 
