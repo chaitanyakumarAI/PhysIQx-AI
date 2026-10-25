@@ -13,8 +13,15 @@ its placeholder automatically once registered (see §5).
 
 - **Any capable image model works** (GPT-image, Midjourney v7, Imagen, Flux,
   SDXL). Use the same model for a whole set so the style matches.
-- **Output:** PNG with a **transparent background** where noted (otherwise
-  flat `#0a0d0b`), **1024 × 1024**, then convert to WebP (§5).
+- **Output: always PNG** (owner rule, 2026-10-25) — never JPEG: its
+  compression smears the edges and the cutout gets worse. Pick a model or
+  setting that returns PNG (on Weave, Nano Banana 2.1 with
+  `output_format: png`), **1024 × 1024**, then convert to WebP (§5).
+- **Background:** transparent if the model truly supports it. Otherwise a
+  **flat, solid `#0a0d0b`** (the app background, so reflections in polished
+  metal match the app) — except dark subjects (Legendary obsidian medals,
+  Nyra), which go on flat white. Never a gradient, floor, shadow or
+  vignette: `convert-assets.mjs --cutout` keys out one flat colour.
 - **Consistency is everything.**
   - **Characters:** always attach the locked anchors from `design/mascots/`
     (`kix/kix-anchor.png`, `kix/kix-grid.png`, `nyra/nyra-anchor.png`,
@@ -205,9 +212,11 @@ Use a **shield crest** instead of a round medal:
 
 ## 5. After generating — plug them in
 
-1. Convert to WebP (quality 85, ideally ≤ 150 KB) with the bundled script:
+1. Convert to WebP (quality 85, ideally ≤ 150 KB) with the bundled script —
+   add `--cutout` when the PNG has a flat background instead of transparency
+   (round medals are cut along their fitted circle):
    ```bash
-   node scripts/convert-assets.mjs <folder-with-pngs> public/badges
+   node scripts/convert-assets.mjs <folder-with-pngs> public/badges --cutout
    ```
 2. **Medals:** put them in `public/badges/` using the file names above, then
    add each id to `AVAILABLE_ART` in
