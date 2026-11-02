@@ -341,7 +341,7 @@ Free Starter team: build with write tools (`use_figma`, `upload_assets`); reads 
   Fixed split templates per days/week (2–6); sets/reps/rest from goal × experience table.
   Live `/train/programs/ai` is built once with defaults (bulk, intermediate) — not personalised.
   `targetBodyShape`, `preferredSplit`, `sessionHistory` inputs are accepted but unused.
-- [ ] **Personalise the PhysIQ Split** — build it from the user's onboarding goal/experience
+- [x] **Personalise the PhysIQ Split** — build it from the user's onboarding goal/experience (2026-11-02: `useProgram` on the program page, summary card and calendar; opens on their days/week)
   (`GenerateProgramScreen.tsx` already does this but has no route).
 - [ ] **Conversational AI Coach** — dedicated `/coach` route — **deferred to a future version (route disabled 2026-09-28; see `docs/FUTURE_WORK.md` #1)**
   `src/app/(app)/coach/CoachScreen.tsx` — full chat UI: bubble thread, persona toggle (Kix/Nyra),

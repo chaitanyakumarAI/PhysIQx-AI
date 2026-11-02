@@ -9,11 +9,8 @@ import { FilterChipRow } from "@/components/ui/FilterChipRow";
 import { iconSize } from "@/constants/icons";
 import { cn } from "@/lib/utils";
 import { mockExercises } from "@/data/exercises";
-import {
-  findProgram,
-  programLevelLabels,
-  type ProgramVariant,
-} from "@/data/programs";
+import { programLevelLabels, type ProgramVariant } from "@/data/programs";
+import { usePreferredVariantIndex, useProgram } from "../hooks/useProgram";
 import { usePlansStore } from "@/store/plansStore";
 import { planFromProgram } from "@/lib/workoutPlan";
 import type { ProgramType } from "@/types/training";
@@ -56,8 +53,11 @@ export function ProgramSchedule({
 }: ProgramScheduleProps) {
   const savePlan = usePlansStore((state) => state.savePlan);
   const setActivePlan = usePlansStore((state) => state.setActivePlan);
-  const program = findProgram(programType);
-  const [variantIndex, setVariantIndex] = useState(0);
+  const program = useProgram(programType);
+  const preferredIndex = usePreferredVariantIndex(program);
+  // null until the athlete picks one: then the variant matching their days.
+  const [pickedIndex, setVariantIndex] = useState<number | null>(null);
+  const variantIndex = pickedIndex ?? preferredIndex;
   const [openDay, setOpenDay] = useState<string | null>(null);
   const [adoptedName, setAdoptedName] = useState<string | null>(null);
 

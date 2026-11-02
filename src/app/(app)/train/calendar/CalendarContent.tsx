@@ -10,7 +10,8 @@ import { IconButton } from "@/components/ui/IconButton";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { iconSize } from "@/constants/icons";
 import { cn } from "@/lib/utils";
-import { findProgram, type ProgramVariant } from "@/data/programs";
+import type { ProgramVariant } from "@/data/programs";
+import { useProgram } from "@/features/train/hooks/useProgram";
 import { useSessionStore } from "@/store/sessionStore";
 import type { ProgramType } from "@/types/training";
 
@@ -96,7 +97,7 @@ export function CalendarContent() {
   const history = useSessionStore((state) => state.history);
 
   const programType = (searchParams.get("program") ?? "ppl") as ProgramType;
-  const program = findProgram(programType);
+  const program = useProgram(programType);
   const [variantIndex, setVariantIndex] = useState(() => {
     const requested = Number(searchParams.get("variant") ?? 0);
     return Number.isFinite(requested) ? requested : 0;

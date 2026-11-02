@@ -1,9 +1,12 @@
+"use client";
+
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { iconSize } from "@/constants/icons";
 import { cn } from "@/lib/utils";
-import { findProgram, programLevelLabels } from "@/data/programs";
+import { programLevelLabels } from "@/data/programs";
+import { useProgram } from "../hooks/useProgram";
 import type { ProgramType } from "@/types/training";
 
 export interface ProgramSummaryCardProps {
@@ -24,7 +27,7 @@ const levelTone: Record<string, string> = {
  * scroll (visual-audit finding).
  */
 export function ProgramSummaryCard({ programType, className }: ProgramSummaryCardProps) {
-  const program = findProgram(programType);
+  const program = useProgram(programType);
   if (!program) return null;
 
   return (
