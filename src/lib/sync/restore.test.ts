@@ -268,6 +268,12 @@ describe("profilePatch", () => {
     expect(patch.activePlanId).toBeUndefined();
   });
 
+  it("restores the Privacy switches, and leaves them alone for older snapshots without them", () => {
+    const withPrivacy = { ...server, settings: { ...(server.settings as object), privacyPreferences: { "friend-requests": false } } };
+    expect(profilePatch(local, null, new Set(), withPrivacy, false).profile.privacyPreferences).toEqual({ "friend-requests": false });
+    expect(profilePatch(local, null, new Set(), server, false).profile).not.toHaveProperty("privacyPreferences");
+  });
+
   it("never swaps an uploaded photo for a preset, or activates a missing plan", () => {
     const withPhoto = { ...local, avatarDataUrl: "data:image/png;base64,AAAA" };
     const patch = profilePatch(withPhoto, null, new Set(), server, false);

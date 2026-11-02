@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { onboardingSchema } from "@/features/onboarding/schemas";
 import { DEFAULT_NOTIFICATION_PREFERENCES } from "@/lib/notifications";
+import { DEFAULT_PRIVACY_PREFERENCES } from "./privacy";
 import { DEFAULT_USER_PREFERENCES, type useProfileStore } from "@/store/profileStore";
 
 /**
@@ -49,6 +50,11 @@ export const profileSnapshotSchema = z
         .refine((prefs) => Object.keys(prefs).length <= 50, "Too many notification preferences"),
       showcaseAchievementIds: z.array(z.string().min(1).max(200)).max(3),
       avatarPresetId: z.string().min(1).max(60).nullable(),
+      // Optional: snapshots from before the Privacy switches were saved.
+      privacyPreferences: z
+        .record(z.string().min(1).max(60), z.boolean())
+        .refine((prefs) => Object.keys(prefs).length <= 20, "Too many privacy preferences")
+        .optional(),
     }),
     /** When this device last changed any of it — newer wins. */
     updatedAt: z.iso.datetime({ offset: true }),
@@ -81,6 +87,7 @@ export function buildProfileSnapshot(
       },
       showcaseAchievementIds: profile.showcaseAchievementIds.slice(-3),
       avatarPresetId: profile.avatarPresetId,
+      privacyPreferences: { ...DEFAULT_PRIVACY_PREFERENCES, ...profile.privacyPreferences },
     },
     updatedAt,
   };

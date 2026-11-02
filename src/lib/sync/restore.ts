@@ -316,6 +316,7 @@ export type RestoredProfileFields = Pick<
   | "onboardingProfile"
   | "preferences"
   | "notificationPreferences"
+  | "privacyPreferences"
   | "showcaseAchievementIds"
   | "avatarPresetId"
   | "avatarDataUrl"
@@ -393,6 +394,9 @@ export function profilePatch(
     if (!same(settings.preferences, local.preferences)) patch.profile.preferences = settings.preferences;
     if (!same(settings.notificationPreferences, local.notificationPreferences)) {
       patch.profile.notificationPreferences = settings.notificationPreferences;
+    }
+    if (settings.privacyPreferences && !same(settings.privacyPreferences, local.privacyPreferences)) {
+      patch.profile.privacyPreferences = settings.privacyPreferences;
     }
     if (!same(settings.showcaseAchievementIds, local.showcaseAchievementIds)) {
       patch.profile.showcaseAchievementIds = settings.showcaseAchievementIds;

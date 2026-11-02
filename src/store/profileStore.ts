@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { DEFAULT_PRIVACY_PREFERENCES } from "@/features/profile/lib/privacy";
 import { DEFAULT_NOTIFICATION_PREFERENCES } from "@/lib/notifications";
 import { emitSyncEvent } from "@/lib/sync/syncEvents";
 import type { BodyBuild, Sex, WeighIn } from "@/types/ledger";
@@ -99,6 +100,8 @@ interface ProfileStoreState extends AthleteDetails {
   preferences: UserPreferences;
   /** User notification preferences (streak risk, mission reminders, challenge results, etc.). */
   notificationPreferences: Record<string, boolean>;
+  /** Profile › Privacy switches (features/profile/lib/privacy). */
+  privacyPreferences: Record<string, boolean>;
   setPresetAvatar: (presetId: string) => void;
   setUploadedAvatar: (dataUrl: string) => void;
   clearAvatar: () => void;
@@ -112,6 +115,7 @@ interface ProfileStoreState extends AthleteDetails {
   setDemoMode: (enabled: boolean) => void;
   updatePreferences: (patch: Partial<UserPreferences>) => void;
   updateNotificationPreferences: (patch: Record<string, boolean>) => void;
+  updatePrivacyPreferences: (patch: Record<string, boolean>) => void;
   resetPreferences: () => void;
 }
 
@@ -142,6 +146,7 @@ export const useProfileStore = create<ProfileStoreState>()(
         demoMode: false,
         preferences: DEFAULT_USER_PREFERENCES,
         notificationPreferences: DEFAULT_NOTIFICATION_PREFERENCES,
+        privacyPreferences: DEFAULT_PRIVACY_PREFERENCES,
         setPresetAvatar: (presetId) =>
           changeProfile({ avatarPresetId: presetId, avatarDataUrl: null }),
         setUploadedAvatar: (dataUrl) =>
@@ -205,6 +210,10 @@ export const useProfileStore = create<ProfileStoreState>()(
               ...patch,
             },
           })),
+        updatePrivacyPreferences: (patch) =>
+          changeProfile((state) => ({
+            privacyPreferences: { ...DEFAULT_PRIVACY_PREFERENCES, ...state.privacyPreferences, ...patch },
+          })),
         updateNotificationPreferences: (patch) =>
           changeProfile((state) => ({
             notificationPreferences: {
@@ -217,7 +226,7 @@ export const useProfileStore = create<ProfileStoreState>()(
     },
     {
       name: "physiqx-profile",
-      version: 2,
+      version: 3,
       migrate: (persisted, version) => {
         const state = persisted as Partial<ProfileStoreState>;
         // v0 → v1: drop the placeholder progress photos earlier builds seeded
@@ -235,6 +244,8 @@ export const useProfileStore = create<ProfileStoreState>()(
           state.currentBuild ??= null;
           state.demoMode ??= false;
         }
+        // v2 → v3: Privacy switches were component state, never saved.
+        if (version < 3) state.privacyPreferences ??= DEFAULT_PRIVACY_PREFERENCES;
         return state as ProfileStoreState;
       },
       skipHydration: true,

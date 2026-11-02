@@ -44,9 +44,11 @@ describe("profile", () => {
     profile.logWeight(80, "2026-10-23");
     profile.setHeight(180);
     profile.updatePreferences({ trackRpe: true });
+    profile.updatePrivacyPreferences({ "friend-requests": false });
     profile.setDemoMode(true);
     profile.addPhoto({ date: "2026-10-23", angle: "front", dataUrl: "data:image/png;base64," });
-    expect(events).toEqual(["weighInLogged", "profileChanged", "profileChanged"]);
+    expect(events).toEqual(["weighInLogged", "profileChanged", "profileChanged", "profileChanged"]);
+    expect(useProfileStore.getState().privacyPreferences).toMatchObject({ "friend-requests": false, "leaderboard-visibility": true });
     profile.setDemoMode(false);
   });
 });
