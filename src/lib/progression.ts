@@ -114,7 +114,7 @@ export function computeOverloadSuggestion({
     // Case 2: Weighted Movement
     const step = getEquipmentIncrement(equipment);
     const lastWeight = top.weightKg;
-    const lastRpe = (top as unknown as { rpe?: number | null }).rpe;
+    const lastRpe = top.rpe;
 
     // RPE-aware auto-regulation
     if (enableRpeAutoRegulation && lastRpe != null) {

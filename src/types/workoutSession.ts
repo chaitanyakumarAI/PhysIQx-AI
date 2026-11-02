@@ -56,6 +56,9 @@ export interface TopSet {
   exerciseName: string;
   weightKg: number;
   reps: number;
+  /** RPE logged on this set, when the athlete tracks it; drives the
+   *  overload engine's auto-regulation (lib/progression). */
+  rpe?: number;
 }
 
 /**

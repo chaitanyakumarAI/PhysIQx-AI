@@ -41,6 +41,7 @@ export function summarize(
           exerciseName: exercise.exerciseName,
           weightKg: weight,
           reps,
+          ...(exerciseSet.rpe && exerciseSet.rpe > 0 ? { rpe: exerciseSet.rpe } : {}),
         };
       }
     }

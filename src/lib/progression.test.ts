@@ -202,7 +202,6 @@ describe("progression engine", () => {
               exerciseName: "Squat",
               weightKg: 100,
               reps: 5,
-              // @ts-expect-error extra property test
               rpe: 6.0,
             },
           ],
@@ -240,7 +239,6 @@ describe("progression engine", () => {
               exerciseName: "Deadlift",
               weightKg: 140,
               reps: 5,
-              // @ts-expect-error extra property test
               rpe: 10.0,
             },
           ],

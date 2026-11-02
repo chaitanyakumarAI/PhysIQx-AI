@@ -61,7 +61,7 @@ Free Starter team: build with write tools (`use_figma`, `upload_assets`); reads 
 - [x] **`sessions.client_ref`** (migration 006): unique per user `(user_id, client_ref)` like cardio (005), and `upsert … onConflict` instead of check-then-insert
 - [x] **Cross-tab safety** (2026-10-23, StoreHydrator): rehydrate stores on `storage` events (or a `BroadcastChannel`) so two tabs can't overwrite each other's history
 - [x] **Queue abandoned workouts** for upload too (2026-10-23: the store emits every archived workout — finished, abandoned, or replaced — and the sync client queues it)
-- [ ] **RPE in top sets** so `computeOverloadSuggestion`'s RPE auto-regulation can run on real data
+- [x] **RPE in top sets** so `computeOverloadSuggestion`'s RPE auto-regulation can run on real data (2026-11-02: `TopSet.rpe` from the heaviest set)
 - [ ] **Photos and avatar** out of `localStorage` (data URLs) into IndexedDB / Supabase Storage
 - [ ] **Pull / restore** for signed-in users on a new device (sync is push-only today) — plan: `docs/SYNC_RESTORE_PLAN.md`
   - [x] Phase A: migration 007 (profile columns, `weigh_ins`, `plans`, tombstones, cursor triggers, `get_ledger_changes`) — applied 2026-10-23
