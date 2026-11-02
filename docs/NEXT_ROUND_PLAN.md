@@ -60,3 +60,9 @@ The questions as asked:
 ## 4. Order and verification
 
 W1 → W3 → W5 → W4 → W2 → W6, one commit each. Each runs the typecheck, tests, lint and build; UI changes are checked in the browser.
+
+## 5. Status (2026-11-02)
+
+- Done and committed: W1 (a11y merge, stale docs, lint), W3 (RPE in top sets), W5 (Privacy switches persist and sync), W4 (personalised PhysIQ Split).
+- Next: W2 (photos and avatar to IndexedDB). Touch points read so far: `PhotosContent.tsx` (`readAsDataURL`, `<img src={photo.dataUrl}>` ×3, SVG placeholder when no image), `AvatarContent.tsx` (200 KB cap, `setUploadedAvatar`), `UserAvatar.tsx`, `ExportContent.tsx`, `clearLocalData` in `lib/sync/pullClient.ts`.
+- Then: W7 → W8 → W6 → W9 → W10.
