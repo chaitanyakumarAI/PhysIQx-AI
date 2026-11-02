@@ -69,7 +69,7 @@ Free Starter team: build with write tools (`use_figma`, `upload_assets`); reads 
   - [x] Phase C (2026-10-23): pull client, mappers, merge rules, triggers (sign-in, start, online, back in view), per-account cursor, owner guard
   - [x] Phase D (2026-10-24): account-tagged outbox, account switch, sign-out (upload, confirm, clear), restore state on Home, Cloud sync row
   - [ ] Phase E: two-browser verification
-- [ ] **Stale docs**: middleware comment claims route guarding; `PHYSIQ_SCORE.md` describes stored snapshots and other behaviour the engine doesn't have
+- [x] **Stale docs** (2026-11-02): middleware comment rewritten; `PHYSIQ_SCORE.md` gained "As built" notes (snapshots are recomputed, not stored)
 - [ ] **Tests**: RLS cross-user tests (pgTAP / Supabase CLI) and one Playwright flow (log offline → online → rows exist)
 
 ## 🔴 Phase 6 — Interactive Character Guide Overlays
@@ -267,7 +267,7 @@ Free Starter team: build with write tools (`use_figma`, `upload_assets`); reads 
   authenticated no onboarding → `/onboarding`, authenticated + onboarded → `/home`).
   `src/lib/supabase/middleware.ts` handles cookie refresh with 800ms Supabase reachability check
   and 1500ms session timeout to prevent navigation hangs offline.
-- [ ] Persist onboarding output to `profiles` table on submit
+- [x] Persist onboarding output to `profiles` table on submit (2026-10-23: through the outbox's profile snapshot, which also covers guests who sign in later)
   *(Needs live Supabase project with `NEXT_PUBLIC_SUPABASE_URL` + key configured)*
 - [x] Forgot password flow — wire `ForgotPasswordForm`
   `ForgotPasswordForm.tsx` calls `supabase.auth.resetPasswordForEmail`.

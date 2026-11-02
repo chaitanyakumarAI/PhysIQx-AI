@@ -123,6 +123,13 @@ always recomputable from raw events; it is never itself a source of truth.
 - Snapshots store their inputs summary alongside the value, so any historical
   score can be explained later.
 
+> **As built (v4, `lib/scoreEngine.ts`):** snapshots are not stored. Every
+> day's snapshot is recomputed on demand from the ledger (the engine is pure
+> and fast enough), so "finalized" means "the headline shows yesterday's
+> snapshot", not a saved, immutable row. Calibrating (first 7 days) and stale
+> (14+ days without training) work as described; the inputs summary is not
+> kept, because the ledger itself is the explanation.
+
 ### Cold start (first 7 days)
 
 New users have no history, and no design exists for this state — it must be
@@ -176,6 +183,11 @@ These are contracts for later phases; none are built during UI recreation.
 - **History is never recomputed under a new version.** Old snapshots remain
   as-scored; trend charts may annotate version boundaries if a change is
   user-visible.
+
+> **As built:** `SCORE_VERSION` exists, but because snapshots aren't stored,
+> a new version recomputes the whole history under the new math. Freezing
+> history needs stored snapshots (a future item: a `score_snapshots` table
+> written at day close).
 - Material changes to weights or inputs are product decisions, announced
   in-app ("Your score now includes sleep"), never silent.
 

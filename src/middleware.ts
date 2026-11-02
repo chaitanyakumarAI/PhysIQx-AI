@@ -2,14 +2,13 @@ import { type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
 /**
- * Three-way route guard:
- *  1. No session        → redirect to /login
- *  2. Session, no onboarding → redirect to /onboarding
- *  3. Session + onboarded    → allow through
+ * Keeps the Supabase session cookie fresh on every request, and sends a
+ * signed-in athlete who opens an auth page (login, signup, forgot-password)
+ * to /home instead.
  *
- * Public routes (login, signup, forgot-password, auth/callback) are
- * always accessible. If an authenticated user visits /login, they
- * are redirected to /home instead.
+ * It deliberately does NOT guard routes: the app is local-first, so guests
+ * use every screen offline, and onboarding is offered by Home's first-run
+ * state rather than forced by a redirect.
  */
 
 const PUBLIC_ROUTES = ["/login", "/signup", "/forgot-password", "/auth/callback"];
