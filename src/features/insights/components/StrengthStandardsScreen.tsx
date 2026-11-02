@@ -118,7 +118,7 @@ export function StrengthStandardsScreen() {
                         evaluation?.currentTier === tier ? "bg-brand/15" : "bg-surface-elevated/60",
                       )}
                     >
-                      <dt className="truncate text-[10px] text-foreground-muted">{TIER_LABELS[tier]}</dt>
+                      <dt className="truncate text-[10px] text-foreground-secondary">{TIER_LABELS[tier]}</dt>
                       <dd className="text-xs font-semibold tabular-nums">{kg} kg</dd>
                     </div>
                   ))}
@@ -129,7 +129,7 @@ export function StrengthStandardsScreen() {
         </Section>
       )}
 
-      <p className="px-1 text-xs text-foreground-muted">
+      <p className="px-1 text-xs text-foreground-secondary">
         Estimated 1RM = weight × (1 + reps ÷ 30), with reps capped at 10. Tiers follow published
         bodyweight-ratio tables (beginner → elite); female tables are scaled per lift.
       </p>

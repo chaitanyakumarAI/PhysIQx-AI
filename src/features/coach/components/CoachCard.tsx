@@ -29,7 +29,7 @@ export function CoachCard({ recommendation, className }: CoachCardProps) {
           <Icon size={iconSize.sm} aria-hidden />
         </span>
         <div className="min-w-0 flex-1">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-foreground-muted">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-foreground-secondary">
             {meta.label}
           </p>
           <h3 className="mt-0.5 font-semibold leading-snug">{recommendation.title}</h3>

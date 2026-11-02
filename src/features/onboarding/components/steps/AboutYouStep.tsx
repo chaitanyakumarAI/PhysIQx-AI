@@ -71,7 +71,7 @@ export function AboutYouStep({ values, onChange }: AboutYouStepProps) {
             </button>
           ))}
         </div>
-        <p className="text-xs text-foreground-muted">Used only to pick the right strength tables.</p>
+        <p className="text-xs text-foreground-secondary">Used only to pick the right strength tables.</p>
       </div>
 
       <div className="grid grid-cols-3 gap-3">

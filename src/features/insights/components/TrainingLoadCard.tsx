@@ -44,13 +44,13 @@ export function TrainingLoadCard({ load, href, className }: TrainingLoadCardProp
       <p className="text-sm text-foreground-secondary">{load.advice}</p>
       <dl className="grid grid-cols-3 gap-2 text-center">
         <div className="rounded-xl bg-surface-elevated/60 p-2.5">
-          <dt className="text-[11px] text-foreground-muted">This week</dt>
+          <dt className="text-[11px] text-foreground-secondary">This week</dt>
           <dd className="font-display text-base font-bold tabular-nums">
             {(load.weekVolumeKg / 1000).toFixed(1)} t
           </dd>
         </div>
         <div className="rounded-xl bg-surface-elevated/60 p-2.5">
-          <dt className="text-[11px] text-foreground-muted">4-wk avg</dt>
+          <dt className="text-[11px] text-foreground-secondary">4-wk avg</dt>
           <dd className="font-display text-base font-bold tabular-nums">
             {load.baselineWeeklyVolumeKg !== null
               ? `${(load.baselineWeeklyVolumeKg / 1000).toFixed(1)} t`
@@ -58,7 +58,7 @@ export function TrainingLoadCard({ load, href, className }: TrainingLoadCardProp
           </dd>
         </div>
         <div className="rounded-xl bg-surface-elevated/60 p-2.5">
-          <dt className="text-[11px] text-foreground-muted">Days in a row</dt>
+          <dt className="text-[11px] text-foreground-secondary">Days in a row</dt>
           <dd className="font-display text-base font-bold tabular-nums">
             {load.consecutiveTrainingDays}
           </dd>

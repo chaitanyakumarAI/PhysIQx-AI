@@ -123,7 +123,7 @@ export function CoachRecommendationWidget({
             <BadgeIcon size={11} aria-hidden />
             {rec.badge}
           </span>
-          <span className="text-[11px] text-foreground-muted font-mono">
+          <span className="text-[11px] text-foreground-secondary font-mono">
             {"//"} {profile.name} Advisory
           </span>
         </div>

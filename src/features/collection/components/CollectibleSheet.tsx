@@ -92,7 +92,7 @@ export function CollectibleSheet({ subject, onClose, canPin }: CollectibleSheetP
                       <ProgressBar value={tier.progress * 100} size="sm" className="mt-1.5" aria-label={`${tier.tierLabel} progress`} />
                     )}
                   </div>
-                  <span className="shrink-0 text-xs font-semibold tabular-nums text-foreground-muted">+{tier.xp} XP</span>
+                  <span className="shrink-0 text-xs font-semibold tabular-nums text-foreground-secondary">+{tier.xp} XP</span>
                 </li>
               ))}
             </ol>
@@ -100,7 +100,7 @@ export function CollectibleSheet({ subject, onClose, canPin }: CollectibleSheetP
             <div className="flex items-center justify-between rounded-2xl border border-white/[0.06] p-3 text-sm">
               <StatusLine item={subject.item} />
               {subject.item.xp > 0 && (
-                <span className="text-xs font-semibold tabular-nums text-foreground-muted">+{subject.item.xp} XP</span>
+                <span className="text-xs font-semibold tabular-nums text-foreground-secondary">+{subject.item.xp} XP</span>
               )}
             </div>
           )}

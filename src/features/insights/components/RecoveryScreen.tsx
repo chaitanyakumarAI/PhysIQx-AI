@@ -62,7 +62,7 @@ export function RecoveryScreen() {
                   className={index === weeks.length - 1 ? "w-full rounded-md bg-brand" : "w-full rounded-md bg-white/[0.14]"}
                   style={{ height: `${Math.max(4, (week.volume / peak) * 100)}%` }}
                 />
-                <span className="text-[10px] tabular-nums text-foreground-muted">
+                <span className="text-[10px] tabular-nums text-foreground-secondary">
                   {new Date(`${week.start}T00:00:00`).toLocaleDateString("en-US", { month: "numeric", day: "numeric" })}
                 </span>
               </div>
