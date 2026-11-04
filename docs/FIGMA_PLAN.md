@@ -175,3 +175,28 @@ the Figma components mirror them and their descriptions flag it.
 **Next.** v2 screens (Train, Insights, Profile, Session); delete the Archive
 section after approval; set the Cover as the file thumbnail (right-click ›
 Set as thumbnail — the API can't).
+
+## 9. Outcome v2 (2026-11-04)
+
+**Built.** Train, Insights, Profile and Session — Default (390 wide, Home's shell:
+padding 16/20/144/20, gap 32, ambient light, fixed BottomNavigation; Session has
+no nav), built only from instances with the app's sample data. 20 new patterns
+in the Patterns section with docs blocks: WorkoutHeroCard (Ready / Rest day),
+ProgramSummaryCard, MyPlansEmpty, Exercise Row; ScoreTrendCard, Insight Card,
+BodyBalanceCard, TrainingLoadCard, Lift Standard, StrengthStandardsCard,
+PersonalRecordCard, StreakHeatmapCard; ProfileHeaderCard, Settings Row,
+Settings List; Session Top Bar, Session Progress, Difficulty Suggestion,
+Set Row, Exercise Session Card. New icons: Cloud, LogIn. Doc/Status set to Done.
+
+**Checked.** Scripted audits: 0 raw fills or strokes, 0 unstyled text, 0
+components without a description, 0 horizontal overflow. Compared with the
+running app (sample data). Small heatmap labels and the CoachCard / Tier Row
+mirrors now use `color/text/secondary`, as in code. Metered reads used: 5.
+
+**Deviations.** Chip rows on the v2 screens are clipped frames of Chip
+instances (FilterChipRow's fixed 80 px chips cut long labels); the profile
+avatar shows initials, not the sample photo; the TrendChart line is the
+component's sample curve; TrainingLoadCard's StatChipRow puts the value above
+the label (code: label first).
+
+**Next.** Delete the Archive section after approval; set the Cover as thumbnail.

@@ -61,8 +61,7 @@ The questions as asked:
 
 W1 → W3 → W5 → W4 → W2 → W6, one commit each. Each runs the typecheck, tests, lint and build; UI changes are checked in the browser.
 
-## 5. Status (2026-11-02)
+## 5. Status (2026-11-04)
 
-- Done and committed: W1 (a11y merge, stale docs, lint), W3 (RPE in top sets), W5 (Privacy switches persist and sync), W4 (personalised PhysIQ Split).
-- Next: W2 (photos and avatar to IndexedDB). Touch points read so far: `PhotosContent.tsx` (`readAsDataURL`, `<img src={photo.dataUrl}>` ×3, SVG placeholder when no image), `AvatarContent.tsx` (200 KB cap, `setUploadedAvatar`), `UserAvatar.tsx`, `ExportContent.tsx`, `clearLocalData` in `lib/sync/pullClient.ts`.
-- Then: W7 → W8 → W6 → W9 → W10.
+- Done and committed: W1, W3, W5, W4, W2 (media in IndexedDB), W7 (cloud media, migration 008), W8 (difficulty suggestion), W6 (RLS check + offline e2e), W9 (weekly quests), W10 (Figma v2 screens, `docs/FIGMA_PLAN.md` §9).
+- Owner actions: apply `supabase/migrations/008_athlete_media.sql`, run `supabase/tests/rls_check.sql`, set `E2E_EMAIL`/`E2E_PASSWORD` for the signed-in e2e.
