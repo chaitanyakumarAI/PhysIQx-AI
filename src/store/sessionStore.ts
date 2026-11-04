@@ -9,6 +9,7 @@ import type {
   TopSet,
   WorkoutSession,
 } from "@/types/workoutSession";
+import { adjustSessionDifficulty, type DifficultyKind } from "@/lib/difficulty";
 import { computeOverloadSuggestion } from "@/lib/progression";
 import { summarize } from "@/features/session/lib/summarize";
 import { emitSyncEvent } from "@/lib/sync/syncEvents";
@@ -87,6 +88,8 @@ interface SessionStoreState {
   /** Mid-workout set count is the athlete's call — any number of sets. */
   addSet: (exerciseId: string) => void;
   removeSet: (exerciseId: string, setId: string) => void;
+  /** Applies or dismisses today's difficulty suggestion (lib/difficulty). */
+  answerDifficulty: (kind: DifficultyKind, choice: "applied" | "dismissed") => void;
   finishSession: () => void;
   abandonSession: () => void;
   clearSession: () => void;
@@ -229,6 +232,19 @@ export const useSessionStore = create<SessionStoreState>()(
                 return { ...sessionExercise, sets: [...sessionExercise.sets, nextSet] };
               }),
             },
+          };
+        });
+      },
+
+      answerDifficulty: (kind, choice) => {
+        set((state) => {
+          // One answer per workout: a second tap can't stack another adjustment.
+          if (!state.session || state.session.difficulty) return state;
+          return {
+            session:
+              choice === "applied"
+                ? adjustSessionDifficulty(state.session, kind)
+                : { ...state.session, difficulty: { kind, choice } },
           };
         });
       },

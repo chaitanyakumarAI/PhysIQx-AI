@@ -133,6 +133,15 @@ describe("sessionStore", () => {
     expect(entry?.setsCompleted).toBe(1);
   });
 
+  it("takes one answer per workout to the difficulty suggestion", () => {
+    const session = start();
+    const sets = session.exercises[0]!.sets.length;
+    useSessionStore.getState().answerDifficulty("add-set", "applied");
+    useSessionStore.getState().answerDifficulty("add-set", "applied");
+    expect(useSessionStore.getState().session!.exercises[0]!.sets).toHaveLength(sets + 1);
+    expect(useSessionStore.getState().session!.difficulty).toEqual({ kind: "add-set", choice: "applied" });
+  });
+
   it("hands every finished or abandoned workout with work to the uploader", () => {
     const archived: string[] = [];
     onSyncEvent((event) => {

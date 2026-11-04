@@ -348,7 +348,7 @@ Free Starter team: build with write tools (`use_figma`, `upload_assets`); reads 
   6-category quick prompts, thinking animation, suggested action deep-links, input bar.
   Engine: `src/lib/aiCoachChat.ts` (rule-based keyword matcher, 100% client-side, no API calls).
   Entry points (Home quick action, Insights CTA) removed; `coach/page.tsx` now returns `notFound()`.
-- [ ] **Adaptive difficulty** — `adaptProgramDifficulty()` in `lib/aiProgramEngine.ts`
+- [x] **Adaptive difficulty** — `adaptProgramDifficulty()` in `lib/aiProgramEngine.ts` (2026-11-04: wired as a suggestion card on the workout, `lib/difficulty.ts`; the athlete applies it. Also fixed: it read the oldest workouts, not the newest)
   Logic + tests exist (deload on avg RPE >= 9.0, extra set on avg RPE <= 7.0) but it is
   **not wired to any screen**. Wire it before any "adapts to you" copy returns.
 - [ ] **Score trajectory forecast** — `forecastScoreTrajectory()` in `lib/aiProgramEngine.ts`

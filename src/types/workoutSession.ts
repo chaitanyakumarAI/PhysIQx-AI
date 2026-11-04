@@ -94,4 +94,6 @@ export interface WorkoutSession {
   completedAt: string | null;
   exercises: SessionExercise[];
   xpReward: number;
+  /** The athlete's answer to today's difficulty suggestion (lib/difficulty). */
+  difficulty?: { kind: "deload" | "add-set"; choice: "applied" | "dismissed" };
 }

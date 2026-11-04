@@ -10,6 +10,7 @@ import { IconButton } from "@/components/ui/IconButton";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { iconSize } from "@/constants/icons";
 import { WorkoutComplete } from "@/features/celebration/components/WorkoutComplete";
+import { DifficultySuggestion } from "@/features/session/components/DifficultySuggestion";
 import { ExerciseSessionCard } from "@/features/session/components/ExerciseSessionCard";
 import { SessionTimer } from "@/features/session/components/SessionTimer";
 import { useElapsedSeconds } from "@/features/session/hooks/useElapsedSeconds";
@@ -194,6 +195,8 @@ export function SessionScreen({ missionId, setup }: SessionScreenProps) {
           {progress.completedSets} of {progress.totalSets} sets
         </p>
       </div>
+
+      <DifficultySuggestion />
 
       <div className="flex flex-col gap-4">
         {session.exercises.map((exercise) => (

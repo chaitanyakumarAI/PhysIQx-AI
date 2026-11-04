@@ -1,3 +1,4 @@
+import { recentSessions as latestSessions } from "@/lib/difficulty";
 import type { ProfileGoal, ExperienceLevel, GoalBodyShape } from "@/types/profile";
 import type { ProgramType } from "@/types/training";
 import type {
@@ -447,7 +448,8 @@ export function adaptProgramDifficulty(
   program: ProgramDefinition,
   history: CompletedSessionSummary[],
 ): ProgramDifficultyAdaptation {
-  const recentSessions = history.slice(0, 5);
+  // Newest first: history is stored oldest first, so slice(0, 5) read the oldest.
+  const recentSessions = latestSessions(history);
   const baseExercises = program.variants[0]?.days[0]?.exercises ?? [];
 
   if (recentSessions.length === 0) {
