@@ -5,6 +5,7 @@ import { useCardioStore } from "@/store/cardioStore";
 import { usePlansStore } from "@/store/plansStore";
 import { useProfileStore } from "@/store/profileStore";
 import { useSessionStore } from "@/store/sessionStore";
+import { migrateLegacyMedia, pruneOrphanMedia } from "@/features/profile/lib/media";
 
 /**
  * Persisted Zustand stores use `skipHydration` (see sessionStore.ts) so the
@@ -18,6 +19,11 @@ const persistedStores = [useSessionStore, useProfileStore, usePlansStore, useCar
 export function StoreHydrator() {
   useEffect(() => {
     for (const store of persistedStores) void store.persist.rehydrate();
+    // Images saved before the media store existed move out of localStorage
+    // once; then stored images nothing refers to are cleaned up.
+    void migrateLegacyMedia()
+      .then(() => pruneOrphanMedia())
+      .catch((error: unknown) => console.warn("[media] startup tidy-up failed:", error));
 
     // Cross-tab safety: when another tab writes one of these stores, reload
     // it here before this tab writes again — otherwise this tab's stale copy

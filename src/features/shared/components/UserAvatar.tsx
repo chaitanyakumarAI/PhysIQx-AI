@@ -5,6 +5,7 @@ import {
   DEFAULT_AVATAR_PRESET,
   findAvatarPreset,
 } from "@/features/profile/lib/avatarPresets";
+import { useMediaUrl } from "@/lib/media/useMediaUrl";
 import { useProfileStore } from "@/store/profileStore";
 
 export type UserAvatarProps = Omit<AvatarProps, "src" | "variant">;
@@ -19,8 +20,10 @@ export type UserAvatarProps = Omit<AvatarProps, "src" | "variant">;
  */
 export function UserAvatar(props: UserAvatarProps) {
   const avatarPresetId = useProfileStore((state) => state.avatarPresetId);
+  const avatarMediaId = useProfileStore((state) => state.avatarMediaId);
   const avatarDataUrl = useProfileStore((state) => state.avatarDataUrl);
+  const uploaded = useMediaUrl(avatarMediaId);
   const preset = findAvatarPreset(avatarPresetId) ?? DEFAULT_AVATAR_PRESET;
 
-  return <Avatar {...props} variant="brand" src={avatarDataUrl ?? preset.src} />;
+  return <Avatar {...props} variant="brand" src={uploaded ?? avatarDataUrl ?? preset.src} />;
 }

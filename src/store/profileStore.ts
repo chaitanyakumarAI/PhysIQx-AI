@@ -21,7 +21,12 @@ export interface ProgressPhotoEntry {
   angle: "front" | "side" | "back";
   weightKg?: number;
   notes?: string;
-  dataUrl: string;
+  /** The image in the media store (lib/media); absent = no image, the
+   *  angle's silhouette shows instead. */
+  mediaId?: string;
+  /** Legacy (before IndexedDB): the image inline. Moved to the media store
+   *  once after hydration (features/profile/lib/media). */
+  dataUrl?: string;
 }
 
 /** Ids of the placeholder photos earlier builds wrote into user data. */
@@ -81,7 +86,9 @@ export const DEFAULT_USER_PREFERENCES: UserPreferences = {
 interface ProfileStoreState extends AthleteDetails {
   /** One of AVATAR_PRESETS' ids, or null when unset/uploaded. */
   avatarPresetId: string | null;
-  /** A locally-uploaded image as a data URL (capped at upload time). */
+  /** An uploaded avatar in the media store (lib/media), or null. */
+  avatarMediaId: string | null;
+  /** Legacy (before IndexedDB): an uploaded avatar inline; moved once. */
   avatarDataUrl: string | null;
   heightCm: number | null;
   /** User-logged weights, one per date (logging twice a day overwrites). */
@@ -103,7 +110,7 @@ interface ProfileStoreState extends AthleteDetails {
   /** Profile › Privacy switches (features/profile/lib/privacy). */
   privacyPreferences: Record<string, boolean>;
   setPresetAvatar: (presetId: string) => void;
-  setUploadedAvatar: (dataUrl: string) => void;
+  setUploadedAvatar: (mediaId: string) => void;
   clearAvatar: () => void;
   setHeight: (heightCm: number) => void;
   logWeight: (weightKg: number, date: string) => void;
@@ -137,6 +144,7 @@ export const useProfileStore = create<ProfileStoreState>()(
         birthYear: null,
         currentBuild: null,
         avatarPresetId: null,
+        avatarMediaId: null,
         avatarDataUrl: null,
         heightCm: null,
         weightEntries: [],
@@ -148,10 +156,11 @@ export const useProfileStore = create<ProfileStoreState>()(
         notificationPreferences: DEFAULT_NOTIFICATION_PREFERENCES,
         privacyPreferences: DEFAULT_PRIVACY_PREFERENCES,
         setPresetAvatar: (presetId) =>
-          changeProfile({ avatarPresetId: presetId, avatarDataUrl: null }),
-        setUploadedAvatar: (dataUrl) =>
-          changeProfile({ avatarDataUrl: dataUrl, avatarPresetId: null }),
-        clearAvatar: () => changeProfile({ avatarPresetId: null, avatarDataUrl: null }),
+          changeProfile({ avatarPresetId: presetId, avatarMediaId: null, avatarDataUrl: null }),
+        setUploadedAvatar: (mediaId) =>
+          changeProfile({ avatarMediaId: mediaId, avatarDataUrl: null, avatarPresetId: null }),
+        clearAvatar: () =>
+          changeProfile({ avatarPresetId: null, avatarMediaId: null, avatarDataUrl: null }),
         setHeight: (heightCm) => changeProfile({ heightCm }),
         logWeight: (weightKg, date) => {
           set((state) => ({
@@ -226,7 +235,7 @@ export const useProfileStore = create<ProfileStoreState>()(
     },
     {
       name: "physiqx-profile",
-      version: 3,
+      version: 4,
       migrate: (persisted, version) => {
         const state = persisted as Partial<ProfileStoreState>;
         // v0 → v1: drop the placeholder progress photos earlier builds seeded
@@ -246,6 +255,8 @@ export const useProfileStore = create<ProfileStoreState>()(
         }
         // v2 → v3: Privacy switches were component state, never saved.
         if (version < 3) state.privacyPreferences ??= DEFAULT_PRIVACY_PREFERENCES;
+        // v3 → v4: images moved to IndexedDB; the data URLs move after hydration.
+        if (version < 4) state.avatarMediaId ??= null;
         return state as ProfileStoreState;
       },
       skipHydration: true,

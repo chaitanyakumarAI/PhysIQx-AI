@@ -278,6 +278,8 @@ describe("profilePatch", () => {
     const withPhoto = { ...local, avatarDataUrl: "data:image/png;base64,AAAA" };
     const patch = profilePatch(withPhoto, null, new Set(), server, false);
     expect(patch.profile).not.toHaveProperty("avatarPresetId");
+    const withStoredPhoto = { ...local, avatarMediaId: "avatar-1-x" };
+    expect(profilePatch(withStoredPhoto, null, new Set(), server, false).profile).not.toHaveProperty("avatarPresetId");
     expect(patch.activePlanId).toBeUndefined();
   });
 });

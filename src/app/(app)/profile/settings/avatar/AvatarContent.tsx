@@ -11,32 +11,35 @@ import { Section } from "@/components/layout/Section";
 import { SettingsPageHeader } from "@/features/profile/components/SettingsPageHeader";
 import { UserAvatar } from "@/features/shared/components/UserAvatar";
 import { AVATAR_PRESETS } from "@/features/profile/lib/avatarPresets";
+import { MAX_IMAGE_UPLOAD_BYTES, saveUploadedAvatar } from "@/features/profile/lib/media";
 import { mockProfile } from "@/data/profile";
 import { useProfileStore } from "@/store/profileStore";
-
-/** Uploads above this size would bloat localStorage — data URLs live there. */
-const MAX_UPLOAD_BYTES = 200 * 1024;
 
 export function AvatarContent() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const avatarPresetId = useProfileStore((state) => state.avatarPresetId);
-  const avatarDataUrl = useProfileStore((state) => state.avatarDataUrl);
+  const hasUpload = useProfileStore((state) => Boolean(state.avatarMediaId || state.avatarDataUrl));
   const setPresetAvatar = useProfileStore((state) => state.setPresetAvatar);
-  const setUploadedAvatar = useProfileStore((state) => state.setUploadedAvatar);
+  const [saving, setSaving] = useState(false);
 
-  function handleFile(file: File | undefined) {
+  async function handleFile(file: File | undefined) {
     if (!file) return;
-    if (file.size > MAX_UPLOAD_BYTES) {
-      setUploadError("That image is over 200KB — pick a smaller one.");
+    if (!file.type.startsWith("image/") || file.size > MAX_IMAGE_UPLOAD_BYTES) {
+      setUploadError("That file isn't an image we can use. Pick a JPEG, PNG or HEIC photo.");
       return;
     }
     setUploadError(null);
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (typeof reader.result === "string") setUploadedAvatar(reader.result);
-    };
-    reader.readAsDataURL(file);
+    setSaving(true);
+    try {
+      // Shrunk to avatar size on the way in, so any photo size works.
+      await saveUploadedAvatar(file);
+    } catch (error) {
+      console.error("[avatar] upload failed:", error);
+      setUploadError("Couldn't read that image. Try a different one.");
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -79,22 +82,23 @@ export function AvatarContent() {
             type="file"
             accept="image/*"
             className="sr-only"
-            onChange={(event) => handleFile(event.target.files?.[0])}
+            onChange={(event) => void handleFile(event.target.files?.[0])}
           />
           <Button
             variant="secondary"
             fullWidth
+            loading={saving}
             onClick={() => fileInputRef.current?.click()}
           >
             <Upload size={iconSize.sm} aria-hidden />
-            Choose image (max 200KB)
+            Choose image
           </Button>
           {uploadError && (
             <p role="alert" className="text-sm text-danger">
               {uploadError}
             </p>
           )}
-          {avatarDataUrl && !uploadError && (
+          {hasUpload && !uploadError && (
             <p role="status" className="text-sm text-foreground-secondary">
               Uploaded image applied — it&apos;s saved on this device.
             </p>

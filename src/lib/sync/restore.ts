@@ -320,6 +320,7 @@ export type RestoredProfileFields = Pick<
   | "showcaseAchievementIds"
   | "avatarPresetId"
   | "avatarDataUrl"
+  | "avatarMediaId"
 >;
 
 export interface ProfilePatch {
@@ -402,7 +403,7 @@ export function profilePatch(
       patch.profile.showcaseAchievementIds = settings.showcaseAchievementIds;
     }
     // An uploaded photo isn't synced yet; a preset must not replace it.
-    if (!local.avatarDataUrl && settings.avatarPresetId !== local.avatarPresetId) {
+    if (!local.avatarDataUrl && !local.avatarMediaId && settings.avatarPresetId !== local.avatarPresetId) {
       patch.profile.avatarPresetId = settings.avatarPresetId;
     }
   }

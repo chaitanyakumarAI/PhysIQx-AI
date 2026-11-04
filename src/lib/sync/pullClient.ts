@@ -3,6 +3,7 @@
 import { useSyncExternalStore } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useCardioStore } from "@/store/cardioStore";
+import { clearMedia } from "@/lib/media/mediaStore";
 import { useNotificationStore } from "@/store/notificationStore";
 import { usePlansStore } from "@/store/plansStore";
 import { useProfileStore } from "@/store/profileStore";
@@ -121,8 +122,9 @@ export async function clearLocalData(): Promise<void> {
   useCardioStore.setState(useCardioStore.getInitialState(), true);
   useProfileStore.setState(useProfileStore.getInitialState(), true);
   usePlansStore.setState(usePlansStore.getInitialState(), true);
-  // Read/dismissed notifications are per person too.
+  // Read/dismissed notifications are per person too, and so are their images.
   useNotificationStore.setState(useNotificationStore.getInitialState(), true);
+  await clearMedia().catch(() => undefined);
   const store = storage();
   if (!store) return;
   for (const key of Object.keys(store)) {

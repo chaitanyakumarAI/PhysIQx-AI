@@ -1,8 +1,8 @@
 "use client";
-// Progress photos are local data URLs, which next/image cannot optimize.
+// The upload preview is a local Blob URL, which next/image cannot optimize.
 /* eslint-disable @next/next/no-img-element */
 
-import { useMemo, useState, useRef } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -21,6 +21,12 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { iconSize } from "@/constants/icons";
 import { cn } from "@/lib/utils";
+import { ProgressPhotoImage } from "@/features/profile/components/ProgressPhotoImage";
+import {
+  MAX_IMAGE_UPLOAD_BYTES,
+  removeProgressPhoto,
+  saveProgressPhoto,
+} from "@/features/profile/lib/media";
 import { useProfileStore, type ProgressPhotoEntry } from "@/store/profileStore";
 
 type ViewMode = "timeline" | "compare";
@@ -30,8 +36,6 @@ const NO_PHOTOS: ProgressPhotoEntry[] = [];
 
 export function PhotosContent() {
   const photos = useProfileStore((state) => state.photos ?? NO_PHOTOS);
-  const addPhoto = useProfileStore((state) => state.addPhoto);
-  const deletePhoto = useProfileStore((state) => state.deletePhoto);
   const weightEntries = useProfileStore((state) => state.weightEntries);
 
   const [mode, setMode] = useState<ViewMode>("timeline");
@@ -50,7 +54,18 @@ export function PhotosContent() {
   const [newAngle, setNewAngle] = useState<"front" | "side" | "back">("front");
   const [newWeight, setNewWeight] = useState<string>(latestWeight.toString());
   const [newNotes, setNewNotes] = useState("");
+  const [newImage, setNewImage] = useState<File | null>(null);
   const [newImagePreview, setNewImagePreview] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+
+  // The preview is an object URL: release it when replaced or on unmount.
+  useEffect(
+    () => () => {
+      if (newImagePreview) URL.revokeObjectURL(newImagePreview);
+    },
+    [newImagePreview],
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Filtered photos for timeline
@@ -66,34 +81,41 @@ export function PhotosContent() {
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      setNewImagePreview(event.target?.result as string);
-    };
-    reader.readAsDataURL(file);
+    if (!file.type.startsWith("image/") || file.size > MAX_IMAGE_UPLOAD_BYTES) {
+      setSaveError("That file isn't a photo we can use. Pick a JPEG, PNG or HEIC image.");
+      return;
+    }
+    setSaveError(null);
+    setNewImage(file);
+    setNewImagePreview(URL.createObjectURL(file));
   }
 
-  function handleSavePhoto() {
-    // If no custom image was uploaded, generate a themed athletic SVG silhouette
-    let finalDataUrl = newImagePreview;
-    if (!finalDataUrl) {
-      const color = newAngle === "front" ? "%2310b981" : newAngle === "side" ? "%2338bdf8" : "%23a855f7";
-      finalDataUrl = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='500' viewBox='0 0 400 500' fill='%23121214'><rect width='400' height='500' rx='16' fill='%2318181b'/><circle cx='200' cy='130' r='45' fill='${color}' fill-opacity='0.3' stroke='${color}' stroke-width='2'/><path d='M130,220 C130,170 270,170 270,220 L280,360 C280,380 250,390 200,390 C150,390 120,380 120,360 Z' fill='${color}' fill-opacity='0.25' stroke='${color}' stroke-width='2'/><text x='200' y='450' fill='${color}' font-family='sans-serif' font-size='14' font-weight='bold' text-anchor='middle'>Logged Check-in (${newAngle.toUpperCase()})</text></svg>`;
-    }
-
-    addPhoto({
-      date: newDate,
-      angle: newAngle,
-      weightKg: newWeight ? parseFloat(newWeight) : undefined,
-      notes: newNotes.trim() || undefined,
-      dataUrl: finalDataUrl,
-    });
-
-    // Reset and close
+  function closeUpload() {
     setShowUploadModal(false);
+    setNewImage(null);
     setNewImagePreview(null);
-    setNewNotes("");
+    setSaveError(null);
+  }
+
+  async function handleSavePhoto() {
+    setSaving(true);
+    setSaveError(null);
+    try {
+      // Without an image, the check-in shows the angle's silhouette.
+      await saveProgressPhoto(newImage, {
+        date: newDate,
+        angle: newAngle,
+        weightKg: newWeight ? parseFloat(newWeight) : undefined,
+        notes: newNotes.trim() || undefined,
+      });
+      setNewNotes("");
+      closeUpload();
+    } catch (error) {
+      console.error("[photos] save failed:", error);
+      setSaveError("Couldn't save that photo. Try a different image.");
+    } finally {
+      setSaving(false);
+    }
   }
 
   // Calculate comparison deltas
@@ -189,7 +211,7 @@ export function PhotosContent() {
               Log Transformation Photo
             </h3>
             <button
-              onClick={() => setShowUploadModal(false)}
+              onClick={closeUpload}
               className="text-foreground-secondary hover:text-foreground"
             >
               <X size={18} />
@@ -309,14 +331,19 @@ export function PhotosContent() {
               variant="secondary"
               size="sm"
               fullWidth
-              onClick={() => setShowUploadModal(false)}
+              onClick={closeUpload}
             >
               Cancel
             </Button>
-            <Button size="sm" fullWidth onClick={handleSavePhoto}>
+            <Button size="sm" fullWidth loading={saving} onClick={() => void handleSavePhoto()}>
               Save Check-in
             </Button>
           </div>
+          {saveError && (
+            <p role="alert" className="text-sm text-danger">
+              {saveError}
+            </p>
+          )}
         </Card>
       )}
 
@@ -350,8 +377,8 @@ export function PhotosContent() {
                   className="flex flex-col gap-3 overflow-hidden border-border/60 group hover:border-brand/40 transition-colors"
                 >
                   <div className="relative aspect-[4/5] w-full overflow-hidden rounded-md bg-surface-elevated">
-                    <img
-                      src={photo.dataUrl}
+                    <ProgressPhotoImage
+                      photo={photo}
                       alt={`${photo.angle} progress on ${photo.date}`}
                       className="size-full object-cover"
                     />
@@ -361,7 +388,7 @@ export function PhotosContent() {
                       </span>
                     </div>
                     <button
-                      onClick={() => deletePhoto(photo.id)}
+                      onClick={() => void removeProgressPhoto(photo.id)}
                       className="absolute top-2.5 right-2.5 grid size-7 place-items-center rounded-full bg-background/80 text-foreground-secondary hover:text-rose-400 opacity-0 group-hover:opacity-100 transition-opacity"
                       aria-label="Delete check-in"
                     >
@@ -485,11 +512,7 @@ export function PhotosContent() {
             {baselinePhoto && (
               <Card padding="sm" className="flex flex-col gap-2 overflow-hidden border-border/60">
                 <div className="relative aspect-[4/5] w-full overflow-hidden rounded-md bg-surface-elevated">
-                  <img
-                    src={baselinePhoto.dataUrl}
-                    alt="Baseline"
-                    className="size-full object-cover"
-                  />
+                  <ProgressPhotoImage photo={baselinePhoto} alt="Baseline" className="size-full object-cover" />
                   <span className="absolute top-2 left-2 rounded-full bg-background/80 backdrop-blur-sm px-2 py-0.5 text-[10px] font-bold text-foreground">
                     Before
                   </span>
@@ -508,11 +531,7 @@ export function PhotosContent() {
             {currentPhoto && (
               <Card padding="sm" className="flex flex-col gap-2 overflow-hidden border-brand/40">
                 <div className="relative aspect-[4/5] w-full overflow-hidden rounded-md bg-surface-elevated">
-                  <img
-                    src={currentPhoto.dataUrl}
-                    alt="Current"
-                    className="size-full object-cover"
-                  />
+                  <ProgressPhotoImage photo={currentPhoto} alt="Current" className="size-full object-cover" />
                   <span className="absolute top-2 left-2 rounded-full bg-brand text-background px-2 py-0.5 text-[10px] font-bold">
                     After
                   </span>
