@@ -70,7 +70,7 @@ Free Starter team: build with write tools (`use_figma`, `upload_assets`); reads 
   - [x] Phase D (2026-10-24): account-tagged outbox, account switch, sign-out (upload, confirm, clear), restore state on Home, Cloud sync row
   - [ ] Phase E: two-browser verification
 - [x] **Stale docs** (2026-11-02): middleware comment rewritten; `PHYSIQ_SCORE.md` gained "As built" notes (snapshots are recomputed, not stored)
-- [ ] **Tests**: RLS cross-user tests (pgTAP / Supabase CLI) and one Playwright flow (log offline → online → rows exist)
+- [x] **Tests**: RLS cross-user tests (pgTAP / Supabase CLI) and one Playwright flow (log offline → online → rows exist) — 2026-11-04: `supabase/tests/rls_check.sql` (run in the SQL Editor; rolls back) and `npm run test:e2e` (guest flow passes; the signed-in flow needs `E2E_EMAIL`/`E2E_PASSWORD`)
 
 ## 🔴 Phase 6 — Interactive Character Guide Overlays
 
