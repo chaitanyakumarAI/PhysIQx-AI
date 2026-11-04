@@ -1,13 +1,17 @@
-import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { onSyncEvent, type SyncEvent } from "@/lib/sync/syncEvents";
 import { getMedia, listMediaIds, memoryBackend, putMedia, setMediaBackend } from "@/lib/media/mediaStore";
 import { useProfileStore } from "@/store/profileStore";
 import {
+  mediaBackfillRecords,
   migrateLegacyMedia,
   pruneOrphanMedia,
   removeProgressPhoto,
   saveProgressPhoto,
   saveUploadedAvatar,
+  setPhotoBackup,
 } from "./media";
+import { PHOTO_BACKUP } from "./privacy";
 
 // The profile store binds to localStorage when created (at import).
 vi.hoisted(() => {
@@ -32,10 +36,26 @@ beforeAll(async () => {
   await useProfileStore.persist.rehydrate();
 });
 
+let events: SyncEvent[] = [];
+
 beforeEach(() => {
   setMediaBackend(memoryBackend());
   useProfileStore.setState({ photos: [], avatarMediaId: null, avatarDataUrl: null, avatarPresetId: null });
+  useProfileStore.getState().updatePrivacyPreferences({ [PHOTO_BACKUP]: false });
+  events = [];
+  onSyncEvent((event) => events.push(event));
 });
+
+afterEach(() => onSyncEvent(null));
+
+const mediaEvents = () =>
+  events.flatMap((event) =>
+    event.type === "mediaSaved"
+      ? [`saved:${event.media.kind}`]
+      : event.type === "mediaDeleted"
+        ? [`deleted:${event.mediaId.split("-")[0]}`]
+        : [],
+  );
 
 describe("progress photos", () => {
   it("stores the image in the media store and only its id in the profile", async () => {
@@ -67,6 +87,39 @@ describe("avatar", () => {
     expect(second).not.toBe(first);
     expect(await getMedia(first)).toBeUndefined();
     expect(await getMedia(second)).toBeInstanceOf(Blob);
+  });
+});
+
+describe("cloud backup (owner decision: avatar always, photos opt-in)", () => {
+  it("backs up photos only once the athlete turns photo backup on", async () => {
+    await saveProgressPhoto(new Blob(["a"], { type: "image/jpeg" }), details);
+    expect(mediaEvents()).toEqual([]);
+
+    setPhotoBackup(true);
+    expect(mediaEvents()).toEqual(["saved:photo"]);
+    const [saved] = events.filter((event) => event.type === "mediaSaved");
+    expect(saved).toMatchObject({ media: { kind: "photo", photo: { date: "2026-11-04", angle: "front", weightKg: 80 } } });
+
+    await saveProgressPhoto(new Blob(["b"], { type: "image/jpeg" }), details);
+    expect(mediaEvents()).toEqual(["saved:photo", "saved:photo"]);
+    expect(mediaBackfillRecords()).toHaveLength(2);
+  });
+
+  it("deletes the cloud copies when photo backup is turned off, and when a check-in is deleted", async () => {
+    await saveProgressPhoto(new Blob(["a"], { type: "image/jpeg" }), details);
+    await saveProgressPhoto(null, details); // no image: nothing to back up
+    setPhotoBackup(false);
+    expect(mediaEvents()).toEqual(["deleted:photo"]);
+
+    await removeProgressPhoto(useProfileStore.getState().photos.find((photo) => photo.mediaId)!.id);
+    expect(mediaEvents()).toEqual(["deleted:photo", "deleted:photo"]);
+  });
+
+  it("always backs up an uploaded avatar, and removes the old one's copy", async () => {
+    await saveUploadedAvatar(new Blob(["first"], { type: "image/png" }));
+    await saveUploadedAvatar(new Blob(["second"], { type: "image/png" }));
+    useProfileStore.getState().setPresetAvatar("gen-z-girl");
+    expect(mediaEvents()).toEqual(["saved:avatar", "saved:avatar", "deleted:avatar", "deleted:avatar"]);
   });
 });
 

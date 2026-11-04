@@ -62,7 +62,7 @@ Free Starter team: build with write tools (`use_figma`, `upload_assets`); reads 
 - [x] **Cross-tab safety** (2026-10-23, StoreHydrator): rehydrate stores on `storage` events (or a `BroadcastChannel`) so two tabs can't overwrite each other's history
 - [x] **Queue abandoned workouts** for upload too (2026-10-23: the store emits every archived workout — finished, abandoned, or replaced — and the sync client queues it)
 - [x] **RPE in top sets** so `computeOverloadSuggestion`'s RPE auto-regulation can run on real data (2026-11-02: `TopSet.rpe` from the heaviest set)
-- [ ] **Photos and avatar** out of `localStorage` (data URLs) into IndexedDB / Supabase Storage — IndexedDB done 2026-11-02 (`lib/media`, shrunk on import, one-time move of old data URLs); cloud backup is W7 in `docs/NEXT_ROUND_PLAN.md`
+- [x] **Photos and avatar** out of `localStorage` (data URLs) into IndexedDB / Supabase Storage — IndexedDB done 2026-11-02 (`lib/media`, shrunk on import, one-time move of old data URLs); cloud backup done 2026-11-04 (W7: migration 008, private `athlete-media` bucket; avatar always, photos opt-in in Privacy) — *apply 008 in the SQL Editor*
 - [ ] **Pull / restore** for signed-in users on a new device (sync is push-only today) — plan: `docs/SYNC_RESTORE_PLAN.md`
   - [x] Phase A: migration 007 (profile columns, `weigh_ins`, `plans`, tombstones, cursor triggers, `get_ledger_changes`) — applied 2026-10-23
   - [x] Phase B (2026-10-23): weigh-ins, the profile snapshot (details, onboarding, active plan, settings), plans and deletes go through the outbox; one-time backfill; a flush no longer overwrites entries queued while it ran

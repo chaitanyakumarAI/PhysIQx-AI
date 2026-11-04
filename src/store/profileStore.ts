@@ -130,13 +130,18 @@ const SHOWCASE_LIMIT = 3;
 
 export const useProfileStore = create<ProfileStoreState>()(
   persist(
-    (set) => {
+    (set, get) => {
       /** Writes a field that syncs (see lib/sync/profileSnapshot) and announces it. */
       const changeProfile = (
         partial: Partial<ProfileStoreState> | ((state: ProfileStoreState) => Partial<ProfileStoreState>),
       ) => {
         set(partial);
         emitSyncEvent({ type: "profileChanged" });
+      };
+      /** Switching away from an uploaded avatar: its cloud copy goes too. */
+      const discardUploadedAvatar = () => {
+        const { avatarMediaId } = get();
+        if (avatarMediaId) emitSyncEvent({ type: "mediaDeleted", mediaId: avatarMediaId });
       };
       return {
         displayName: null,
@@ -155,12 +160,16 @@ export const useProfileStore = create<ProfileStoreState>()(
         preferences: DEFAULT_USER_PREFERENCES,
         notificationPreferences: DEFAULT_NOTIFICATION_PREFERENCES,
         privacyPreferences: DEFAULT_PRIVACY_PREFERENCES,
-        setPresetAvatar: (presetId) =>
-          changeProfile({ avatarPresetId: presetId, avatarMediaId: null, avatarDataUrl: null }),
+        setPresetAvatar: (presetId) => {
+          discardUploadedAvatar();
+          changeProfile({ avatarPresetId: presetId, avatarMediaId: null, avatarDataUrl: null });
+        },
         setUploadedAvatar: (mediaId) =>
           changeProfile({ avatarMediaId: mediaId, avatarDataUrl: null, avatarPresetId: null }),
-        clearAvatar: () =>
-          changeProfile({ avatarPresetId: null, avatarMediaId: null, avatarDataUrl: null }),
+        clearAvatar: () => {
+          discardUploadedAvatar();
+          changeProfile({ avatarPresetId: null, avatarMediaId: null, avatarDataUrl: null });
+        },
         setHeight: (heightCm) => changeProfile({ heightCm }),
         logWeight: (weightKg, date) => {
           set((state) => ({
@@ -177,7 +186,8 @@ export const useProfileStore = create<ProfileStoreState>()(
             photos: [
               {
                 ...entry,
-                id: "photo-" + Date.now(),
+                // Random suffix: two check-ins saved in one millisecond must not collide.
+                id: `photo-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
               },
               ...state.photos,
             ],

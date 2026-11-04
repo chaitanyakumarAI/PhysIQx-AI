@@ -35,7 +35,7 @@ export interface LedgerCursor {
 export type LedgerCursors = Partial<Record<LedgerTable, LedgerCursor>>;
 
 /** What a pull accepts as its starting point (Postgres timestamps keep microseconds). */
-const ledgerCursorSchema = z.object({ at: z.iso.datetime({ offset: true }), id: z.guid() }).strict();
+export const ledgerCursorSchema = z.object({ at: z.iso.datetime({ offset: true }), id: z.guid() }).strict();
 export const ledgerCursorsSchema = z
   .object({
     sessions: ledgerCursorSchema.optional(),
@@ -402,8 +402,12 @@ export function profilePatch(
     if (!same(settings.showcaseAchievementIds, local.showcaseAchievementIds)) {
       patch.profile.showcaseAchievementIds = settings.showcaseAchievementIds;
     }
-    // An uploaded photo isn't synced yet; a preset must not replace it.
-    if (!local.avatarDataUrl && !local.avatarMediaId && settings.avatarPresetId !== local.avatarPresetId) {
+    // Another device's uploaded avatar wins (its bytes arrive with the media
+    // pull); a preset never replaces this device's own uploaded photo.
+    if (settings.avatarMediaId && settings.avatarMediaId !== local.avatarMediaId) {
+      patch.profile.avatarMediaId = settings.avatarMediaId;
+      patch.profile.avatarPresetId = null;
+    } else if (!local.avatarDataUrl && !local.avatarMediaId && settings.avatarPresetId !== local.avatarPresetId) {
       patch.profile.avatarPresetId = settings.avatarPresetId;
     }
   }
@@ -430,17 +434,24 @@ const ZERO_ID = "00000000-0000-0000-0000-000000000000";
  */
 export function nextCursors(previous: LedgerCursors, page: LedgerPage): LedgerCursors {
   const next: LedgerCursors = { ...previous };
-  const horizon = Date.parse(page.server_time) - OVERLAP_MS;
   for (const table of LEDGER_TABLES) {
-    const last = page[table].at(-1);
-    if (!last) continue;
-    const caughtUp = !page.has_more[table];
-    next[table] =
-      caughtUp && Number.isFinite(horizon) && Date.parse(last.updated_at) > horizon
-        ? { at: new Date(horizon).toISOString(), id: ZERO_ID }
-        : { at: last.updated_at, id: last.id };
+    const cursor = advanceCursor(page[table].at(-1), page.has_more[table], page.server_time);
+    if (cursor) next[table] = cursor;
   }
   return next;
+}
+
+/** One stream's next cursor from its page's last row (null: no rows, keep the old one). */
+export function advanceCursor(
+  last: { id: string; updated_at: string } | undefined,
+  hasMore: boolean,
+  serverTime: string,
+): LedgerCursor | null {
+  if (!last) return null;
+  const horizon = Date.parse(serverTime) - OVERLAP_MS;
+  return !hasMore && Number.isFinite(horizon) && Date.parse(last.updated_at) > horizon
+    ? { at: new Date(horizon).toISOString(), id: ZERO_ID }
+    : { at: last.updated_at, id: last.id };
 }
 
 export function hasMorePages(page: LedgerPage): boolean {

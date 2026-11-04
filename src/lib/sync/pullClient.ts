@@ -3,23 +3,31 @@
 import { useSyncExternalStore } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useCardioStore } from "@/store/cardioStore";
-import { clearMedia } from "@/lib/media/mediaStore";
+import { downloadMedia } from "@/lib/media/cloudMedia";
+import { clearMedia, deleteMedia, getMedia } from "@/lib/media/mediaStore";
+import { forgetMediaUrl } from "@/lib/media/useMediaUrl";
 import { useNotificationStore } from "@/store/notificationStore";
 import { usePlansStore } from "@/store/plansStore";
 import { useProfileStore } from "@/store/profileStore";
 import { useSessionStore } from "@/store/sessionStore";
 import { pullLedgerChanges } from "./pullLedgerChanges";
+import { pullMediaChanges } from "./pullMediaChanges";
 import {
+  advanceCursor,
   hasMorePages,
+  ledgerCursorSchema,
   ledgerCursorsSchema,
   mergeLedger,
   nextCursors,
   profilePatch,
+  type LedgerCursor,
   type LedgerCursors,
   type LedgerPage,
 } from "./restore";
+import { mergeMedia } from "./restoreMedia";
 import {
   deviceOwner,
+  pendingMediaIds,
   pendingUploadsFor,
   setDeviceOwner,
   setSignedInAccount,
@@ -42,6 +50,8 @@ import { whenHydrated } from "./whenHydrated";
  */
 
 const CURSOR_PREFIX = "physiqx-sync-cursor:";
+/** Media has its own stream (migration 008); same prefix, so clearing forgets it too. */
+const mediaCursorKey = (userId: string) => `${CURSOR_PREFIX}media:${userId}`;
 const LAST_PULL_PREFIX = "physiqx-sync-last-pull:";
 const PAGE_SIZE = 100;
 /** A runaway guard: 50 pages of 100 is years of training. */
@@ -124,7 +134,8 @@ export async function clearLocalData(): Promise<void> {
   usePlansStore.setState(usePlansStore.getInitialState(), true);
   // Read/dismissed notifications are per person too, and so are their images.
   useNotificationStore.setState(useNotificationStore.getInitialState(), true);
-  await clearMedia().catch(() => undefined);
+  // Images still waiting to upload stay: they go up on that account's next sign-in.
+  await clearMedia(pendingMediaIds()).catch(() => undefined);
   const store = storage();
   if (!store) return;
   for (const key of Object.keys(store)) {
@@ -171,6 +182,64 @@ function applyPage(page: LedgerPage, userId: string): number {
   return merged.changes + profileChanges + (nextActive !== activePlanId ? 1 : 0);
 }
 
+function readMediaCursor(store: Storage, userId: string): LedgerCursor | null {
+  try {
+    const parsed = ledgerCursorSchema.safeParse(JSON.parse(store.getItem(mediaCursorKey(userId)) ?? "null"));
+    return parsed.success ? parsed.data : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Restores images: photo check-ins (when this account backs them up) and
+ * the bytes of any image this device is missing, the avatar included.
+ * Never fails the pull: before migration 008 is applied, or offline
+ * mid-download, it simply tries again next time.
+ */
+async function pullMedia(store: Storage, userId: string): Promise<number> {
+  let cursor = readMediaCursor(store, userId);
+  let changes = 0;
+  try {
+    for (let pageIndex = 0; pageIndex < MAX_PAGES; pageIndex += 1) {
+      const result = await pullMediaChanges(cursor, PAGE_SIZE);
+      if (result.status !== "ok" || result.userId !== userId) return changes;
+
+      await useProfileStore.persist.rehydrate();
+      const pending = new Set(pendingUploadsFor(userId).map((entry) => entry.key));
+      const { photos, avatarMediaId } = useProfileStore.getState();
+      const merged = mergeMedia(photos, result.page.media, pending, avatarMediaId);
+      if (merged.photos !== photos) useProfileStore.setState({ photos: merged.photos });
+      for (const id of merged.discard) {
+        forgetMediaUrl(id);
+        await deleteMedia(id).catch(() => undefined);
+      }
+      let complete = true;
+      for (const item of merged.download) {
+        if (await getMedia(item.mediaId)) continue;
+        try {
+          await downloadMedia(item.mediaId, item.storagePath);
+        } catch (error) {
+          complete = false;
+          console.warn("[pull] image download failed:", item.mediaId, error);
+        }
+      }
+      changes += merged.changes;
+      // A failed download keeps the cursor here, so the next pull tries again.
+      if (!complete) return changes;
+      const next = advanceCursor(result.page.media.at(-1), result.page.has_more, result.page.server_time);
+      if (next) {
+        cursor = next;
+        store.setItem(mediaCursorKey(userId), JSON.stringify(next));
+      }
+      if (!result.page.has_more) break;
+    }
+  } catch (error) {
+    console.warn("[pull] media restore failed:", error);
+  }
+  return changes;
+}
+
 async function run(userId: string): Promise<PullOutcome> {
   if (!navigator.onLine) return "skipped";
   const store = storage();
@@ -206,6 +275,7 @@ async function run(userId: string): Promise<PullOutcome> {
     store.setItem(CURSOR_PREFIX + userId, JSON.stringify(cursors));
     if (!hasMorePages(result.page)) break;
   }
+  changes += await pullMedia(store, userId);
   const now = new Date().toISOString();
   store.setItem(LAST_PULL_PREFIX + userId, now);
   update({ lastSyncedAt: now });

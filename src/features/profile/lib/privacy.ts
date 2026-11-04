@@ -9,7 +9,16 @@ export interface PrivacyPreference {
   description: string;
 }
 
+/** Opt-in (owner decision 2026-11-02): progress photos are body photos. */
+export const PHOTO_BACKUP = "photo-backup";
+
 export const PRIVACY_PREFERENCES: PrivacyPreference[] = [
+  {
+    id: PHOTO_BACKUP,
+    label: "Back up progress photos",
+    description:
+      "Keep a private copy in your account so photos come back on a new phone. Turning this off deletes the copies.",
+  },
   {
     id: "leaderboard-visibility",
     label: "Show me on leaderboards",
@@ -31,4 +40,5 @@ export const DEFAULT_PRIVACY_PREFERENCES: Record<string, boolean> = {
   "leaderboard-visibility": true,
   "circle-activity-sharing": true,
   "friend-requests": true,
+  [PHOTO_BACKUP]: false,
 };

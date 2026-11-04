@@ -50,6 +50,8 @@ export const profileSnapshotSchema = z
         .refine((prefs) => Object.keys(prefs).length <= 50, "Too many notification preferences"),
       showcaseAchievementIds: z.array(z.string().min(1).max(200)).max(3),
       avatarPresetId: z.string().min(1).max(60).nullable(),
+      // An uploaded avatar's media id (its bytes sync as a media item).
+      avatarMediaId: z.string().regex(/^avatar-\d+-[a-z0-9]+$/).nullable().optional(),
       // Optional: snapshots from before the Privacy switches were saved.
       privacyPreferences: z
         .record(z.string().min(1).max(60), z.boolean())
@@ -88,6 +90,7 @@ export function buildProfileSnapshot(
       showcaseAchievementIds: profile.showcaseAchievementIds.slice(-3),
       avatarPresetId: profile.avatarPresetId,
       privacyPreferences: { ...DEFAULT_PRIVACY_PREFERENCES, ...profile.privacyPreferences },
+      avatarMediaId: profile.avatarMediaId ?? null,
     },
     updatedAt,
   };

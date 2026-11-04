@@ -268,6 +268,14 @@ describe("profilePatch", () => {
     expect(patch.activePlanId).toBeUndefined();
   });
 
+  it("takes another device's uploaded avatar (its bytes come with the media pull)", () => {
+    const withUpload = { ...server, settings: { ...(server.settings as object), avatarMediaId: "avatar-1730700000000-k3j9a" } };
+    expect(profilePatch(local, null, new Set(), withUpload, false).profile).toMatchObject({
+      avatarMediaId: "avatar-1730700000000-k3j9a",
+      avatarPresetId: null,
+    });
+  });
+
   it("restores the Privacy switches, and leaves them alone for older snapshots without them", () => {
     const withPrivacy = { ...server, settings: { ...(server.settings as object), privacyPreferences: { "friend-requests": false } } };
     expect(profilePatch(local, null, new Set(), withPrivacy, false).profile.privacyPreferences).toEqual({ "friend-requests": false });

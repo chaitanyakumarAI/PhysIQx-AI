@@ -79,11 +79,28 @@ async function call<T>(operation: (media: MediaBackend) => Promise<T>): Promise<
   }
 }
 
+/** Told whenever an image is stored, so a waiting view can show it. */
+const listeners = new Set<(id: string) => void>();
+
+export function onMediaStored(listener: (id: string) => void): () => void {
+  listeners.add(listener);
+  return () => listeners.delete(listener);
+}
+
 export const getMedia = (id: string) => call((media) => media.get(id));
-export const putMedia = (id: string, blob: Blob) => call((media) => media.put(id, blob));
 export const deleteMedia = (id: string) => call((media) => media.delete(id));
-export const clearMedia = () => call((media) => media.clear());
 export const listMediaIds = () => call((media) => media.keys());
+
+export async function putMedia(id: string, blob: Blob): Promise<void> {
+  await call((media) => media.put(id, blob));
+  listeners.forEach((listener) => listener(id));
+}
+
+/** Empties the store, except `keep` (images still waiting to upload). */
+export async function clearMedia(keep: ReadonlySet<string> = new Set()): Promise<void> {
+  if (keep.size === 0) return call((media) => media.clear());
+  for (const id of await listMediaIds()) if (!keep.has(id)) await deleteMedia(id);
+}
 
 /** "photo-1730700000000-k3j9a": the timestamp lets cleanup skip fresh saves. */
 export function newMediaId(kind: "photo" | "avatar"): string {

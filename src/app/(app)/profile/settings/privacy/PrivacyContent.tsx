@@ -4,7 +4,8 @@ import { Card } from "@/components/ui/Card";
 import { Switch } from "@/components/ui/Switch";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { SettingsPageHeader } from "@/features/profile/components/SettingsPageHeader";
-import { DEFAULT_PRIVACY_PREFERENCES, PRIVACY_PREFERENCES } from "@/features/profile/lib/privacy";
+import { setPhotoBackup } from "@/features/profile/lib/media";
+import { DEFAULT_PRIVACY_PREFERENCES, PHOTO_BACKUP, PRIVACY_PREFERENCES } from "@/features/profile/lib/privacy";
 import { useProfileStore } from "@/store/profileStore";
 
 export function PrivacyContent() {
@@ -23,7 +24,10 @@ export function PrivacyContent() {
             </div>
             <Switch
               checked={enabled[pref.id] ?? false}
-              onChange={(checked) => update({ [pref.id]: checked })}
+              onChange={(checked) =>
+                // Photo backup also uploads or deletes the cloud copies.
+                pref.id === PHOTO_BACKUP ? setPhotoBackup(checked) : update({ [pref.id]: checked })
+              }
               label={pref.label}
             />
           </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getMedia } from "./mediaStore";
+import { getMedia, onMediaStored } from "./mediaStore";
 
 /**
  * Object URLs for stored images, shared across components and kept while
@@ -35,16 +35,23 @@ export function useMediaUrl(mediaId: string | null | undefined): string | null {
   useEffect(() => {
     if (!mediaId || urls.has(mediaId)) return;
     let cancelled = false;
-    void getMedia(mediaId)
-      .then((blob) => {
-        if (cancelled || !blob) return;
-        const url = urls.get(mediaId) ?? URL.createObjectURL(blob);
-        remember(mediaId, url);
-        setLoaded({ id: mediaId, url });
-      })
-      .catch((error: unknown) => console.warn("[media] could not load", mediaId, error));
+    const load = () =>
+      void getMedia(mediaId)
+        .then((blob) => {
+          if (cancelled || !blob) return;
+          const url = urls.get(mediaId) ?? URL.createObjectURL(blob);
+          remember(mediaId, url);
+          setLoaded({ id: mediaId, url });
+        })
+        .catch((error: unknown) => console.warn("[media] could not load", mediaId, error));
+    load();
+    // Not here yet (a restore still downloading it): show it once stored.
+    const stop = onMediaStored((id) => {
+      if (id === mediaId) load();
+    });
     return () => {
       cancelled = true;
+      stop();
     };
   }, [mediaId]);
 

@@ -2,7 +2,11 @@
 
 import { useSyncExternalStore } from "react";
 import { saveProfileSnapshot } from "@/features/profile/actions/saveProfileSnapshot";
+import { deleteMediaRecord, saveMediaRecord } from "@/features/profile/actions/syncMedia";
+import type { MediaRecord } from "@/features/profile/lib/mediaRecord";
+import { uploadMedia } from "@/lib/media/cloudMedia";
 import { saveWeighIn } from "@/features/profile/actions/saveWeighIn";
+import { mediaBackfillRecords } from "@/features/profile/lib/media";
 import { buildProfileSnapshot } from "@/features/profile/lib/profileSnapshot";
 import { saveWorkoutSession } from "@/features/session/actions/saveWorkoutSession";
 import { deleteCardioActivity } from "@/features/train/actions/deleteCardioActivity";
@@ -41,6 +45,8 @@ const LEGACY_CARDIO_KEY = "physiqx-cardio-sync-queue";
 const CHANGE_EVENT = "physiqx-outbox-change";
 /** Set once this device has queued what it recorded before everything synced. */
 const BACKFILL_KEY = "physiqx-sync-backfill-v1";
+/** Images arrived later (W7): their own one-time backfill. */
+const MEDIA_BACKFILL_KEY = "physiqx-sync-backfill-media-v1";
 /** The account this device's local data belongs to (set by its first restore). */
 const OWNER_KEY = "physiqx-sync-owner";
 
@@ -124,7 +130,25 @@ function send(job: SyncJob): Promise<SyncWriteResult> {
       return saveUserPlan(job.plan);
     case "planDelete":
       return deleteUserPlan(job.id);
+    case "media":
+      return sendMedia(job.media);
+    case "mediaDelete":
+      return deleteMediaRecord(job.id);
   }
+}
+
+/** Bytes first (straight to Storage), then the record that points at them. */
+async function sendMedia(media: MediaRecord): Promise<SyncWriteResult> {
+  const account = signedInAccount;
+  if (!account) return { success: false, reason: "unauthenticated", error: "Not signed in." };
+  // Deleted from this device since it was queued: nothing left to back up.
+  if ((await uploadMedia(media.mediaId, account)) === "missing") return { success: true };
+  return saveMediaRecord(media);
+}
+
+/** Images still waiting to upload: kept when local data is cleared or pruned. */
+export function pendingMediaIds(): Set<string> {
+  return new Set(loadOutbox().filter((entry) => entry.job.kind === "media").map((entry) => entry.job.id));
 }
 
 async function deliver(job: SyncJob): Promise<JobResult> {
@@ -238,10 +262,21 @@ function backfillOnce(): void {
   store.setItem(BACKFILL_KEY, new Date().toISOString());
 }
 
+/** Queues, once per device, images saved before they synced (the avatar; photos if opted in). */
+function backfillMediaOnce(): void {
+  const store = storage();
+  if (!store || store.getItem(MEDIA_BACKFILL_KEY)) return;
+  queue(mediaBackfillRecords().map((media): SyncJob => ({ kind: "media", id: media.mediaId, media })));
+  store.setItem(MEDIA_BACKFILL_KEY, new Date().toISOString());
+}
+
 /** Retries due entries when the browser comes back online and periodically. */
 export function startBackgroundSync(): () => void {
   if (typeof window === "undefined") return () => {};
-  void whenHydrated([useProfileStore, usePlansStore]).then(backfillOnce);
+  void whenHydrated([useProfileStore, usePlansStore]).then(() => {
+    backfillOnce();
+    backfillMediaOnce();
+  });
   const run = () => void syncNow();
   window.addEventListener("online", run);
   const timer = window.setInterval(run, 60_000);

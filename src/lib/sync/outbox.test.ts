@@ -38,6 +38,9 @@ describe("outbox keys", () => {
     queue = enqueue(queue, cardioJob("c1"), NOW); // re-imported
     expect(queue.map((entry) => entry.key)).toEqual(["plan:p1", "cardio:c1"]);
     expect(queue.map((entry) => entry.job.kind)).toEqual(["planDelete", "cardio"]);
+    queue = enqueue(queue, { kind: "media", id: "photo-1-a", media: { mediaId: "photo-1-a", kind: "avatar" } }, NOW);
+    queue = enqueue(queue, { kind: "mediaDelete", id: "photo-1-a" }, NOW);
+    expect(queue.at(-1)).toMatchObject({ key: "media:photo-1-a", job: { kind: "mediaDelete" } });
   });
 });
 

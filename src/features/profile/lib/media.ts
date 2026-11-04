@@ -7,8 +7,11 @@ import {
   putMedia,
 } from "@/lib/media/mediaStore";
 import { forgetMediaUrl } from "@/lib/media/useMediaUrl";
+import { emitSyncEvent } from "@/lib/sync/syncEvents";
 import { whenHydrated } from "@/lib/sync/whenHydrated";
 import { useProfileStore, type ProgressPhotoEntry } from "@/store/profileStore";
+import type { MediaRecord } from "./mediaRecord";
+import { PHOTO_BACKUP } from "./privacy";
 
 /**
  * The athlete's images: progress photos and an uploaded avatar. Bytes live
@@ -23,6 +26,59 @@ export const MAX_IMAGE_UPLOAD_BYTES = 25 * 1024 * 1024;
 
 export type PhotoDetails = Omit<ProgressPhotoEntry, "id" | "mediaId" | "dataUrl">;
 
+// --- Cloud backup (W7): the avatar always; photos only when opted in. ---
+
+export function photoBackupEnabled(): boolean {
+  return useProfileStore.getState().privacyPreferences?.[PHOTO_BACKUP] === true;
+}
+
+function photoRecord(photo: ProgressPhotoEntry): MediaRecord | null {
+  if (!photo.mediaId) return null;
+  return {
+    mediaId: photo.mediaId,
+    kind: "photo",
+    photo: {
+      photoId: photo.id,
+      date: photo.date,
+      angle: photo.angle,
+      ...(photo.weightKg !== undefined && Number.isFinite(photo.weightKg) ? { weightKg: photo.weightKg } : {}),
+      ...(photo.notes ? { notes: photo.notes } : {}),
+    },
+  };
+}
+
+function backUpPhoto(photo: ProgressPhotoEntry): void {
+  const record = photoRecord(photo);
+  if (record && photoBackupEnabled()) emitSyncEvent({ type: "mediaSaved", media: record });
+}
+
+/**
+ * Privacy > "Back up progress photos". On: every photo with an image is
+ * queued for upload. Off: every cloud copy is deleted (a delete replaces
+ * an upload still waiting).
+ */
+export function setPhotoBackup(enabled: boolean): void {
+  useProfileStore.getState().updatePrivacyPreferences({ [PHOTO_BACKUP]: enabled });
+  for (const photo of useProfileStore.getState().photos) {
+    if (!photo.mediaId) continue;
+    if (enabled) backUpPhoto(photo);
+    else emitSyncEvent({ type: "mediaDeleted", mediaId: photo.mediaId });
+  }
+}
+
+/** The one-time backfill: what this device holds that the cloud should have. */
+export function mediaBackfillRecords(): MediaRecord[] {
+  const { avatarMediaId, photos } = useProfileStore.getState();
+  const records: MediaRecord[] = avatarMediaId ? [{ mediaId: avatarMediaId, kind: "avatar" }] : [];
+  if (photoBackupEnabled()) {
+    for (const photo of photos) {
+      const record = photoRecord(photo);
+      if (record) records.push(record);
+    }
+  }
+  return records;
+}
+
 /** Saves a check-in; with no image, the angle's silhouette stands in. */
 export async function saveProgressPhoto(image: Blob | null, details: PhotoDetails): Promise<void> {
   let mediaId: string | undefined;
@@ -31,12 +87,18 @@ export async function saveProgressPhoto(image: Blob | null, details: PhotoDetail
     await putMedia(mediaId, await downscaleImage(image, PHOTO_MAX_SIDE, "image/jpeg", 0.85));
   }
   useProfileStore.getState().addPhoto({ ...details, ...(mediaId ? { mediaId } : {}) });
+  // addPhoto puts the new check-in first.
+  const saved = useProfileStore.getState().photos[0];
+  if (saved) backUpPhoto(saved);
 }
 
 export async function removeProgressPhoto(id: string): Promise<void> {
   const photo = useProfileStore.getState().photos.find((entry) => entry.id === id);
   useProfileStore.getState().deletePhoto(id);
-  if (photo?.mediaId) await discard(photo.mediaId);
+  if (photo?.mediaId) {
+    emitSyncEvent({ type: "mediaDeleted", mediaId: photo.mediaId });
+    await discard(photo.mediaId);
+  }
 }
 
 /** Stores an uploaded avatar and makes it the athlete's look. */
@@ -46,7 +108,11 @@ export async function saveUploadedAvatar(image: Blob): Promise<void> {
   // WebP keeps transparency; browsers that can't encode it fall back to PNG.
   await putMedia(mediaId, await downscaleImage(image, AVATAR_MAX_SIDE, "image/webp", 0.9));
   useProfileStore.getState().setUploadedAvatar(mediaId);
-  if (previous) await discard(previous);
+  emitSyncEvent({ type: "mediaSaved", media: { mediaId, kind: "avatar" } });
+  if (previous) {
+    emitSyncEvent({ type: "mediaDeleted", mediaId: previous });
+    await discard(previous);
+  }
 }
 
 async function discard(mediaId: string): Promise<void> {
@@ -111,17 +177,30 @@ export async function migrateLegacyMedia(): Promise<number> {
       ? { avatarMediaId, avatarDataUrl: null }
       : {}),
   }));
+  // Moved images are new to the cloud as well.
+  if (avatarMediaId) emitSyncEvent({ type: "mediaSaved", media: { mediaId: avatarMediaId, kind: "avatar" } });
+  const movedIds = new Set(movedPhotos.values());
+  for (const photo of useProfileStore.getState().photos) {
+    if (photo.mediaId && movedIds.has(photo.mediaId)) backUpPhoto(photo);
+  }
   return moved;
 }
 
 /** Saves younger than this are never pruned (their store write may be pending). */
 const PRUNE_GRACE_MS = 5 * 60_000;
 
-/** Deletes stored images nothing refers to any more (replaced avatars, crashes mid-save). */
-export async function pruneOrphanMedia(now = Date.now()): Promise<number> {
+/**
+ * Deletes stored images nothing refers to any more (replaced avatars,
+ * crashes mid-save). `keep`: images still waiting to upload (an account
+ * that signed out with uploads pending gets them back on its next sign-in).
+ */
+export async function pruneOrphanMedia(
+  now = Date.now(),
+  keep: ReadonlySet<string> = new Set(),
+): Promise<number> {
   await whenHydrated([useProfileStore]);
   const { photos, avatarMediaId } = useProfileStore.getState();
-  const inUse = new Set([...photos.map((photo) => photo.mediaId), avatarMediaId].filter(Boolean));
+  const inUse = new Set([...photos.map((photo) => photo.mediaId), avatarMediaId, ...keep].filter(Boolean));
   let pruned = 0;
   for (const id of await listMediaIds()) {
     const createdAt = mediaIdCreatedAt(id);

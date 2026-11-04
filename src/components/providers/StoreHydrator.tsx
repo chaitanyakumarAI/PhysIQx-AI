@@ -6,6 +6,7 @@ import { usePlansStore } from "@/store/plansStore";
 import { useProfileStore } from "@/store/profileStore";
 import { useSessionStore } from "@/store/sessionStore";
 import { migrateLegacyMedia, pruneOrphanMedia } from "@/features/profile/lib/media";
+import { pendingMediaIds } from "@/lib/sync/syncClient";
 
 /**
  * Persisted Zustand stores use `skipHydration` (see sessionStore.ts) so the
@@ -22,7 +23,7 @@ export function StoreHydrator() {
     // Images saved before the media store existed move out of localStorage
     // once; then stored images nothing refers to are cleaned up.
     void migrateLegacyMedia()
-      .then(() => pruneOrphanMedia())
+      .then(() => pruneOrphanMedia(Date.now(), pendingMediaIds()))
       .catch((error: unknown) => console.warn("[media] startup tidy-up failed:", error));
 
     // Cross-tab safety: when another tab writes one of these stores, reload

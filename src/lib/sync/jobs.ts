@@ -26,6 +26,10 @@ export function jobForEvent(event: SyncEvent, snapshot: () => ProfileSnapshot): 
       return { kind: "planDelete", id: event.planId };
     case "cardioRemoved":
       return { kind: "cardioDelete", id: event.activityId };
+    case "mediaSaved":
+      return { kind: "media", id: event.media.mediaId, media: event.media };
+    case "mediaDeleted":
+      return { kind: "mediaDelete", id: event.mediaId };
   }
 }
 

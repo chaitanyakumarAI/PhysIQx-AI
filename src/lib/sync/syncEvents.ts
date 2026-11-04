@@ -1,3 +1,4 @@
+import type { MediaRecord } from "@/features/profile/lib/mediaRecord";
 import type { WeighIn } from "@/types/ledger";
 import type { UserPlan } from "@/types/plan";
 import type { CompletedSessionSummary, WorkoutSession } from "@/types/workoutSession";
@@ -17,7 +18,10 @@ export type SyncEvent =
   | { type: "profileChanged" }
   | { type: "planSaved"; plan: UserPlan }
   | { type: "planDeleted"; planId: string }
-  | { type: "cardioRemoved"; activityId: string };
+  | { type: "cardioRemoved"; activityId: string }
+  /** An image to back up (the avatar, or a photo when photo backup is on). */
+  | { type: "mediaSaved"; media: MediaRecord }
+  | { type: "mediaDeleted"; mediaId: string };
 
 type SyncEventHandler = (event: SyncEvent) => void;
 

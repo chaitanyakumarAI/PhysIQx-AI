@@ -1,3 +1,4 @@
+import type { MediaRecord } from "@/features/profile/lib/mediaRecord";
 import type { ProfileSnapshot } from "@/features/profile/lib/profileSnapshot";
 import type { CardioActivity } from "@/types/cardio";
 import type { WeighIn } from "@/types/ledger";
@@ -28,7 +29,10 @@ export type SyncJob =
   /** One snapshot of the whole profile; the newest replaces any pending one. */
   | { kind: "profile"; id: "me"; profile: ProfileSnapshot }
   | { kind: "plan"; id: string; plan: UserPlan }
-  | { kind: "planDelete"; id: string };
+  | { kind: "planDelete"; id: string }
+  /** id = the media id; the bytes are read from the media store at delivery. */
+  | { kind: "media"; id: string; media: MediaRecord }
+  | { kind: "mediaDelete"; id: string };
 
 export interface OutboxEntry {
   /** kind:id — one entry per record; re-queueing replaces the payload. */
@@ -61,6 +65,7 @@ const MAX_BACKOFF_MS = 6 * 60 * 60_000;
 const RECORD_OF: Partial<Record<SyncJob["kind"], string>> = {
   cardioDelete: "cardio",
   planDelete: "plan",
+  mediaDelete: "media",
 };
 
 export function outboxKey(job: SyncJob): string {
