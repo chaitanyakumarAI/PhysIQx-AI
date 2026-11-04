@@ -1,3 +1,4 @@
+import { questXpEvents } from "./quests";
 import type { Ledger } from "@/types/ledger";
 import { daysBetweenIso } from "../dates";
 import { detectRecentPRs } from "../prEngine";
@@ -32,7 +33,8 @@ export type XpSource =
   | "weighIns"
   | "perfectWeeks"
   | "setup"
-  | "collection";
+  | "collection"
+  | "quests";
 
 export const xpSourceLabels: Record<XpSource, string> = {
   workouts: "Workouts",
@@ -42,6 +44,7 @@ export const xpSourceLabels: Record<XpSource, string> = {
   perfectWeeks: "Perfect weeks",
   setup: "Setup bonus",
   collection: "Collection",
+  quests: "Weekly quests",
 };
 
 interface XpEvent {
@@ -114,6 +117,10 @@ function activityXp(ledger: Ledger, metrics: MetricTable, todayIso: string): XpE
     if (lastPaidWeighIn && daysBetweenIso(lastPaidWeighIn, entry.date) < XP_RULES.weighInEveryDays) continue;
     events.push({ date: entry.date, source: "weighIns", amount: XP_RULES.weighIn });
     lastPaidWeighIn = entry.date;
+  }
+
+  for (const event of questXpEvents(ledger, todayIso)) {
+    events.push({ date: event.date, source: "quests", amount: event.amount });
   }
 
   for (const point of metrics.perfectWeeks.points) {
@@ -195,6 +202,7 @@ export function computeProgression(ledger: Ledger, todayIso: string): Progressio
     perfectWeeks: 0,
     setup: 0,
     collection: 0,
+    quests: 0,
   };
   const levelDates: { level: number; date: string }[] = [];
   let totalXp = 0;

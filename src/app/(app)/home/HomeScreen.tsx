@@ -15,11 +15,13 @@ import { CoachCard, CoachList } from "@/features/coach/components/CoachCard";
 import { DailyMissionCard } from "@/features/home/components/DailyMissionCard";
 import { PhysIQScoreCard } from "@/features/home/components/PhysIQScoreCard";
 import { WeeklyActivityCard } from "@/features/home/components/WeeklyActivityCard";
+import { WeeklyQuestsCard } from "@/features/home/components/WeeklyQuestsCard";
 import { WelcomeHeader } from "@/features/home/components/WelcomeHeader";
 import { getGreeting } from "@/features/home/lib/greeting";
 import { generateArchetype } from "@/features/onboarding/lib/generateArchetype";
 import { DemoBanner } from "@/features/shared/components/DemoBanner";
 import { useActiveSessionInfo, useAthleteState } from "@/features/shared/hooks/useAthlete";
+import { todayIso } from "@/lib/dates";
 import { fadeInUp, staggerChildren } from "@/lib/motion";
 import { useSyncState } from "@/lib/sync/pullClient";
 import { useEntranceOnce } from "@/lib/useEntranceOnce";
@@ -109,6 +111,10 @@ export function HomeScreen() {
               </Card>
             )}
           </Section>
+        </m.div>
+
+        <m.div variants={fadeInUp}>
+          <WeeklyQuestsCard ledger={ledger} todayIso={todayIso()} />
         </m.div>
 
         {lead && (
