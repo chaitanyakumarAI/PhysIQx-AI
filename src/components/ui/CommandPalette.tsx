@@ -149,8 +149,8 @@ const STATIC_COMMANDS: CommandItem[] = [
   },
   {
     id: "nav-integrations",
-    title: "Wearables & Integrations",
-    subtitle: "Apple Health, Android Connect, Garmin, WHOOP, Oura",
+    title: "Cardio sync & imports",
+    subtitle: "Import GPX or TCX files from Garmin, Strava and other apps",
     category: "navigation",
     icon: Activity,
     href: "/profile/integrations",
