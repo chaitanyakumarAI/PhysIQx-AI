@@ -40,7 +40,10 @@ export function BodyShapeStep({ value = "athletic", onChange }: BodyShapeStepPro
 
       {/* Live Hologram Preview with Interactive Angles */}
       <div className="mx-auto w-full max-w-[260px] flex flex-col items-center gap-3">
+        {/* w-full: the scan's image is absolutely filled, so in this centred
+            column it has no width of its own and collapsed to its padding. */}
         <HologramBodyScan
+          className="w-full"
           bodyShape={value}
           gender={gender}
           viewAngle={viewAngle}
