@@ -47,7 +47,8 @@ Free Starter team: build with write tools (`use_figma`, `upload_assets`); reads 
 - [x] **Key screens** composed from the components: Home, Collection (+ badge sheet), Workout Complete (quiet day + illustrative big day), checked side by side with the app
 - [x] **Speech bubble + cast** components for the tour and celebrations (Kix & Nyra stage cuts with the app's edge fades)
 - [x] **v2 screens** in Figma: Train, Insights, Profile, Session — 2026-11-04: 20 new patterns (Patterns section) + 2 icons, screens built from instances with sample data, audits clean (`docs/FIGMA_PLAN.md` §9)
-- [ ] **Delete the Archive** section in Figma once the second pass is approved (superseded first-pass components)
+- [x] **Delete the Archive** section in Figma once the second pass is approved (superseded first-pass components) — 2026-11-06, after the owner approved v2
+- [ ] **Set the Cover as the Figma file thumbnail** (owner: right-click the Cover frame › Set as thumbnail)
 - [x] **Code a11y**: 11–12 px labels in `text-foreground-muted` fail AA (CoachCard kicker, badge-sheet XP, heatmap labels) — done 2026-10-23: all 22 small-text usages across 12 files switched to `text-foreground-secondary`; muted kept only for large text and icons. Figma mirrors (CoachCard kicker, Tier Row XP) switched to `color/text/secondary` 2026-11-04
 - [x] **Weekly quests**: 3 personal goals a week from the plan (Fitocracy/Duolingo style) — 2026-11-04: `lib/gamification/quests.ts` + Home card, spec `docs/WEEKLY_QUESTS.md`
 - [ ] **Character reactions on Home** to real events (PR → Kix proud; skipped rest → Nyra narrowed)

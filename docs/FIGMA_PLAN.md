@@ -199,4 +199,6 @@ avatar shows initials, not the sample photo; the TrendChart line is the
 component's sample curve; TrainingLoadCard's StatChipRow puts the value above
 the label (code: label first).
 
-**Next.** Delete the Archive section after approval; set the Cover as thumbnail.
+**Approved** by the owner 2026-11-06. The Archive section (first-pass Button, Chip, Card, Stat Chip, Progress Bar and review frame; no instances outside it) was then deleted, with its Guide and overview rows; Figma's version history keeps it.
+
+**Next.** Set the Cover as the file thumbnail (right-click › Set as thumbnail — the API can't).
