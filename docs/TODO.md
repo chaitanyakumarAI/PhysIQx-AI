@@ -10,6 +10,8 @@ Last audited: **2026-10-15**. Master plan and status: `docs/MASTER_PLAN.md`.
 Everything works today with placeholders (vector medals, expression
 crops). Each asset replaces its placeholder once registered (ASSET_PROMPTS §5).
 
+**Next phase (owner, 2026-11-06):** the remaining mascot poses, scenes and tour animations (`docs/ANIMATION_PROMPTS.md`) move to the next phase.
+
 - [x] **Stage cuts from the locked grids** (12): Kix default · focus · joy · sheepish · worried · proud · determined; Nyra stare · narrowed · closed · nod · tilt → `public/mascots/stage/` (`scripts/crop_mascot_stage.py`)
 - [ ] **Stage poses — Kix** (4): wave · point-up · celebrate · thinking → `public/mascots/stage/`
 - [ ] **Stage poses — Nyra** (3): gesture-up · teach · rest → `public/mascots/stage/`
