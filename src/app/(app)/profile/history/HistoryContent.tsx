@@ -88,6 +88,7 @@ export function HistoryContent() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search workouts..."
+            aria-label="Search workouts"
             className="w-full h-10 pl-10 pr-4 rounded-full border border-border bg-surface text-sm text-foreground placeholder:text-foreground-secondary focus:outline-none focus:ring-2 focus:ring-brand/60"
           />
         </div>

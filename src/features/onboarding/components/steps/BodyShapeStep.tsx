@@ -60,6 +60,7 @@ export function BodyShapeStep({ value = "athletic", onChange }: BodyShapeStepPro
               <button
                 key={angle}
                 type="button"
+                aria-pressed={viewAngle === angle}
                 onClick={() => setViewAngle(angle)}
                 className={`rounded-md px-2 py-1 text-[11px] font-semibold uppercase tracking-wider transition-colors ${
                   viewAngle === angle
@@ -78,6 +79,7 @@ export function BodyShapeStep({ value = "athletic", onChange }: BodyShapeStepPro
               <button
                 key={g}
                 type="button"
+                aria-pressed={gender === g}
                 onClick={() => setGender(g)}
                 className={`rounded-md px-2 py-1 text-[11px] font-semibold capitalize transition-colors ${
                   gender === g

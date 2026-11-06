@@ -82,6 +82,7 @@ export function AvatarContent() {
             type="file"
             accept="image/*"
             className="sr-only"
+            aria-label="Choose a photo for your avatar"
             onChange={(event) => void handleFile(event.target.files?.[0])}
           />
           <Button

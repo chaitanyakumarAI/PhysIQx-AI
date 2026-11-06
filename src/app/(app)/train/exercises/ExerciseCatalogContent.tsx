@@ -197,6 +197,7 @@ export function ExerciseCatalogContent({ exercises }: ExerciseCatalogContentProp
               setVisibleLimit(PAGE_CHUNK);
             }}
             placeholder="Search exercises by name, muscle, or equipment..."
+            aria-label="Search exercises"
             className="h-12 w-full rounded-card border border-border/60 bg-surface pl-10 pr-16 text-sm placeholder:text-foreground-secondary/70 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
           />
           {query ? (
