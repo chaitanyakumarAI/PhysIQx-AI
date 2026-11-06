@@ -33,6 +33,12 @@ export interface TrendChartProps {
   detail?: boolean;
   /** Marks the latest value with a dot at the line's end (default true). */
   endpointDot?: boolean;
+  /**
+   * Sparkline finish: the line brightens toward the latest point and the
+   * fill fades in from the left, so a small chart reads as light rather than
+   * a solid slab with hard edges. Used by Home's score sparkline.
+   */
+  fade?: boolean;
   className?: string;
   "aria-label"?: string;
 }
@@ -80,6 +86,7 @@ export function TrendChart({
   interactive = false,
   detail = false,
   endpointDot = true,
+  fade = false,
   className,
   "aria-label": ariaLabel,
 }: TrendChartProps) {
@@ -147,7 +154,9 @@ export function TrendChart({
         aria-label={ariaLabel ?? "Trend chart"}
         viewBox={`0 0 ${VIEWBOX_WIDTH} ${height}`}
         preserveAspectRatio="none"
-        className="w-full"
+        // A sparkline's line glow sits at its top edge; let it spill
+        // instead of being cut off flat.
+        className={cn("w-full", fade && "overflow-visible")}
         style={{ height }}
       >
         <defs>
@@ -160,6 +169,24 @@ export function TrendChart({
             <stop offset="45%" stopColor={color} stopOpacity={0.07} />
             <stop offset="100%" stopColor={color} stopOpacity={0} />
           </linearGradient>
+          {/* userSpaceOnUse, not the path's box: a flat series has a
+              zero-height box, and a box-relative gradient would paint
+              nothing. */}
+          {fade && (
+            <>
+              <linearGradient id={`${gradientId}-line`} gradientUnits="userSpaceOnUse" x1={0} y1={0} x2={VIEWBOX_WIDTH} y2={0}>
+                <stop offset="0%" stopColor={color} stopOpacity={0.3} />
+                <stop offset="100%" stopColor={color} stopOpacity={1} />
+              </linearGradient>
+              <linearGradient id={`${gradientId}-fade`} gradientUnits="userSpaceOnUse" x1={0} y1={0} x2={VIEWBOX_WIDTH} y2={0}>
+                <stop offset="0%" stopColor="#fff" stopOpacity={0} />
+                <stop offset="70%" stopColor="#fff" stopOpacity={1} />
+              </linearGradient>
+              <mask id={`${gradientId}-mask`} maskUnits="userSpaceOnUse" x={0} y={0} width={VIEWBOX_WIDTH} height={height}>
+                <rect x={0} y={0} width={VIEWBOX_WIDTH} height={height} fill={`url(#${gradientId}-fade)`} />
+              </mask>
+            </>
+          )}
         </defs>
 
         {detail &&
@@ -178,7 +205,12 @@ export function TrendChart({
             />
           ))}
 
-        <path d={areaPath} fill={`url(#${gradientId})`} stroke="none" />
+        <path
+          d={areaPath}
+          fill={`url(#${gradientId})`}
+          stroke="none"
+          mask={fade ? `url(#${gradientId}-mask)` : undefined}
+        />
         {/* Soft under-stroke = line glow without a filter (cheap to paint). */}
         <path
           d={linePath}
@@ -188,11 +220,12 @@ export function TrendChart({
           strokeWidth={7}
           strokeLinecap="round"
           strokeLinejoin="round"
+          mask={fade ? `url(#${gradientId}-mask)` : undefined}
         />
         <path
           d={linePath}
           fill="none"
-          stroke={color}
+          stroke={fade ? `url(#${gradientId}-line)` : color}
           strokeWidth={2.5}
           strokeLinecap="round"
           strokeLinejoin="round"

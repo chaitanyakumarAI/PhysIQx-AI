@@ -43,6 +43,10 @@
      Tinted surfaces stay as opacity modifiers: bg-brand/10, border-brand/20. */
   --color-brand: #22c55e;
   --color-brand-strong: #16a34a;
+  /* Ends of the score gauge's sweep (CircularProgress `sweep`): the arc
+     starts deep and ends at a bright head, so it reads as lit, not flat. */
+  --color-brand-deep: #15803d;
+  --color-brand-highlight: #86efac;
 
   /* Status */
   --color-success: #22c55e;
@@ -91,6 +95,21 @@
     linear-gradient(to bottom, transparent, #000 16%, #000 68%, transparent),
     linear-gradient(to right, transparent, #000 14%, #000 86%, transparent);
   mask-composite: intersect;
+}
+
+/* Score gauge sweep: progress is a registered number so the conic arc and
+   its head animate together when the score changes. */
+@property --ring-progress {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@utility ring-sweep {
+  transition: --ring-progress 600ms ease-out;
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 }
 
 @layer base {

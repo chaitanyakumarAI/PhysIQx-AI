@@ -52,7 +52,10 @@ export function PhysIQScoreCard({
     <section
       aria-label="PhysIQ Score"
       className={cn(
-        "relative px-6 py-8 [background:radial-gradient(ellipse_75%_85%_at_50%_40%,rgb(34_197_94/0.12),transparent_75%)]",
+        // closest-side: the light reaches zero before the section's top and
+        // side edges — a larger ellipse was still ~5% green there and cut off
+        // in a straight line, drawing a faint box around the score.
+        "relative px-6 py-8 [background:radial-gradient(closest-side_at_50%_40%,rgb(34_197_94/0.12),transparent)]",
         className,
       )}
     >
@@ -70,6 +73,7 @@ export function PhysIQScoreCard({
           size={180}
           strokeWidth={12}
           glow={!isCalibrating}
+          sweep
           aria-label={isCalibrating ? "Score calibrating" : `Score ${score} of 100`}
         >
           {isCalibrating ? (
@@ -92,6 +96,7 @@ export function PhysIQScoreCard({
           <TrendChart
             points={weekTrend.map((value) => ({ value }))}
             height={36}
+            fade
             className="max-w-40"
             aria-label={`Score over the last 7 days, from ${weekTrend[0]} to ${score}`}
           />
