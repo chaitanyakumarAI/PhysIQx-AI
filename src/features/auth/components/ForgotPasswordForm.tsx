@@ -8,9 +8,18 @@ import { Input } from "@/components/ui/Input";
 import { createClient } from "@/lib/supabase/client";
 import { forgotPasswordSchema, type ForgotPasswordFormValues } from "../schemas";
 
-export function ForgotPasswordForm() {
+export interface ForgotPasswordFormProps {
+  /** The last reset link didn't work (expired, used, or another browser). */
+  linkInvalid?: boolean;
+}
+
+export function ForgotPasswordForm({ linkInvalid = false }: ForgotPasswordFormProps) {
   const [sentTo, setSentTo] = useState<string | null>(null);
-  const [authError, setAuthError] = useState<string | null>(null);
+  const [authError, setAuthError] = useState<string | null>(
+    linkInvalid
+      ? "That reset link has expired or was opened in a different browser. Send a new one and open it in this browser."
+      : null,
+  );
   const {
     register,
     handleSubmit,
@@ -20,8 +29,11 @@ export function ForgotPasswordForm() {
   async function onSubmit(values: ForgotPasswordFormValues) {
     setAuthError(null);
     const supabase = createClient();
+    // The link signs the athlete in for this one purpose and lands on the
+    // page where they choose the new password. It used to land on /login,
+    // which sends signed-in people to /home — so the password never changed.
     const { error } = await supabase.auth.resetPasswordForEmail(values.email, {
-      redirectTo: `${window.location.origin}/auth/callback?next=/login`,
+      redirectTo: `${window.location.origin}/auth/callback?next=/reset-password`,
     });
 
     if (error) {

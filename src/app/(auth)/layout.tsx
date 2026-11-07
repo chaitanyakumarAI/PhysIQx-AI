@@ -310,6 +310,20 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           }
         }
 
+        /* Page title block shared by the reset pages */
+        .auth-page-title {
+          font-family: var(--font-display), ui-sans-serif, system-ui;
+          font-size: 1.625rem; font-weight: 700; color: #fafafa;
+          letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 0.25rem;
+        }
+        .auth-page-sub { font-size: 0.875rem; color: #a1a1aa; line-height: 1.5; }
+        .auth-back-link {
+          display: flex; align-items: center; justify-content: center;
+          gap: 0.375rem; font-size: 0.875rem; font-weight: 500;
+          color: #71717a; text-decoration: none; transition: color 0.15s;
+        }
+        .auth-back-link:hover { color: #22c55e; }
+
         /* Mobile-only logo */
         .auth-mobile-logo {
           display: flex;

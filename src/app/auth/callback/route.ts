@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 import { createAuthServerClient } from "@/lib/supabase/server";
 
 /**
- * OAuth callback handler. Supabase redirects here after a successful
- * Google/Apple sign-in with an auth `code` query param. We exchange
- * it for a session, then redirect the user into the app.
+ * Auth callback. Supabase redirects here with an auth `code` after a
+ * Google/Apple sign-in or from a password-reset email. We exchange it for a
+ * session, then redirect to `next` (the reset email sends /reset-password).
  */
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
@@ -21,6 +21,10 @@ export async function GET(request: Request) {
     }
   }
 
-  // Something went wrong — send them back to login with an error hint
+  // A failed password-reset link goes back to the reset form, which says why
+  // and offers a new link; anything else goes to login with an error hint.
+  if (safeNext === "/reset-password") {
+    return NextResponse.redirect(new URL("/forgot-password?error=reset_link_invalid", origin));
+  }
   return NextResponse.redirect(new URL("/login?error=auth_callback_failed", origin));
 }

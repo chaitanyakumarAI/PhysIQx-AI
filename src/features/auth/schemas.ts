@@ -24,3 +24,14 @@ export const forgotPasswordSchema = z.object({
   email: z.string().trim().min(1, "Email is required").email("Enter a valid email address"),
 });
 export type ForgotPasswordFormValues = z.infer<typeof forgotPasswordSchema>;
+
+export const resetPasswordSchema = z
+  .object({
+    password: z.string().min(8, "Password must be at least 8 characters"),
+    confirm: z.string().min(1, "Type the new password again"),
+  })
+  .refine((values) => values.password === values.confirm, {
+    path: ["confirm"],
+    message: "The passwords don't match",
+  });
+export type ResetPasswordFormValues = z.infer<typeof resetPasswordSchema>;
