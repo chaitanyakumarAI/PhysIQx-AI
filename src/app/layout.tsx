@@ -1,24 +1,26 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
+import localFont from "next/font/local";
 import { MotionProvider } from "@/components/providers/MotionProvider";
 import { StoreHydrator } from "@/components/providers/StoreHydrator";
 import { ServiceWorkerRegister } from "@/components/providers/ServiceWorkerRegister";
 import "../styles/globals.css";
 
-const inter = Inter({
-  subsets: ["latin"],
+// Fonts ship with the app (npm @fontsource-variable/*, OFL), not fetched
+// from Google at build time — a failed download there failed a CI build.
+const inter = localFont({
+  src: "../../node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2",
+  weight: "100 900",
   variable: "--font-inter",
   display: "swap",
 });
 
 // The display face — fills the --font-display slot reserved since Foundation.
 // Space Grotesk: technical, confident numerals that separate data moments
-// (score, PRs, timers) from prose, which Inter alone couldn't do.
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin"],
-  // Only semibold and bold are used in the app (font-display class on score,
-  // PRs, timers, headings). Loading all weights is ~15–25 KB wasted.
-  weight: ["600", "700"],
+// (score, PRs, timers) from prose, which Inter alone couldn't do. The
+// variable file (22 KB, latin) covers the semibold and bold the app uses.
+const spaceGrotesk = localFont({
+  src: "../../node_modules/@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2",
+  weight: "300 700",
   variable: "--font-space-grotesk",
   display: "swap",
 });
