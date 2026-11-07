@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Dumbbell, Zap, TrendingUp, Shield } from "lucide-react";
+import Image from "next/image";
+import { Zap, TrendingUp, Shield } from "lucide-react";
 
 export const metadata: Metadata = {
   title: {
@@ -32,9 +33,10 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
 
         {/* Logo */}
         <div className="auth-logo">
-          <span className="auth-logo-icon">
-            <Dumbbell size={22} aria-hidden />
-          </span>
+          {/* The app icon itself (public/brand/logo-mark.png, cut from
+              icon-512.png), so the auth pages wear the same mark as the
+              home screen. */}
+          <Image src="/brand/logo-mark.png" alt="" width={36} height={36} className="auth-logo-icon" priority />
           <span className="auth-logo-text">PhysIQx</span>
         </div>
 
@@ -73,9 +75,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <div className="auth-form-card">
           {/* Mobile-only logo */}
           <div className="auth-mobile-logo">
-            <span className="auth-logo-icon">
-              <Dumbbell size={18} aria-hidden />
-            </span>
+            <Image src="/brand/logo-mark.png" alt="" width={36} height={36} className="auth-logo-icon" priority />
             <span className="auth-logo-text" style={{ fontSize: "1.1rem" }}>PhysIQx</span>
           </div>
 
@@ -167,10 +167,8 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           place-items: center;
           width: 2.25rem;
           height: 2.25rem;
-          background: linear-gradient(135deg, #22c55e, #16a34a);
           border-radius: 0.625rem;
-          color: #052e16;
-          box-shadow: 0 0 20px rgba(34, 197, 94, 0.4);
+          box-shadow: 0 0 20px rgba(34, 197, 94, 0.25);
         }
         .auth-logo-text {
           font-family: var(--font-display), ui-sans-serif, system-ui;
