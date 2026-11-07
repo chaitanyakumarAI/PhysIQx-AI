@@ -1,5 +1,8 @@
 // PhysIQx AI Service Worker — PWA offline shell & active workout cache
-const CACHE_NAME = "physiqx-cache-v5";
+// v6: data requests (RSC payloads behind client-side navigation) are no
+// longer cache-first — after a deploy they served the old build's payloads.
+// Bumping the name also clears every v5 entry on activate.
+const CACHE_NAME = "physiqx-cache-v6";
 
 const PRECACHE_ASSETS = [
   "/",
@@ -12,6 +15,10 @@ const PRECACHE_ASSETS = [
   "/icon-192.png",
   "/icon-512.png",
 ];
+
+// Files that only change when their name does (or almost never): safe to
+// serve from cache and refresh in the background.
+const STATIC_FILE = /\.(?:png|jpe?g|webp|gif|svg|ico|woff2?|mp3|wav|webm|mp4)$/i;
 
 // Install: pre-cache critical app shell
 self.addEventListener("install", (event) => {
@@ -39,70 +46,72 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-// Fetch: Stale-While-Revalidate for static assets, Network-First for navigation
+function store(request, response) {
+  if (response && response.status === 200) {
+    const copy = response.clone();
+    caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+  }
+  return response;
+}
+
+// Cached copy now, fresh copy into the cache for next time.
+function staleWhileRevalidate(request) {
+  return caches.match(request).then((cached) => {
+    const network = fetch(request)
+      .then((response) => store(request, response))
+      .catch(() => cached);
+    return cached || network;
+  });
+}
+
+// The network when it answers; the cache only when offline.
+function networkFirst(request, fallbackToRoot) {
+  return fetch(request)
+    .then((response) => store(request, response))
+    .catch(async () => {
+      const cached = await caches.match(request);
+      if (cached) return cached;
+      if (fallbackToRoot) {
+        const root = await caches.match("/");
+        if (root) return root;
+      }
+      return Response.error();
+    });
+}
+
 self.addEventListener("fetch", (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Only handle HTTP/HTTPS GET requests from same origin
+  // Only same-origin GETs. Supabase and other origins go straight through.
   if (request.method !== "GET" || url.origin !== self.location.origin) {
     return;
   }
 
-  // Next.js static chunks, fonts, and assets — Stale-While-Revalidate
+  // Auth hops must always reach the server.
+  if (url.pathname.startsWith("/auth/")) {
+    return;
+  }
+
+  // Next.js build output is content-hashed: a new deploy means new URLs.
   if (url.pathname.startsWith("/_next/static/") || url.pathname.startsWith("/fonts/")) {
-    event.respondWith(
-      caches.match(request).then((cached) => {
-        const networkFetch = fetch(request)
-          .then((response) => {
-            if (response && response.status === 200) {
-              const responseClone = response.clone();
-              caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone));
-            }
-            return response;
-          })
-          .catch(() => cached);
-
-        return cached || networkFetch;
-      }),
-    );
+    event.respondWith(staleWhileRevalidate(request));
     return;
   }
 
-  // Navigation requests (HTML pages) — Network-First with Cache Fallback
+  // Page loads.
   if (request.mode === "navigate") {
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
-          if (response && response.status === 200) {
-            const responseClone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone));
-          }
-          return response;
-        })
-        .catch(async () => {
-          const cached = await caches.match(request);
-          if (cached) return cached;
-          const rootCached = await caches.match("/");
-          return rootCached || Response.error();
-        }),
-    );
+    event.respondWith(networkFirst(request, true));
     return;
   }
 
-  // Default: Cache first with network fallback
-  event.respondWith(
-    caches.match(request).then((cached) => {
-      return (
-        cached ||
-        fetch(request).then((response) => {
-          if (response && response.status === 200) {
-            const responseClone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, responseClone));
-          }
-          return response;
-        })
-      );
-    }),
-  );
+  // Images, icons, sounds, optimised images.
+  if (url.pathname.startsWith("/_next/image") || STATIC_FILE.test(url.pathname)) {
+    event.respondWith(staleWhileRevalidate(request));
+    return;
+  }
+
+  // Everything else — RSC payloads, the manifest, JSON — follows the server
+  // while online, so a deploy takes effect immediately.
+  event.respondWith(networkFirst(request, false));
 });
