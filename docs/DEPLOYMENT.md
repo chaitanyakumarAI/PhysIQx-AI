@@ -16,6 +16,32 @@ owner's (accounts, DNS, dashboards). Check current prices on each site.*
 - Supabase: migrations 001–008 applied, RLS cross-account check passed, sync
   restore verified on a fresh browser.
 
+## Closed beta first (owner decision 2026-11-07)
+
+About 10 invited testers, all on free tiers, no domain yet. Steps 1 and the
+Resend part of 2 wait for the public launch; the rest still applies.
+
+1. **Email via Gmail (free, no domain).** Make a separate Gmail account for
+   the app (e.g. `physiqx.app@gmail.com`), not your personal one.
+   - Turn on 2-Step Verification for it: myaccount.google.com → Security.
+   - Create an App Password: myaccount.google.com → Security → App
+     passwords → name it "Supabase" → copy the 16-character password.
+   - Supabase → **Authentication → Emails → SMTP Settings** → enable custom
+     SMTP: host `smtp.gmail.com`, port `587`, username = the Gmail address,
+     password = the App Password, sender email = the same Gmail address,
+     sender name `PhysIQx`.
+   - Gmail sends a few hundred emails a day — plenty for a beta.
+2. **Vercel Hobby (free)** — step 3 below, skipping the domain. The app
+   lives at `https://<project-name>.vercel.app`. A free, invite-only beta is
+   non-commercial use.
+3. **Supabase URLs** — step 4 below with the vercel.app address as the
+   Site URL, and `https://<project-name>.vercel.app/**` in Redirect URLs.
+4. **Supabase Free.** Ten active testers keep it awake (only signed-in use
+   counts). There are no backups: tell testers it's a beta.
+5. **Run the smoke test** (section 6) yourself, then send testers the link.
+   On a phone: open it in the browser → Share / menu → *Add to Home
+   Screen* to install it like an app.
+
 ## 1. A domain
 
 Buy one (any registrar). You need it for the app's address and for sending
