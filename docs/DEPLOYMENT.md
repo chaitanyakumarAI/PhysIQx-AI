@@ -73,8 +73,11 @@ sign-up confirmations or reset links.
    `.env.local`:
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-3. Deploy.
-4. **Settings → General → Node.js Version: 22.x.**
+3. Deploy. If the import flow skipped the variables, add them in
+   **Settings → Environment Variables**, then **Deployments → ⋯ → Redeploy**
+   with *Use existing Build Cache* unticked: `NEXT_PUBLIC_*` values are
+   copied into the app at build time, so an older build never sees them.
+4. **Settings → Build and Deployment → Node.js Version: 22.x.**
 5. **Settings → Domains**: add your domain and set the DNS records Vercel
    shows.
 6. Plan: Hobby (free) is for non-commercial use; a commercial app needs Pro.
