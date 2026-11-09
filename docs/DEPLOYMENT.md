@@ -27,9 +27,12 @@ Resend part of 2 wait for the public launch; the rest still applies.
    - Create an App Password: myaccount.google.com → Security → App
      passwords → name it "Supabase" → copy the 16-character password.
    - Supabase → **Authentication → Emails → SMTP Settings** → enable custom
-     SMTP: host `smtp.gmail.com`, port `587`, username = the Gmail address,
-     password = the App Password, sender email = the same Gmail address,
-     sender name `PhysIQx`.
+     SMTP: host `smtp.gmail.com`, port `465` (587 timed out from Supabase:
+     sign-ups failed with 504 "context deadline exceeded"), username = the
+     Gmail address, password = the App Password typed without spaces, sender
+     email = the same Gmail address, sender name `PhysIQx`.
+   - Live since 2026-11-09 with `physiqx.admin@gmail.com`. Check its Sent
+     folder to confirm emails go out.
    - Gmail sends a few hundred emails a day — plenty for a beta.
 2. **Vercel Hobby (free)** — step 3 below, skipping the domain. The app
    lives at `https://<project-name>.vercel.app`. A free, invite-only beta is
