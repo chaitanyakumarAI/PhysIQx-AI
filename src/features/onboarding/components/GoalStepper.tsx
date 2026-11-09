@@ -15,7 +15,7 @@ export interface GoalStepperProps {
 }
 
 /**
- * Large-numeral stepper for continuous goals (rest days, water).
+ * Large-numeral stepper for continuous goals (training days, water).
  * Deliberately not a native range input — cross-browser range-slider
  * styling is a well-known source of inconsistent, hard-to-polish results,
  * and a stepper with a confident hero numeral channels the same "big

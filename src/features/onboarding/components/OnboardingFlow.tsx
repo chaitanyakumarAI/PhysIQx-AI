@@ -27,8 +27,8 @@ import { CurrentBuildStep } from "./steps/CurrentBuildStep";
 import { DNAResultStep } from "./steps/DNAResultStep";
 import { ExperienceStep } from "./steps/ExperienceStep";
 import { GoalStep } from "./steps/GoalStep";
-import { RestDaysStep } from "./steps/RestDaysStep";
 import { SplitStep } from "./steps/SplitStep";
+import { TrainingDaysStep } from "./steps/TrainingDaysStep";
 import { WelcomeStep } from "./steps/WelcomeStep";
 
 interface StepConfig {
@@ -116,9 +116,9 @@ const steps: StepConfig[] = [
     canContinue: (values) => !!values.activeSplit,
   },
   {
-    id: "rest-days",
+    id: "training-days",
     render: (values, setValue) => (
-      <RestDaysStep
+      <TrainingDaysStep
         trainingDaysPerWeek={values.trainingDaysPerWeek}
         onChange={(value) => setValue("trainingDaysPerWeek", value)}
       />
@@ -160,47 +160,48 @@ export function OnboardingFlow() {
   const isLast = step === steps.length - 1;
   const canContinue = current.canContinue?.(values) ?? true;
 
-  async function handleContinue() {
-    if (isLast) {
-
-      // Save to the local ledger immediately (works offline too).
-      setOnboardingProfile({
-        goal: values.goal,
-        experienceLevel: values.experienceLevel,
-        activeSplit: values.activeSplit,
-        goalBodyShape: values.goalBodyShape,
-        trainingDaysPerWeek: values.trainingDaysPerWeek,
-      });
-      setAthleteDetails({
-        displayName: values.displayName?.trim() || null,
-        sex: values.sex ?? null,
-        birthYear: values.birthYear ?? null,
-        currentBuild: values.currentBuild ?? null,
-      });
-      if (values.heightCm) setHeight(Math.round(values.heightCm));
-      if (values.weightKg) logWeight(Math.round(values.weightKg * 10) / 10, todayIso());
-      // The chosen split becomes the active plan, so Home has a workout
-      // ready on day one. Existing plans are never overwritten.
-      if (!hasPlans) {
-        const plan = buildStarterPlan(
-          {
-            split: values.activeSplit ?? null,
-            daysPerWeek: values.trainingDaysPerWeek,
-            goal: values.goal ?? null,
-            experienceLevel: values.experienceLevel ?? null,
-          },
-          Date.now(),
-        );
-        savePlan(plan);
-        setActivePlan(plan.id);
-      }
-
-      // The store calls above queue the cloud copy (lib/sync): it uploads in
-      // the background now, or the day a guest signs in.
-      router.push("/home?tour=1");
-      return;
+  /** Last step: save everything, then enter the app with or without the tour. */
+  function finishOnboarding(withTour: boolean) {
+    // Save to the local ledger immediately (works offline too).
+    setOnboardingProfile({
+      goal: values.goal,
+      experienceLevel: values.experienceLevel,
+      activeSplit: values.activeSplit,
+      goalBodyShape: values.goalBodyShape,
+      trainingDaysPerWeek: values.trainingDaysPerWeek,
+    });
+    setAthleteDetails({
+      displayName: values.displayName?.trim() || null,
+      sex: values.sex ?? null,
+      birthYear: values.birthYear ?? null,
+      currentBuild: values.currentBuild ?? null,
+    });
+    if (values.heightCm) setHeight(Math.round(values.heightCm));
+    if (values.weightKg) logWeight(Math.round(values.weightKg * 10) / 10, todayIso());
+    // The chosen split becomes the active plan, so Home has a workout
+    // ready on day one. Existing plans are never overwritten.
+    if (!hasPlans) {
+      const plan = buildStarterPlan(
+        {
+          split: values.activeSplit ?? null,
+          daysPerWeek: values.trainingDaysPerWeek,
+          goal: values.goal ?? null,
+          experienceLevel: values.experienceLevel ?? null,
+        },
+        Date.now(),
+      );
+      savePlan(plan);
+      setActivePlan(plan.id);
     }
-    setStep((index) => index + 1);
+
+    // The store calls above queue the cloud copy (lib/sync): it uploads in
+    // the background now, or the day a guest signs in.
+    router.push(withTour ? "/home?tour=1" : "/home");
+  }
+
+  function handleContinue() {
+    if (isLast) finishOnboarding(true);
+    else setStep((index) => index + 1);
   }
 
   function handleBack() {
@@ -260,6 +261,15 @@ export function OnboardingFlow() {
             className="min-h-11 text-center text-sm text-foreground-secondary hover:underline"
           >
             Look around with sample data first
+          </button>
+        )}
+        {isLast && (
+          <button
+            type="button"
+            onClick={() => finishOnboarding(false)}
+            className="min-h-11 text-center text-sm text-foreground-secondary hover:underline"
+          >
+            Skip the tour
           </button>
         )}
       </div>
