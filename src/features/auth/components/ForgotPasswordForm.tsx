@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { createClient } from "@/lib/supabase/client";
+import { EMAIL_SEND_FAILED, isServerAuthError } from "../authErrors";
 import { forgotPasswordSchema, type ForgotPasswordFormValues } from "../schemas";
 
 export interface ForgotPasswordFormProps {
@@ -37,7 +38,7 @@ export function ForgotPasswordForm({ linkInvalid = false }: ForgotPasswordFormPr
     });
 
     if (error) {
-      setAuthError(error.message);
+      setAuthError(isServerAuthError(error) ? EMAIL_SEND_FAILED : error.message);
       return;
     }
 

@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, AlertCircle, CheckCircle } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { EMAIL_SEND_FAILED, isServerAuthError } from "../authErrors";
 import { signupSchema, type SignupFormValues } from "../schemas";
 
 export function SignupForm() {
@@ -37,7 +38,9 @@ export function SignupForm() {
     if (error) {
       console.error("Signup error:", error);
       let rawMsg = error.message || (typeof error === "string" ? error : JSON.stringify(error));
-      if (!rawMsg || rawMsg === "{}" || rawMsg === "[object Object]") {
+      if (isServerAuthError(error)) {
+        rawMsg = EMAIL_SEND_FAILED;
+      } else if (!rawMsg || rawMsg === "{}" || rawMsg === "[object Object]") {
         rawMsg = "Couldn't create your account. Check your connection and try again.";
       } else if (rawMsg.includes("already registered") || rawMsg.includes("already exists")) {
         rawMsg = "An account with this email already exists. Try logging in.";
