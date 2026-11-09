@@ -84,6 +84,14 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       </div>
 
       <style>{`
+        /* ─── Shared notice banner (signup sent, email confirmed) ─── */
+        .auth-success-banner {
+          display: flex; align-items: center; gap: 0.5rem;
+          padding: 0.75rem 1rem;
+          background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2);
+          border-radius: 0.75rem; font-size: 0.875rem; color: #4ade80; line-height: 1.4;
+        }
+
         /* ─── Root layout ─── */
         .auth-root {
           display: flex;

@@ -1,13 +1,21 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { LoginForm } from "@/features/auth/components/LoginForm";
+import { isLoginNotice } from "@/features/auth/loginNotices";
 import { SocialLoginButtons } from "@/features/auth/components/SocialLoginButtons";
 
 export const metadata: Metadata = {
   title: "Log in",
 };
 
-export default function LoginPage() {
+interface LoginPageProps {
+  /** `notice` comes from /auth/callback (email links). */
+  searchParams: Promise<{ notice?: string }>;
+}
+
+export default async function LoginPage({ searchParams }: LoginPageProps) {
+  const { notice } = await searchParams;
+
   return (
     <>
       {/* Header */}
@@ -17,7 +25,7 @@ export default function LoginPage() {
       </div>
 
       {/* Primary Email/password form */}
-      <LoginForm />
+      <LoginForm notice={isLoginNotice(notice) ? notice : undefined} />
 
       {/* Social sign-in: only providers enabled in Supabase (none → hidden) */}
       <SocialLoginButtons />

@@ -29,6 +29,8 @@ export function SignupForm() {
       password: data.password,
       options: {
         data: { name: data.name },
+        // The confirmation link signs them in here and starts onboarding.
+        emailRedirectTo: `${window.location.origin}/auth/callback?next=/onboarding`,
       },
     });
 
@@ -36,7 +38,7 @@ export function SignupForm() {
       console.error("Signup error:", error);
       let rawMsg = error.message || (typeof error === "string" ? error : JSON.stringify(error));
       if (!rawMsg || rawMsg === "{}" || rawMsg === "[object Object]") {
-        rawMsg = "Failed to create account. Please check your Supabase credentials or network connection.";
+        rawMsg = "Couldn't create your account. Check your connection and try again.";
       } else if (rawMsg.includes("already registered") || rawMsg.includes("already exists")) {
         rawMsg = "An account with this email already exists. Try logging in.";
       }
@@ -44,9 +46,9 @@ export function SignupForm() {
       return;
     }
 
-    // If email confirmation is enabled in Supabase, session will be null
+    // Email confirmation on: no session until they open the link.
     if (!resData.session) {
-      setAuthSuccess("Account created! Please check your email inbox to verify your account before logging in, or disable 'Confirm Email' in your Supabase Auth settings for instant signup.");
+      setAuthSuccess(`Almost there! We sent a confirmation link to ${data.email}. Open it to finish creating your account.`);
       return;
     }
 
@@ -149,12 +151,6 @@ export function SignupForm() {
           padding: 0.75rem 1rem;
           background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2);
           border-radius: 0.75rem; font-size: 0.875rem; color: #f87171; line-height: 1.4;
-        }
-        .auth-success-banner {
-          display: flex; align-items: center; gap: 0.5rem;
-          padding: 0.75rem 1rem;
-          background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2);
-          border-radius: 0.75rem; font-size: 0.875rem; color: #4ade80; line-height: 1.4;
         }
         .auth-field { display: flex; flex-direction: column; gap: 0.375rem; }
         .auth-label { font-size: 0.875rem; font-weight: 500; color: #d4d4d8; }

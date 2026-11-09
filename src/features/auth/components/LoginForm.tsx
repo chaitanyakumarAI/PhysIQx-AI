@@ -5,13 +5,25 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff, AlertCircle } from "lucide-react";
+import { Eye, EyeOff, AlertCircle, CheckCircle } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { LOGIN_NOTICES, type LoginNotice } from "../loginNotices";
 import { loginSchema, type LoginFormValues } from "../schemas";
 
-export function LoginForm() {
+export interface LoginFormProps {
+  /** Shown until they submit — set when an email link lands here. */
+  notice?: LoginNotice;
+}
+
+export function LoginForm({ notice }: LoginFormProps) {
   const router = useRouter();
-  const [authError, setAuthError] = useState<string | null>(null);
+  const initial = notice ? LOGIN_NOTICES[notice] : null;
+  const [authError, setAuthError] = useState<string | null>(
+    initial?.tone === "error" ? initial.text : null,
+  );
+  const [authSuccess, setAuthSuccess] = useState<string | null>(
+    initial?.tone === "success" ? initial.text : null,
+  );
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -22,6 +34,7 @@ export function LoginForm() {
 
   async function onSubmit(data: LoginFormValues) {
     setAuthError(null);
+    setAuthSuccess(null);
     const supabase = createClient();
     const { error } = await supabase.auth.signInWithPassword({
       email: data.email,
@@ -33,7 +46,7 @@ export function LoginForm() {
       if (error.message === "Invalid login credentials") {
         msg = "Incorrect email or password. Please try again.";
       } else if (error.message.includes("Email not confirmed")) {
-        msg = "Email not confirmed. Please check your email inbox to verify your account, or turn off 'Confirm Email' in your Supabase project settings.";
+        msg = "Please confirm your email first: open the link we sent to your inbox.";
       }
       setAuthError(msg);
       return;
@@ -50,6 +63,12 @@ export function LoginForm() {
         <div className="auth-error-banner" role="alert">
           <AlertCircle size={15} aria-hidden />
           <span>{authError}</span>
+        </div>
+      )}
+      {authSuccess && (
+        <div className="auth-success-banner" role="status">
+          <CheckCircle size={15} aria-hidden />
+          <span>{authSuccess}</span>
         </div>
       )}
 
