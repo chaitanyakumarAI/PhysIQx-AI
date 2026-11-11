@@ -1,11 +1,17 @@
 import type { CompeteData } from "../types";
 import { mockCompeteData } from "../mocks/competeData";
+import { rankWithUser } from "../lib/derive";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { computePercent } from "@/lib/math";
 
+const DAY_MS = 86_400_000;
+
 /**
- * Compete's data service seam — integrates Supabase xp_transactions and volume stats
- * into the leaderboard and challenge participation views.
+ * Compete's data service seam. Signed in, the athlete's own leaderboard row
+ * carries their real XP (weekly = last 7 days, monthly = last 30, all-time =
+ * everything in xp_transactions) and the weekly challenge tracks the volume
+ * they actually lifted this week. The rest of the circle is the bundled
+ * fixture crew until a social graph exists; guests see the fixture as-is.
  */
 export async function getCompeteData(): Promise<CompeteData> {
   try {
@@ -16,98 +22,52 @@ export async function getCompeteData(): Promise<CompeteData> {
       return mockCompeteData;
     }
 
-    // Fetch user's profile name and avatar
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("name")
-      .eq("id", user.id)
-      .maybeSingle();
+    const [{ data: profile }, { data: sessions }, { data: xpRows }] = await Promise.all([
+      supabase.from("profiles").select("name").eq("id", user.id).maybeSingle(),
+      supabase
+        .from("sessions")
+        .select("total_volume_kg, completed_at")
+        .eq("user_id", user.id)
+        .eq("status", "completed"),
+      supabase.from("xp_transactions").select("amount, created_at").eq("user_id", user.id),
+    ]);
 
     const userName = profile?.name || user.email?.split("@")[0] || "You";
+    const now = Date.now();
 
-    // Query user's real total volume for Volume King challenge progress
-    const { data: sessions } = await supabase
-      .from("sessions")
-      .select("total_volume_kg")
-      .eq("user_id", user.id)
-      .eq("status", "completed");
+    /** XP earned in the trailing window; null means all-time. */
+    const xpSince = (days: number | null) =>
+      (xpRows ?? []).reduce((acc: number, row: { amount: unknown; created_at: unknown }) => {
+        const inWindow =
+          days === null || new Date(String(row.created_at)).getTime() >= now - days * DAY_MS;
+        return inWindow ? acc + (Number(row.amount) || 0) : acc;
+      }, 0);
 
-    const totalVolumeLifted = (sessions ?? []).reduce(
-      (acc: number, s: { total_volume_kg: unknown }) => acc + (Number(s.total_volume_kg) || 0),
-      0
+    // Volume King is a weekly challenge — count only this week's lifting.
+    const weeklyVolume = (sessions ?? []).reduce(
+      (acc: number, s: { total_volume_kg: unknown; completed_at: unknown }) =>
+        new Date(String(s.completed_at)).getTime() >= now - 7 * DAY_MS
+          ? acc + (Number(s.total_volume_kg) || 0)
+          : acc,
+      0,
     );
 
-    // Query user's total earned XP from xp_transactions table
-    const { data: xpRows } = await supabase
-      .from("xp_transactions")
-      .select("amount, created_at")
-      .eq("user_id", user.id);
-
-    const realLifetimeXP = (xpRows ?? []).reduce(
-      (acc: number, row: { amount: unknown }) => acc + (Number(row.amount) || 0),
-      0
-    );
-
-    // Calculate weekly XP (past 7 days)
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-
-    const realWeeklyXP = (xpRows ?? [])
-      .filter((row: { created_at: unknown }) => new Date(String(row.created_at)) >= sevenDaysAgo)
-      .reduce((acc: number, row: { amount: unknown }) => acc + (Number(row.amount) || 0), 0);
-
-    // Dynamic current user ID
-    const currentUserId = user.id;
-
-    // Helper to update current user's entry in a scope's leaderboard list
-    const updateScopeWithUser = (
-      entries: typeof mockCompeteData.scopes.weekly,
-      userXP: number
-    ) => {
-      const updated = entries.map((entry) => {
-        if (entry.isCurrentUser) {
-          return {
-            ...entry,
-            id: currentUserId,
-            name: userName,
-            xp: entry.xp + userXP,
-          };
-        }
-        return entry;
-      });
-
-      // Sort descending by XP and update rank indices
-      return updated
-        .sort((a, b) => b.xp - a.xp)
-        .map((entry, index) => ({
-          ...entry,
-          rank: index + 1,
-        }));
-    };
-
-    const updatedWeekly = updateScopeWithUser(mockCompeteData.scopes.weekly, realWeeklyXP);
-    const updatedMonthly = updateScopeWithUser(mockCompeteData.scopes.monthly, Math.round(realLifetimeXP * 0.7));
-    const updatedAllTime = updateScopeWithUser(mockCompeteData.scopes["all-time"], realLifetimeXP);
-
-    // Challenge target progress
+    const me = { id: user.id, name: userName };
     const challengeTarget = mockCompeteData.challenge.target;
-    const currentProgress = Math.min(challengeTarget, 15_000 + totalVolumeLifted);
+    const progress = Math.min(challengeTarget, Math.round(weeklyVolume));
 
     return {
       ...mockCompeteData,
-      currentUserId,
-      challenge: {
-        ...mockCompeteData.challenge,
-      },
+      currentUserId: user.id,
       participation: {
         challengeId: mockCompeteData.challenge.id,
-        progress: currentProgress,
-        percent: computePercent(currentProgress, challengeTarget),
+        progress,
+        percent: computePercent(progress, challengeTarget),
       },
       scopes: {
-        weekly: updatedWeekly,
-        monthly: updatedMonthly,
-        "all-time": updatedAllTime,
+        weekly: rankWithUser(mockCompeteData.scopes.weekly, { ...me, xp: xpSince(7) }),
+        monthly: rankWithUser(mockCompeteData.scopes.monthly, { ...me, xp: xpSince(30) }),
+        "all-time": rankWithUser(mockCompeteData.scopes["all-time"], { ...me, xp: xpSince(null) }),
       },
     };
   } catch (error) {

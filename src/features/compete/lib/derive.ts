@@ -8,6 +8,31 @@ import type { LeaderboardEntry } from "@/types/leaderboard";
 
 export type RankMovement = "up" | "down" | "same";
 
+/**
+ * Replaces the fixture "you" row with the real athlete — their real XP in
+ * place of the fixture's, never added to it — then re-ranks everyone by XP.
+ * The athlete's previousRank is set to their new rank: no rank history
+ * exists yet, so "no movement" is the only honest arrow. Never mutates the
+ * input (the fixture module is shared across requests).
+ */
+export function rankWithUser(
+  entries: LeaderboardEntry[],
+  user: { id: string; name: string; xp: number },
+): LeaderboardEntry[] {
+  return entries
+    .map((entry) =>
+      entry.isCurrentUser
+        ? { ...entry, id: user.id, name: user.name, xp: user.xp }
+        : { ...entry },
+    )
+    .sort((a, b) => b.xp - a.xp)
+    .map((entry, index) => ({
+      ...entry,
+      rank: index + 1,
+      previousRank: entry.isCurrentUser ? index + 1 : entry.previousRank,
+    }));
+}
+
 export function getRankMovement(entry: {
   rank: number;
   previousRank: number;
