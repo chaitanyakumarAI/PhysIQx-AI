@@ -20,6 +20,7 @@ import { WelcomeHeader } from "@/features/home/components/WelcomeHeader";
 import { getGreeting } from "@/features/home/lib/greeting";
 import { generateArchetype } from "@/features/onboarding/lib/generateArchetype";
 import { DemoBanner } from "@/features/shared/components/DemoBanner";
+import { SwapWorkoutSheet } from "@/features/train/components/SwapWorkoutSheet";
 import { useActiveSessionInfo, useAthleteState } from "@/features/shared/hooks/useAthlete";
 import { todayIso } from "@/lib/dates";
 import { fadeInUp, staggerChildren } from "@/lib/motion";
@@ -94,11 +95,14 @@ export function HomeScreen() {
         <m.div variants={fadeInUp} data-tour="mission">
           <Section title="Today's workout">
             {mission ? (
-              <DailyMissionCard
-                mission={mission}
-                upNext={todaysWorkout?.nextDay.name}
-                onStart={() => router.push(`/session/${mission.id}`)}
-              />
+              <>
+                <DailyMissionCard
+                  mission={mission}
+                  upNext={todaysWorkout?.nextDay.name}
+                  onStart={() => router.push(`/session/${mission.id}`)}
+                />
+                {!demo && <SwapWorkoutSheet currentMissionId={mission.id} />}
+              </>
             ) : (
               <Card padding="lg" className="flex flex-col gap-3">
                 <h3 className="font-display text-xl font-bold">No active plan</h3>
