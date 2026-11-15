@@ -11,7 +11,9 @@ import { Card } from "@/components/ui/Card";
 import { FilterChipRow } from "@/components/ui/FilterChipRow";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { mockExercises } from "@/data/exercises";
 import { BodyBalanceCard } from "@/features/insights/components/BodyBalanceCard";
+import { MuscleRecoveryCard } from "@/features/insights/components/MuscleRecoveryCard";
 import { PersonalRecordCard } from "@/features/insights/components/PersonalRecordCard";
 import { ScoreTrendCard } from "@/features/insights/components/ScoreTrendCard";
 import { StreakHeatmapCard } from "@/features/insights/components/StreakHeatmapCard";
@@ -22,6 +24,7 @@ import { DemoBanner } from "@/features/shared/components/DemoBanner";
 import { useAthleteState, useScoreTrend } from "@/features/shared/hooks/useAthlete";
 import type { CoachRecommendation } from "@/lib/coachEngine";
 import { fadeInUp, staggerChildren } from "@/lib/motion";
+import { deriveMuscleRecovery } from "@/features/insights/lib/muscleRecovery";
 import { derivePersonalRecords } from "@/lib/prEngine";
 import { CALIBRATION_DAYS } from "@/lib/scoreEngine";
 import { useEntranceOnce } from "@/lib/useEntranceOnce";
@@ -63,6 +66,11 @@ export function InsightsScreen() {
     () => derivePersonalRecords(ledger.sessions, todayIso),
     [ledger.sessions, todayIso],
   );
+  const muscleRecovery = useMemo(
+    () => deriveMuscleRecovery(ledger.sessions, mockExercises, todayIso),
+    [ledger.sessions, todayIso],
+  );
+  const hasTrained = ledger.sessions.some((session) => session.setsCompleted > 0);
   const insights = athlete.coach
     .filter((recommendation) => !DATA_INSIGHT_EXCLUDES.has(recommendation.id))
     .slice(0, 3)
@@ -135,6 +143,14 @@ export function InsightsScreen() {
           <m.div variants={fadeInUp}>
             <Section title="Body balance">
               <BodyBalanceCard pillars={score.pillars} weakestPillarId={score.weakestPillarId} />
+            </Section>
+          </m.div>
+        )}
+
+        {hasTrained && (
+          <m.div variants={fadeInUp}>
+            <Section title="Muscle recovery">
+              <MuscleRecoveryCard entries={muscleRecovery} />
             </Section>
           </m.div>
         )}

@@ -6,10 +6,13 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { Section } from "@/components/layout/Section";
 import { Card } from "@/components/ui/Card";
 import { iconSize } from "@/constants/icons";
+import { mockExercises } from "@/data/exercises";
 import { DemoBanner } from "@/features/shared/components/DemoBanner";
 import { useAthleteState } from "@/features/shared/hooks/useAthlete";
 import { addDaysIso, weekMondayIso } from "@/lib/dates";
 import { BASELINE_DAYS } from "@/lib/trainingLoad";
+import { deriveMuscleRecovery } from "../lib/muscleRecovery";
+import { MuscleRecoveryCard } from "./MuscleRecoveryCard";
 import { TrainingLoadCard } from "./TrainingLoadCard";
 
 const WEEKS_SHOWN = 8;
@@ -52,6 +55,14 @@ export function RecoveryScreen() {
       {demo && <DemoBanner />}
 
       <TrainingLoadCard load={load} />
+
+      {ledger.sessions.some((session) => session.setsCompleted > 0) && (
+        <Section title="Muscle recovery">
+          <MuscleRecoveryCard
+            entries={deriveMuscleRecovery(ledger.sessions, mockExercises, todayIso)}
+          />
+        </Section>
+      )}
 
       <Section title="Weekly volume">
         <Card padding="md">
