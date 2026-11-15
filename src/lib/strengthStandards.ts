@@ -12,6 +12,8 @@
  * 5. Elite: Top tier competitive strength athlete (<1% of lifters).
  */
 
+import type { Sex } from "@/types/ledger";
+
 export type StrengthTier = "beginner" | "novice" | "intermediate" | "advanced" | "elite";
 
 export interface StrengthBenchmark {
@@ -255,8 +257,9 @@ const FEMALE_STANDARD_FACTOR: Record<string, number> = {
   "ex-overhead-press": 0.6,
 };
 
-/** The Big 4 standards for an athlete's sex (male tables when unknown). */
-export function standardsFor(sex: "male" | "female" | null): StrengthBenchmark[] {
+/** The Big 4 standards for an athlete's answer — men's tables (the stricter
+ *  standard) for every answer except "female", unknown included. */
+export function standardsFor(sex: Sex | null): StrengthBenchmark[] {
   if (sex !== "female") return BIG_4_STANDARDS;
   return BIG_4_STANDARDS.map((benchmark) => {
     const factor = FEMALE_STANDARD_FACTOR[benchmark.exerciseId] ?? 0.65;

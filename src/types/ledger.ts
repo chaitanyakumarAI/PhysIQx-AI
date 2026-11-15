@@ -2,7 +2,31 @@ import type { CardioActivity } from "./cardio";
 import type { ExperienceLevel, GoalBodyShape, ProfileGoal } from "./profile";
 import type { CompletedSessionSummary } from "./workoutSession";
 
-export type Sex = "male" | "female";
+/** The sexes the published strength tables and silhouettes exist for. */
+export type TableSex = "male" | "female";
+
+/**
+ * What the athlete answered — gender options beyond the two table sexes
+ * (owner decision 2026-11-15). Engines never branch on the extra values:
+ * they map through `tableSexFor` to the tables that actually exist.
+ */
+export type Sex = TableSex | "nonbinary" | "unspecified";
+
+export const sexLabels: Record<Sex, string> = {
+  female: "Female",
+  male: "Male",
+  nonbinary: "Non-binary",
+  unspecified: "Prefer not to say",
+};
+
+/**
+ * The published tables an answer maps to. Non-binary, prefer-not-to-say
+ * and unknown all return null, and every consumer falls back to the men's
+ * tables — the stricter standard, same behavior as before the answer existed.
+ */
+export function tableSexFor(sex: Sex | null): TableSex | null {
+  return sex === "male" || sex === "female" ? sex : null;
+}
 
 /**
  * The athlete's current build, picked from illustrated silhouettes (never

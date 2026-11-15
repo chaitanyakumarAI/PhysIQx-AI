@@ -19,7 +19,7 @@ export const ABOUT_YOU_LIMITS = {
  */
 export const onboardingSchema = z.object({
   displayName: z.string().trim().min(1).max(ABOUT_YOU_LIMITS.nameMax).optional(),
-  sex: z.enum(["male", "female"]).optional(),
+  sex: z.enum(["male", "female", "nonbinary", "unspecified"]).optional(),
   birthYear: z
     .number()
     .int()

@@ -45,7 +45,7 @@ export function StrengthStandardsScreen() {
           <h1 className="font-display text-2xl font-bold">Strength standards</h1>
           <p className="text-xs text-foreground-secondary">
             {bodyweight
-              ? `Scaled to your ${bodyweight} kg bodyweight${ledger.profile.sex ? ` · ${ledger.profile.sex} tables` : ""}`
+              ? `Scaled to your ${bodyweight} kg bodyweight${ledger.profile.sex ? ` · ${ledger.profile.sex === "female" ? "women's" : "men's"} tables` : ""}`
               : "Scaled to your bodyweight"}
           </p>
         </div>

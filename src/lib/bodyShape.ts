@@ -1,4 +1,4 @@
-import type { BodyBuild, Sex } from "@/types/ledger";
+import { tableSexFor, type BodyBuild, type Sex, type TableSex } from "@/types/ledger";
 
 /**
  * Body Shape pillar (docs/MASTER_BRIEF.md): the athlete SELECTS their build
@@ -75,7 +75,7 @@ export function getBodyBuild(id: BodyBuild): BodyBuildDefinition {
 }
 
 /** Height at which the tall-frame adjustment applies. */
-const TALL_CM: Record<Sex, number> = { male: 185, female: 172 };
+const TALL_CM: Record<TableSex, number> = { male: 185, female: 172 };
 const TALL_BONUS = 4;
 /** Age credit starts at 30 and grows 0.5/yr to a +12 cap (≈ age 54):
  *  a 50-year-old at Athletic scores like a 25-year-old at Muscular. */
@@ -93,7 +93,8 @@ export interface BodyShapeInputs {
 export function computeBodyShapeValue({ build, sex, heightCm, age }: BodyShapeInputs): number {
   const definition = getBodyBuild(build);
   let value = definition.basePercent;
-  if (definition.muscleForward && sex && heightCm !== null && heightCm >= TALL_CM[sex]) {
+  const tables = tableSexFor(sex);
+  if (definition.muscleForward && tables && heightCm !== null && heightCm >= TALL_CM[tables]) {
     value += TALL_BONUS;
   }
   if (age !== null && age > AGE_CREDIT_START) {
@@ -104,5 +105,5 @@ export function computeBodyShapeValue({ build, sex, heightCm, age }: BodyShapeIn
 
 /** Image for a build's silhouette (front view), by sex. */
 export function bodyBuildImage(build: BodyBuild, sex: Sex | null): string {
-  return `/body-shapes/${build}_${sex ?? "male"}_front.png`;
+  return `/body-shapes/${build}_${tableSexFor(sex) ?? "male"}_front.png`;
 }

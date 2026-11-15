@@ -1,6 +1,6 @@
 import { Input } from "@/components/ui/Input";
 import { cn } from "@/lib/utils";
-import type { Sex } from "@/types/ledger";
+import { sexLabels, type Sex } from "@/types/ledger";
 import { ABOUT_YOU_LIMITS } from "../../schemas";
 
 export interface AboutYouValues {
@@ -16,10 +16,9 @@ export interface AboutYouStepProps {
   onChange: (patch: Partial<AboutYouValues>) => void;
 }
 
-const sexOptions: { value: Sex; label: string }[] = [
-  { value: "female", label: "Female" },
-  { value: "male", label: "Male" },
-];
+const sexOptions: { value: Sex; label: string }[] = (
+  ["female", "male", "nonbinary", "unspecified"] as const
+).map((value) => ({ value, label: sexLabels[value] }));
 
 function toNumber(raw: string): number | undefined {
   if (raw.trim() === "") return undefined;
@@ -51,8 +50,8 @@ export function AboutYouStep({ values, onChange }: AboutYouStepProps) {
       />
 
       <div className="flex flex-col gap-2">
-        <span className="text-sm font-medium">Sex</span>
-        <div role="radiogroup" aria-label="Sex" className="grid grid-cols-2 gap-2">
+        <span className="text-sm font-medium">Gender</span>
+        <div role="radiogroup" aria-label="Gender" className="grid grid-cols-2 gap-2">
           {sexOptions.map((option) => (
             <button
               key={option.value}
@@ -71,7 +70,10 @@ export function AboutYouStep({ values, onChange }: AboutYouStepProps) {
             </button>
           ))}
         </div>
-        <p className="text-xs text-foreground-secondary">Used only to pick the right strength tables.</p>
+        <p className="text-xs text-foreground-secondary">
+          Only picks the strength tables your lifts are measured against — non-binary and prefer
+          not to say use the men&apos;s tables, the stricter standard.
+        </p>
       </div>
 
       <div className="grid grid-cols-3 gap-3">
