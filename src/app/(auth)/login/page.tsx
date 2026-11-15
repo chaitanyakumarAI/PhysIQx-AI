@@ -42,8 +42,12 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           href="/home"
           className="inline-flex items-center text-xs font-semibold text-foreground-secondary hover:text-brand transition-colors pt-1"
         >
-          Explore as Guest (Skip Login) →
+          Continue as guest →
         </Link>
+        <p className="max-w-xs text-center text-xs text-foreground-secondary/80">
+          Everything works in guest mode — logging in backs up your training so it can be
+          restored on any device.
+        </p>
       </div>
 
       <style>{`

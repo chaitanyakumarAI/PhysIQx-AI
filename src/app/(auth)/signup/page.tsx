@@ -18,12 +18,24 @@ export default function SignupPage() {
       <SignupForm />
       <SocialLoginButtons />
 
-      <p className="auth-switch-text">
-        Already have an account?{" "}
-        <Link href="/login" className="auth-switch-link">
-          Log in
+      <div className="flex flex-col items-center gap-2">
+        <p className="auth-switch-text">
+          Already have an account?{" "}
+          <Link href="/login" className="auth-switch-link">
+            Log in
+          </Link>
+        </p>
+        <Link
+          href="/home"
+          className="inline-flex items-center text-xs font-semibold text-foreground-secondary hover:text-brand transition-colors pt-1"
+        >
+          Continue as guest →
         </Link>
-      </p>
+        <p className="max-w-xs text-center text-xs text-foreground-secondary/80">
+          Everything works in guest mode — an account backs up your training so it can be
+          restored on any device.
+        </p>
+      </div>
 
       <style>{`
         .auth-page-title {

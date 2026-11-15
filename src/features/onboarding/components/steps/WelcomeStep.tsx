@@ -12,6 +12,10 @@ export function WelcomeStep() {
           About two minutes. No wrong answers — this sets up your plan, your
           score, and your first workout.
         </p>
+        <p className="mt-3 text-xs text-foreground-secondary/80">
+          No account needed — everything works on this device. Sign up anytime
+          to back up your training.
+        </p>
       </div>
     </div>
   );
