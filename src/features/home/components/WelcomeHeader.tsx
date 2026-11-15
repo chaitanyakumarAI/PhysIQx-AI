@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Flame, Bell } from "lucide-react";
+import { Flame, Bell, Trophy } from "lucide-react";
 import { UserAvatar } from "@/features/shared/components/UserAvatar";
 import { Badge } from "@/components/ui/Badge";
 import { iconSize } from "@/constants/icons";
@@ -14,6 +14,8 @@ export interface WelcomeHeaderProps extends React.ComponentProps<"header"> {
   greeting: string;
   name: string;
   streakDays: number;
+  /** The athlete's longest streak ever — tags the badge when matched. */
+  bestStreakDays?: number;
   archetype: string;
 }
 
@@ -22,9 +24,15 @@ export function WelcomeHeader({
   greeting,
   name,
   streakDays,
+  bestStreakDays,
   archetype,
   ...props
 }: WelcomeHeaderProps) {
+  // "Personal best" only once a streak means something (3+ days) and the
+  // current run has caught its own record — longest includes the current
+  // run, so equality is "at your best right now".
+  const atPersonalBest =
+    streakDays >= 3 && bestStreakDays !== undefined && streakDays >= bestStreakDays;
   const openDrawer = useNotificationStore((state) => state.openDrawer);
   const readIds = useNotificationStore((state) => state.readIds);
   const getAllNotifications = useNotificationStore((state) => state.getAllNotifications);
@@ -63,13 +71,19 @@ export function WelcomeHeader({
             {name}
           </span>
         </h1>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {/* Brand, not amber: a streak is an achievement — warm colors are
               reserved for warnings/at-risk states (color-grammar rule). */}
           {streakDays > 0 && (
             <Badge tone="brand">
               <Flame size={iconSize.xs} aria-hidden />
               {streakDays} day streak
+            </Badge>
+          )}
+          {atPersonalBest && (
+            <Badge tone="info">
+              <Trophy size={iconSize.xs} aria-hidden />
+              Personal best
             </Badge>
           )}
           <span className="text-sm text-foreground-secondary">

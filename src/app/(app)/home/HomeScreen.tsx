@@ -87,6 +87,7 @@ export function HomeScreen() {
             greeting={greeting}
             name={ledger.profile.displayName ?? "Athlete"}
             streakDays={athlete.streak.currentStreakDays}
+            bestStreakDays={athlete.streak.longestStreakDays}
             archetype={archetype}
             className="pt-0"
           />
